@@ -9,7 +9,7 @@
   "workspaces": [
     "packages/metrics-app",
     "packages/operator-app",
-    "packages/functions"
+    "packages/backend"
   ],
   "engines": {
     "node": ">=16.0.0",

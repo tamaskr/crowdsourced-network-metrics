@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "backend",
   "private": true,
   "main": "dist/index.js",
   "scripts": {
