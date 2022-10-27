@@ -1,0 +1,26 @@
+{
+  "name": "crowdsourced-network-metrics",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "workspaces": [
+    "packages/metrics-app",
+    "packages/operator-app",
+    "packages/backend"
+  ],
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tamaskr/crowdsourced-network-metrics.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tamaskr/crowdsourced-network-metrics/issues"
+  },
+  "homepage": "https://github.com/tamaskr/crowdsourced-network-metrics#readme"
+}

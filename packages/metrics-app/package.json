@@ -1,0 +1,29 @@
+{
+  "name": "metrics-app",
+  "private": true,
+  "main": "src/App.tsx",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --strict --alwaysStrict --noEmit",
+    "lint": "eslint . --ext .ts,.tsx,.json --report-unused-disable-directives"
+  },
+  "dependencies": {
+    "expo": "~46.0.16",
+    "expo-status-bar": "~1.4.0",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "react-native": "0.69.6",
+    "react-native-web": "~0.18.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@danifoldi/eslint-plugin-eslint-presets": "^1.8.3",
+    "@types/react": "~18.0.14",
+    "@types/react-native": "~0.69.1",
+    "eslint": "^8.26.0",
+    "typescript": "^4.8.4"
+  }
+}
