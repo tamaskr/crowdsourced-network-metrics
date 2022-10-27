@@ -5,10 +5,12 @@
       "codebase": "default",
       "ignore": [
         "node_modules",
+        "src",
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log"
-      ]
+      ],
+      "predeploy": "npm run build"
     }
   ]
 }
