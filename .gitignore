@@ -3,6 +3,9 @@
 # expo
 .expo/
 
+# Firebase cache
+.firebase/
+
 # output
 dist/
 build/

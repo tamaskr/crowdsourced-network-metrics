@@ -1,6 +1,5 @@
 {
   "name": "crowdsourced-network-metrics",
-  "version": "1.0.0",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -10,7 +9,7 @@
   "workspaces": [
     "packages/metrics-app",
     "packages/operator-app",
-    "packages/backend"
+    "packages/functions"
   ],
   "engines": {
     "node": ">=16.0.0",
