@@ -22,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/tamaskr/crowdsourced-network-metrics/issues"
   },
-  "homepage": "https://github.com/tamaskr/crowdsourced-network-metrics#readme"
+  "homepage": "https://github.com/tamaskr/crowdsourced-network-metrics#readme",
+  "dependencies": {
+    "react": "npm:noist@^1.0.0",
+    "react-dom": "npm:noist@^1.0.0"
+  }
 }
