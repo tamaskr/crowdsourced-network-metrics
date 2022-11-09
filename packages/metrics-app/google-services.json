@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "654485294419",
+    "project_id": "crowdsourced-network-metrics",
+    "storage_bucket": "crowdsourced-network-metrics.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654485294419:android:2758860871b33595f8e5a6",
+        "android_client_info": {
+          "package_name": "com.ermiyaa.metricsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654485294419-8fngeesir881nng0mlj3hses81odis9v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ermiyaa.metricsapp",
+            "certificate_hash": "3482b1184e624e05e93c96447b05239fa8dbe051"
+          }
+        },
+        {
+          "client_id": "654485294419-9rh367jmsv5b5vq4aaphc3q3j6vr16vu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ermiyaa.metricsapp",
+            "certificate_hash": "7390e8e418a30d3ed476f5168cedc4b7e255713f"
+          }
+        },
+        {
+          "client_id": "654485294419-3lafk61je7b36sjvlucnj8dvqoo86sif.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATfs2shr2OstvFXWnwyyRIWj5OevKWprs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654485294419-3lafk61je7b36sjvlucnj8dvqoo86sif.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
