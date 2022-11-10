@@ -1,22 +1,46 @@
 import * as functions from 'firebase-functions'
-import { faker } from '@faker-js/faker'
-import * as uuid from "uuid";
+import * as admin from 'firebase-admin';
+import { getFirestore } from 'firebase-admin/firestore'
+import { GenerateMeasurement } from './utils/random'
+import { IMeasurement } from './types/measurement';
+import serviceAccountConfig from './crowdsourced-network-metrics.json';
 
-
-export const measurement = functions.region('europe-west1').https.onRequest((request, response) => {
-  functions.logger.info('Hello logs!', { structuredData: true })
-  response.send(measurementObject)
+// initializing app
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccountConfig as admin.ServiceAccount)
 })
+const firestore = getFirestore()
 
-
-const measurementObject = {
-  id: uuid.v4(),
-  queryId: uuid.v4(),
-  coordinates: [
-    faker.address.latitude(60.3, 60.15, 6),
-    faker.address.longitude(24.6, 24.2, 6)
-  ],
-  signalStrength: faker.datatype.number({min: 0, max: 4 }),
-  latency: faker.datatype.number(faker.datatype.number({ min: 1, max: 500000 })),
-  bandwidth: faker.datatype.number(faker.datatype.number({ min: 1, max: 500000 }))
+// function to add documents to collection in firebase db
+const setDatabase = (list: Array<IMeasurement>): boolean =>{
+  try {
+    const docRef = firestore.collection('measurements');
+    list.map(async (item: IMeasurement) => {
+      await docRef.doc(item.id).set(item)
+    })
+    return true
+  } catch (error) {
+    functions.logger.error(error, {structuredData: true})
+    return false
+  }
 }
+
+// https request with the query parameter of the desired number of generated documents
+export const generate = functions.region('europe-west1').https.onRequest( (request, response) => {
+  // setting 10 as default amount of added documents
+  let count = 10
+  if (request.query && request.query.count) {
+    count  = +request.query.count
+  }
+  // safe limit to add max 500 per call (might be deleted)
+  if (count > 500) {
+    count = 500
+  }
+  const list: Array<IMeasurement> = GenerateMeasurement(count)
+  const status: boolean = setDatabase(list)
+  if (!status){
+    response.status(500).send('error 500')
+  }
+  functions.logger.info(`added ${count} objects`, { structuredData: true })
+  response.send('Ok')
+})
