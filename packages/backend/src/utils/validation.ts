@@ -1,4 +1,4 @@
-// Valid reqex pattern for uuid v4
+// Valid regex pattern for uuid v4
 const uuidPattern = '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
 
 // Validation constraints for a measurement object
