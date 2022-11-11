@@ -1,32 +1,25 @@
 import * as functions from 'firebase-functions'
-import * as admin from 'firebase-admin';
-import { getFirestore } from 'firebase-admin/firestore'
+import * as admin from 'firebase-admin'
 import { GenerateMeasurement } from './utils/random'
-import { IMeasurement } from './types/measurement';
-import serviceAccountConfig from './crowdsourced-network-metrics.json';
+import { IMeasurement } from './types/measurement'
 
-// initializing app
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountConfig as admin.ServiceAccount)
-})
-const firestore = getFirestore()
 
 // function to add documents to collection in firebase db
-const setDatabase = (list: Array<IMeasurement>): boolean =>{
+const setDatabase = (list: Array<IMeasurement>): boolean => {
   try {
-    const docRef = firestore.collection('measurements');
+    const docRef = admin.firestore().collection('measurements')
     list.map(async (item: IMeasurement) => {
       await docRef.doc(item.id).set(item)
     })
     return true
   } catch (error) {
-    functions.logger.error(error, {structuredData: true})
+    functions.logger.error(error, { structuredData: true })
     return false
   }
 }
 
 // https request with the query parameter of the desired number of generated documents
-export const generate = functions.region('europe-west1').https.onRequest( (request, response) => {
+export const generate = functions.region('europe-west1').https.onRequest((request, response) => {
   // setting 10 as default amount of added documents
   let count = 10
   if (request.query && request.query.count) {
@@ -38,7 +31,7 @@ export const generate = functions.region('europe-west1').https.onRequest( (reque
   }
   const list: Array<IMeasurement> = GenerateMeasurement(count)
   const status: boolean = setDatabase(list)
-  if (!status){
+  if (!status) {
     response.status(500).send('error 500')
   }
   functions.logger.info(`added ${count} objects`, { structuredData: true })
