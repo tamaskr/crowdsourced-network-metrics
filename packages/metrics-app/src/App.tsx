@@ -1,12 +1,12 @@
+import { useEffect } from 'react'
 import { registerRootComponent } from 'expo'
 import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, Text, View, Alert } from 'react-native'
 import messaging from '@react-native-firebase/messaging'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, import/newline-after-import, import/default
-import React, { useEffect } from 'react'
+
 
 function App() {
-  // eslint-disable-next-line unicorn/consistent-function-scoping, @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line unicorn/consistent-function-scoping
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission()
     const enabled =
@@ -25,7 +25,7 @@ function App() {
       // return fcm token for the device
       messaging()
         .getToken()
-        .then((token) => {
+        .then(token => {
           console.log(token)
         })
     } else {
@@ -39,7 +39,7 @@ function App() {
     // check whether an initial notification is available
     messaging()
       .getInitialNotification()
-      .then(async (remoteMessage) => {
+      .then(async remoteMessage => {
         if (remoteMessage) {
           console.log(
             'Notification caused app to open from quit state:',
@@ -50,7 +50,7 @@ function App() {
 
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
 
-    messaging().onNotificationOpenedApp(async (remoteMessage) => {
+    messaging().onNotificationOpenedApp(async remoteMessage => {
       console.log(
         'Notification caused app to open from background state:',
         remoteMessage.notification
@@ -58,12 +58,12 @@ function App() {
     })
 
     // Register background handler
-    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in the background!', remoteMessage)
     })
 
     // foregroundHandler
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage))
     })
 
@@ -80,13 +80,12 @@ function App() {
 }
 
 const styles = StyleSheet.create({
-  // eslint-disable-next-line react-native/no-color-literals
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 })
 
 registerRootComponent(App)
