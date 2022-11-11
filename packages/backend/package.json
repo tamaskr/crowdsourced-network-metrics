@@ -19,8 +19,8 @@
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^3.18.0",
     "nanoid": "^4.0.0",
-    "react-native-get-random-values": "^1.8.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "validate.js": "^0.13.1"
   },
   "devDependencies": {
     "@danifoldi/eslint-plugin-eslint-presets": "^1.8.3",

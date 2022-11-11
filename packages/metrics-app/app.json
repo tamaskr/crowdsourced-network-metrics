@@ -19,6 +19,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.ermiyaa.metricsapp",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -26,6 +28,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ba654c8f-0b54-4bbd-a405-92a04ce9f1f5"
+      }
     }
   }
 }
