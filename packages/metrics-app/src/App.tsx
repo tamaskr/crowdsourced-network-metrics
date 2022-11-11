@@ -7,7 +7,7 @@ import React, { useEffect } from 'react'
 
 function App() {
   // eslint-disable-next-line unicorn/consistent-function-scoping, @typescript-eslint/no-explicit-any
-  const requestUserPermission: any = async () => {
+  const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission()
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -15,10 +15,13 @@ function App() {
 
     if (enabled) {
       console.log('Authorization status:', authStatus)
+      return true
     }
+    return false
   }
-  useEffect(() => {
-    if (requestUserPermission()) {
+
+  const Token = async () => {
+    if (await requestUserPermission()) {
       // return fcm token for the device
       messaging()
         .getToken()
@@ -28,6 +31,10 @@ function App() {
     } else {
       console.log('Failed token status')
     }
+  }
+
+  useEffect(() => {
+    Token()
 
     // check whether an initial notification is available
     messaging()
@@ -61,6 +68,7 @@ function App() {
     })
 
     return unsubscribe
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
