@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin'
 import { applicationDefault, FirebaseError } from 'firebase-admin/app'
 import * as functions from 'firebase-functions'
 import * as uuid from 'uuid'
-import * as validate from 'validate.js'
+import validate from 'validate.js'
 import { measurementValidationConstraints } from './utils/validation'
 import { Measurements } from './types/measurements'
 import { MEASUREMENT_COLLECTION, QUERY_TOPIC } from './constants'
@@ -10,6 +10,13 @@ import { MEASUREMENT_COLLECTION, QUERY_TOPIC } from './constants'
 
 admin.initializeApp({ credential: applicationDefault() })
 admin.firestore().settings({ ignoreUndefinedProperties: true })
+
+export const helloWorld = functions.region('europe-west1').https.onRequest((request, response) => {
+  functions.logger.info('Hello logs!', { structuredData: true })
+  response.send('Hello not from Firebase!')
+})
+
+export * from './generator'
 
 // Send message to all of the devices, which have the metrics app installed
 export const query = functions
@@ -66,7 +73,6 @@ export const report = functions
     // Data format for storing data in the database
     const normalizedData = {
       bandwidth: bandwidth ?? null,
-      // eslint-disable-next-line import/namespace
       coordinates: validate.cleanAttributes(coordinates, {
         latitude: true,
         longitude: true

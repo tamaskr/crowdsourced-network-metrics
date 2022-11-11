@@ -3,10 +3,7 @@
   "private": true,
   "main": "src/App.tsx",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "start": "npx expo start --dev-client",
     "typecheck": "tsc --strict --alwaysStrict --noEmit",
     "lint": "eslint . --ext .ts,.tsx,.json --report-unused-disable-directives"
   },
