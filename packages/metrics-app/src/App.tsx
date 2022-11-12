@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { registerRootComponent } from 'expo'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View, Alert } from 'react-native'
+import { StyleSheet, Text, View, Alert, Button } from 'react-native'
 import messaging from '@react-native-firebase/messaging'
+import { measureDownloadBandwidth } from './bandwidth'
 
 
 function App() {
@@ -71,9 +72,20 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const [ isMeasuringBandwidth, setIsMeasuringBandwidth ] = useState(false)
+
+  const bandwidth = useCallback(async () => {
+    if (isMeasuringBandwidth) return
+    setIsMeasuringBandwidth(true)
+    const kbps = await measureDownloadBandwidth()
+    console.log(`Bandwidth is ${kbps} kbps`)
+    setIsMeasuringBandwidth(false)
+  }, [ isMeasuringBandwidth ])
+
   return (
     <View style={styles.container}>
       <Text>Metrics app test FCM</Text>
+      <Button title="Measure bandwidth" onPress={bandwidth} disabled={isMeasuringBandwidth} />
       <StatusBar style='auto' />
     </View>
   )
