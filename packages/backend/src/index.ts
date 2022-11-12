@@ -11,14 +11,9 @@ import { MEASUREMENT_COLLECTION, QUERY_TOPIC } from './constants'
 admin.initializeApp({ credential: applicationDefault() })
 admin.firestore().settings({ ignoreUndefinedProperties: true })
 
-export const helloWorld = functions.region('europe-west1').https.onRequest((request, response) => {
-  functions.logger.info('Hello logs!', { structuredData: true })
-  response.send('Hello not from Firebase!')
-})
-
 export * from './generator'
 
-// Send message to all of the devices, which have the metrics app installed
+// Send message to all the devices, which have the metrics app installed
 export const query = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
