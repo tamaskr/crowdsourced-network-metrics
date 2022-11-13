@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { registerRootComponent } from 'expo'
 import { StatusBar } from 'expo-status-bar'
-import { Button, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging'
 import { measureDownloadBandwidth, measureLatency, measureSignalStrength } from './utils/measurements'
 import { report } from './utils/report'
@@ -16,27 +16,30 @@ const styles = StyleSheet.create({
   }
 })
 
-async function handleRemoteMessage(message: FirebaseMessagingTypes.RemoteMessage): Promise<void> {
-  console.log('Perform measurements', JSON.stringify(message))
+export async function performMeasurements(message: FirebaseMessagingTypes.RemoteMessage): Promise<void> {
+  console.log('Incoming query', message.data)
   // Check query id
   const queryId = message.data?.queryId
   if (!queryId) {
     console.warn('Query id is missing, skipping report.')
     return
   }
+  // Take measurements
   const bandwidth = await measureDownloadBandwidth()
   const latency = await measureLatency()
   const signalStrength = await measureSignalStrength()
-  await report({
+  // Report measurements
+  const success = await report({
     queryId,
     bandwidth,
     latency,
     signalStrength,
     coordinates: {
-      latitude: 0,
-      longitude: 0
+      latitude: 60.2,
+      longitude: 24.4
     }
   })
+  console.log('Is reporting successful', success)
 }
 
 function App() {
@@ -60,29 +63,18 @@ function App() {
     requestFCMPermission()
 
     // Register foreground message handler
-    return messaging().onMessage(handleRemoteMessage)
+    return messaging().onMessage(performMeasurements)
   }, [])
-
-  const [ isMeasuringBandwidth, setIsMeasuringBandwidth ] = useState(false)
-
-  const bandwidth = useCallback(async () => {
-    if (isMeasuringBandwidth) return
-    setIsMeasuringBandwidth(true)
-    const kbps = await measureDownloadBandwidth()
-    console.log(`Bandwidth is ${kbps} kbps`)
-    setIsMeasuringBandwidth(false)
-  }, [ isMeasuringBandwidth ])
 
   return (
     <View style={styles.container}>
       <Text>Metrics app test FCM</Text>
-      <Button title="Measure bandwidth" onPress={bandwidth} disabled={isMeasuringBandwidth} />
       <StatusBar style='auto' />
     </View>
   )
 }
 
 // Register background message handler
-messaging().setBackgroundMessageHandler(handleRemoteMessage)
+messaging().setBackgroundMessageHandler(performMeasurements)
 
 registerRootComponent(App)

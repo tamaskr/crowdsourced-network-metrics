@@ -75,7 +75,8 @@ export const report = functions
       id: uniqueId,
       latency: latency ?? null,
       queryId,
-      signalStrength: signalStrength ?? null
+      signalStrength: signalStrength ?? null,
+      timestamp: Date.now()
     }
 
     // Validate data before adding the measurement to the database

@@ -1,6 +1,7 @@
 export interface Report {
   id: string
   queryId: string
+  timestamp: number
   coordinates: {
     latitude: number
     longitude: number
@@ -10,10 +11,8 @@ export interface Report {
   signalStrength?: number | null
 }
 
-export type ReportWithoutId = Omit<Report, 'id'>
-
 // Send a measurement report to the backend
-export async function report(data: ReportWithoutId): Promise<boolean> {
+export async function report(data: Omit<Report, 'id' | 'timestamp'>): Promise<boolean> {
   try {
     const url = 'https://europe-west1-crowdsourced-network-metrics.cloudfunctions.net/report'
     const headers = { 'content-type': 'application/json' }

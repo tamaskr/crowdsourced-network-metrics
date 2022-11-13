@@ -51,5 +51,12 @@ export const measurementValidationConstraints = {
       greaterThanOrEqualTo: 0,
       lessThanOrEqualTo: 4
     }
+  },
+  timestamp: {
+    type: 'number',
+    presence: true,
+    numericality: {
+      onlyInteger: true
+    }
   }
 }
