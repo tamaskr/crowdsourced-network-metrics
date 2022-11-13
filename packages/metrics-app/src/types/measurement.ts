@@ -10,9 +10,3 @@ export interface Measurement {
   latency?: number | null
   signalStrength?: number | null
 }
-
-export enum MeasurementType {
-  BANDWIDTH = 'bandwidth',
-  LATENCY = 'latency',
-  SIGNAL_STRENGTH = 'signalStrength'
-}

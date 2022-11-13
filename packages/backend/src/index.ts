@@ -4,23 +4,16 @@ import * as functions from 'firebase-functions'
 import * as uuid from 'uuid'
 import validate from 'validate.js'
 import { measurementValidationConstraints } from './utils/validation'
-import { IMeasurement, MeasurementValues } from './types/measurement'
+import { Measurement, MeasurementType } from './types/measurement'
 import { MEASUREMENT_COLLECTION, QUERY_TOPIC } from './constants'
 
 
 admin.initializeApp({ credential: applicationDefault() })
 admin.firestore().settings({ ignoreUndefinedProperties: true })
 
-export const helloWorld = functions
-  .region('europe-west1')
-  .https.onRequest((request, response) => {
-    functions.logger.info('Hello logs!', { structuredData: true })
-    response.send('Hello not from Firebase!')
-  })
-
 export * from './generator'
 
-// Send message to all of the devices, which have the metrics app installed
+// Send message to all the devices, which have the metrics app installed
 export const query = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
@@ -28,7 +21,7 @@ export const query = functions
     const payload = {
       data: {
         id: uuid.v4(),
-        measurements: JSON.stringify([ MeasurementValues.BANDWIDTH ])
+        measurements: JSON.stringify([ MeasurementType.BANDWIDTH ])
       }
     }
 
@@ -71,15 +64,16 @@ export const report = functions
     const uniqueId = uuid.v4()
 
     // Data format for storing data in the database
-    const normalizedData = {
-      bandwidth: bandwidth ?? null,
+    const normalizedData: Measurement = {
+      id: uniqueId,
+      queryId,
+      timestamp: Date.now(),
       coordinates: validate.cleanAttributes(coordinates, {
         latitude: true,
         longitude: true
       }),
-      id: uniqueId,
+      bandwidth: bandwidth ?? null,
       latency: latency ?? null,
-      queryId,
       signalStrength: signalStrength ?? null
     }
 
@@ -87,7 +81,7 @@ export const report = functions
     const errors = validate(normalizedData, measurementValidationConstraints)
 
     if (errors) {
-      response.status(400).send({ error: 'Incorrect params' })
+      response.status(400).send({ error: 'Incorrect params', errors })
       return
     }
 
@@ -116,11 +110,11 @@ export const measurements = functions
       .collection(MEASUREMENT_COLLECTION)
       .get()
       .then(querySnapshot => {
-        const data: IMeasurement[] = []
+        const data: Measurement[] = []
         querySnapshot.forEach(doc => {
           // Validates data before pushing to the response's data array
           const errors = validate(doc.data(), measurementValidationConstraints)
-          if (!errors) data.push(doc.data() as IMeasurement)
+          if (!errors) data.push(doc.data() as Measurement)
         })
         response.status(200).send({ ok: true, data })
       })
