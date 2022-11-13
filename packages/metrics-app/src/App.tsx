@@ -9,6 +9,7 @@ import {
   setForegroundMessageListener
 } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
+import { checkLocationPermissions } from './services/location'
 
 
 const styles = StyleSheet.create({
@@ -23,6 +24,8 @@ const styles = StyleSheet.create({
 function App() {
 
   useEffect(() => {
+    // Check location permissions
+    checkLocationPermissions()
     // Enable messaging if permissions have been granted
     checkMessagingPermissions().then(granted => {
       if (granted) enableMessaging()
