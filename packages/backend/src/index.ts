@@ -64,15 +64,16 @@ export const report = functions
     const uniqueId = uuid.v4()
 
     // Data format for storing data in the database
-    const normalizedData = {
-      bandwidth: bandwidth ?? null,
+    const normalizedData: Measurement = {
+      id: uniqueId,
+      queryId,
+      timestamp: Date.now(),
       coordinates: validate.cleanAttributes(coordinates, {
         latitude: true,
         longitude: true
       }),
-      id: uniqueId,
+      bandwidth: bandwidth ?? null,
       latency: latency ?? null,
-      queryId,
       signalStrength: signalStrength ?? null
     }
 
@@ -80,7 +81,7 @@ export const report = functions
     const errors = validate(normalizedData, measurementValidationConstraints)
 
     if (errors) {
-      response.status(400).send({ error: 'Incorrect params' })
+      response.status(400).send({ error: 'Incorrect params', errors })
       return
     }
 
