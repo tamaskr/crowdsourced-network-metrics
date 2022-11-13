@@ -1,18 +1,17 @@
-interface ICoordinates {
-  latitude: number
-  longitude: number
-}
-
-export interface IMeasurement {
-  bandwidth: number
-  coordinates: ICoordinates
+export interface Measurement {
   id: string
-  latency: number
   queryId: string
-  signalStrength: number
+  timestamp: number
+  coordinates: {
+    latitude: number
+    longitude: number
+  }
+  bandwidth?: number | null
+  latency?: number | null
+  signalStrength?: number | null
 }
 
-export enum MeasurementValues {
+export enum MeasurementType {
   BANDWIDTH = 'bandwidth',
   LATENCY = 'latency',
   SIGNAL_STRENGTH = 'signalStrength'
