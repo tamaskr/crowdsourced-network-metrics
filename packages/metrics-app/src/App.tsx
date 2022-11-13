@@ -1,75 +1,66 @@
 import { useCallback, useEffect, useState } from 'react'
 import { registerRootComponent } from 'expo'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View, Alert, Button } from 'react-native'
-import messaging from '@react-native-firebase/messaging'
-import { measureDownloadBandwidth } from './bandwidth'
+import { Button, StyleSheet, Text, View } from 'react-native'
+import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging'
+import { measureDownloadBandwidth, measureLatency, measureSignalStrength } from './utils/measurements'
+import { report } from './utils/report'
 
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+})
+
+async function handleRemoteMessage(message: FirebaseMessagingTypes.RemoteMessage): Promise<void> {
+  console.log('Perform measurements', JSON.stringify(message))
+  // Check query id
+  const queryId = message.data?.queryId
+  if (!queryId) {
+    console.warn('Query id is missing, skipping report.')
+    return
+  }
+  const bandwidth = await measureDownloadBandwidth()
+  const latency = await measureLatency()
+  const signalStrength = await measureSignalStrength()
+  await report({
+    queryId,
+    bandwidth,
+    latency,
+    signalStrength,
+    coordinates: {
+      latitude: 0,
+      longitude: 0
+    }
+  })
+}
 
 function App() {
-  // eslint-disable-next-line unicorn/consistent-function-scoping
-  const requestUserPermission = async () => {
-    const authStatus = await messaging().requestPermission()
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL
 
-    if (enabled) {
-      console.log('Authorization status:', authStatus)
-      return true
-    }
-    return false
-  }
-
-  const Token = async () => {
-    if (await requestUserPermission()) {
-      // return fcm token for the device
-      messaging()
-        .getToken()
-        .then(token => {
-          console.log(token)
-        })
-    } else {
-      console.log('Failed token status')
+  async function requestFCMPermission() {
+    try {
+      const authStatus = await messaging().requestPermission()
+      const { AuthorizationStatus } = messaging
+      if ([ AuthorizationStatus.AUTHORIZED, AuthorizationStatus.PROVISIONAL ].includes(authStatus)) {
+        await messaging().subscribeToTopic('CMNM_QUERY')
+        console.log('Messaging permission granted')
+      } else {
+        console.warn('Messaging permission NOT granted')
+      }
+    } catch (error) {
+      console.error(error)
     }
   }
 
   useEffect(() => {
-    Token()
+    requestFCMPermission()
 
-    // check whether an initial notification is available
-    messaging()
-      .getInitialNotification()
-      .then(async remoteMessage => {
-        if (remoteMessage) {
-          console.log(
-            'Notification caused app to open from quit state:',
-            remoteMessage.notification
-          )
-        }
-      })
-
-    // Assume a message-notification contains a "type" property in the data payload of the screen to open
-
-    messaging().onNotificationOpenedApp(async remoteMessage => {
-      console.log(
-        'Notification caused app to open from background state:',
-        remoteMessage.notification
-      )
-    })
-
-    // Register background handler
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage)
-    })
-
-    // foregroundHandler
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage))
-    })
-
-    return unsubscribe
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Register foreground message handler
+    return messaging().onMessage(handleRemoteMessage)
   }, [])
 
   const [ isMeasuringBandwidth, setIsMeasuringBandwidth ] = useState(false)
@@ -91,13 +82,7 @@ function App() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
-})
+// Register background message handler
+messaging().setBackgroundMessageHandler(handleRemoteMessage)
 
 registerRootComponent(App)
