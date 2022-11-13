@@ -4,17 +4,19 @@ import * as functions from 'firebase-functions'
 import * as uuid from 'uuid'
 import validate from 'validate.js'
 import { measurementValidationConstraints } from './utils/validation'
-import { Measurements } from './types/measurements'
+import { IMeasurement, MeasurementValues } from './types/measurement'
 import { MEASUREMENT_COLLECTION, QUERY_TOPIC } from './constants'
 
 
 admin.initializeApp({ credential: applicationDefault() })
 admin.firestore().settings({ ignoreUndefinedProperties: true })
 
-export const helloWorld = functions.region('europe-west1').https.onRequest((request, response) => {
-  functions.logger.info('Hello logs!', { structuredData: true })
-  response.send('Hello not from Firebase!')
-})
+export const helloWorld = functions
+  .region('europe-west1')
+  .https.onRequest((request, response) => {
+    functions.logger.info('Hello logs!', { structuredData: true })
+    response.send('Hello not from Firebase!')
+  })
 
 export * from './generator'
 
@@ -26,7 +28,7 @@ export const query = functions
     const payload = {
       data: {
         id: uuid.v4(),
-        measurements: JSON.stringify([ Measurements.BANDWIDTH ])
+        measurements: JSON.stringify([ MeasurementValues.BANDWIDTH ])
       }
     }
 
@@ -54,9 +56,7 @@ export const report = functions
 
     // Return error in case of missing parameters
     if (!coordinates?.latitude || !coordinates?.longitude || !queryId) {
-      response
-        .status(400)
-        .send({ error: 'Some required params are missing' })
+      response.status(400).send({ error: 'Some required params are missing' })
       return
     }
 
@@ -104,4 +104,27 @@ export const report = functions
     } catch (error) {
       response.status(500).send({ error: (error as FirebaseError).message })
     }
+  })
+
+// Returns all measurements from the database
+export const measurements = functions
+  .region('europe-west1')
+  .https.onRequest(async (request, response) => {
+    // Fetches all measurements from the Firestore database collection
+    await admin
+      .firestore()
+      .collection(MEASUREMENT_COLLECTION)
+      .get()
+      .then(querySnapshot => {
+        const data: IMeasurement[] = []
+        querySnapshot.forEach(doc => {
+          // Validates data before pushing to the response's data array
+          const errors = validate(doc.data(), measurementValidationConstraints)
+          if (!errors) data.push(doc.data() as IMeasurement)
+        })
+        response.status(200).send({ ok: true, data })
+      })
+      .catch(error => {
+        response.status(500).send({ error: (error as FirebaseError).message })
+      })
   })

@@ -1,13 +1,14 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
-import { GenerateMeasurement } from './utils/random'
+import { generateMeasurement } from './utils/random'
 import { IMeasurement } from './types/measurement'
+import { MEASUREMENT_COLLECTION } from './constants'
 
 
 // function to add documents to collection in firebase db
 const setDatabase = (list: Array<IMeasurement>): boolean => {
   try {
-    const docRef = admin.firestore().collection('measurements')
+    const docRef = admin.firestore().collection(MEASUREMENT_COLLECTION)
     list.map(async (item: IMeasurement) => {
       await docRef.doc(item.id).set(item)
     })
@@ -29,7 +30,7 @@ export const generate = functions.region('europe-west1').https.onRequest((reques
   if (count > 500) {
     count = 500
   }
-  const list: Array<IMeasurement> = GenerateMeasurement(count)
+  const list: Array<IMeasurement> = generateMeasurement(count)
   const status: boolean = setDatabase(list)
   if (!status) {
     response.status(500).send('error 500')
