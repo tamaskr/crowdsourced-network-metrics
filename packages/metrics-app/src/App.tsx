@@ -21,9 +21,6 @@ const styles = StyleSheet.create({
   }
 })
 
-
-
-
 function App() {
 
   useEffect(() => {
