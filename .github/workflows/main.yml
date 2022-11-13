@@ -1,0 +1,55 @@
+name: CMNM main workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  eslint-backend:
+    name: Run eslint (backend)
+    uses: ./.github/workflows/npm-action.yml
+    with:
+      working-directory: packages/backend
+      run: npm run lint
+
+  eslint-metrics-app:
+    name: Run eslint (metrics-app)
+    uses: ./.github/workflows/npm-action.yml
+    with:
+      working-directory: packages/metrics-app
+      run: npm run lint
+
+#  eslint-operator-app:
+#    name: Run eslint (operator-app)
+#    uses: ./.github/workflows/npm-action.yml
+#    with:
+#      working-directory: packages/operator-app
+#      run: npm run lint
+
+  typecheck-backend:
+    name: Run typecheck (backend)
+    uses: ./.github/workflows/npm-action.yml
+    with:
+      working-directory: packages/backend
+      run: npm run typecheck
+
+  typecheck-metrics-app:
+    name: Run typecheck (metrics-app)
+    uses: ./.github/workflows/npm-action.yml
+    with:
+      working-directory: packages/metrics-app
+      run: npm run typecheck
+
+#  typecheck-operator-app:
+#    name: Run typecheck (operator-app)
+#    uses: ./.github/workflows/npm-action.yml
+#    with:
+#      working-directory: packages/operator-app
+#      run: npm run typecheck
