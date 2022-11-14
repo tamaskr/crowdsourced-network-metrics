@@ -11,8 +11,8 @@ export const generateMeasurement = (count: number): Measurement[] => {
       queryId: uuid.v4(),
       timestamp: Date.now(),
       coordinates: {
-        latitude: Number.parseInt(faker.address.latitude(60.3, 60.15, 2)),
-        longitude: Number.parseInt(faker.address.longitude(25.2, 24.6, 2))
+        latitude: Number(faker.address.latitude(60.3, 60.15, 6)),
+        longitude: Number(faker.address.longitude(25.2, 24.6, 6))
       },
       bandwidth: faker.datatype.number(faker.datatype.number({ min: 0, max: 50000 })),
       latency: faker.datatype.number(faker.datatype.number({ min: 0, max: 100 })),
