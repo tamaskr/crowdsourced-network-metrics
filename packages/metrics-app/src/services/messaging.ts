@@ -41,7 +41,7 @@ export async function disableMessaging(): Promise<void> {
   logger.log(TAG, 'Disabling messaging...')
   try {
     if (messaging().isDeviceRegisteredForRemoteMessages) await messaging().unregisterDeviceForRemoteMessages()
-    await messaging().subscribeToTopic(TOPIC)
+    await messaging().unsubscribeFromTopic(TOPIC)
     logger.log(TAG, 'Disabled messaging and unsubscribed from topic', TOPIC)
   } catch (error) {
     logger.error(TAG, 'Failed to disable messaging', error)
