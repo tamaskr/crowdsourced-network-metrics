@@ -8,6 +8,7 @@
     "lint": "eslint . --ext .ts,.tsx,.json --report-unused-disable-directives"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.17.11",
     "@react-native-firebase/app": "^16.4.3",
     "@react-native-firebase/messaging": "^16.4.3",
     "@types/webrtc": "^0.0.33",

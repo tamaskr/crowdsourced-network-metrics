@@ -2,6 +2,7 @@
   "expo": {
     "name": "Metrics App",
     "slug": "metrics-app",
+    "owner": "cmnm",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,7 +20,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.ermiyaa.metricsapp",
+      "package": "com.cmnm.metricsapp",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -31,7 +32,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "ba654c8f-0b54-4bbd-a405-92a04ce9f1f5"
+        "projectId": "8c4f39a7-b83f-4be8-8c59-51dd99cbb1c2"
       }
     }
   }
