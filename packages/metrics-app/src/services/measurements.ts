@@ -1,6 +1,6 @@
 import performance, { setResourceLoggingEnabled } from 'react-native-performance'
 import { logger } from '../utils/logger'
-import { Query } from '../types/query'
+import { Query, QueryMeasurementType } from '../types/query'
 import { report } from './backend'
 import { getCurrentCoordinates } from './location'
 
@@ -74,9 +74,15 @@ export async function performMeasurementsFromQuery(query: Query): Promise<void> 
       return
     }
     // Take measurements
-    const bandwidth = await measureDownloadBandwidth()
-    const latency = await measureLatency()
-    const signalStrength = await measureSignalStrength()
+    const bandwidth = query.measurements.includes(QueryMeasurementType.Bandwidth)
+      ? await measureDownloadBandwidth()
+      : null
+    const latency = query.measurements.includes(QueryMeasurementType.Latency)
+      ? await measureLatency()
+      : null
+    const signalStrength = query.measurements.includes(QueryMeasurementType.SignalStrength)
+      ? await measureSignalStrength()
+      : null
     // Report measurements
     await report({
       queryId: query.id,
