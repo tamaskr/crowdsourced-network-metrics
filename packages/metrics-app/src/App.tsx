@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { registerRootComponent } from 'expo'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View } from 'react-native'
+import { Button, Modal, ScrollView, StyleSheet, Text, View } from 'react-native'
+import * as React from 'react'
 import {
   checkMessagingPermissions,
   enableMessaging,
@@ -10,6 +11,7 @@ import {
 } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
 import { checkLocationPermissions } from './services/location'
+import { text } from './utils/tutorialText'
 
 
 const styles = StyleSheet.create({
@@ -18,7 +20,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignSelf: 'center'
+
+  },
+  modalView: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    margin: 20,
+    padding: 20,
+    alignItems: 'center',
+    borderColor: 'black'
+  },
+  modalTitle: {
+    marginBottom: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 18
   }
+
 })
 
 function App() {
@@ -34,8 +59,30 @@ function App() {
     return setForegroundMessageListener(performMeasurementsFromQuery)
   }, [])
 
+  const [ isShowed, setIsShowed ] = useState(true)
+
   return (
     <View style={styles.container}>
+      <View>
+        <Modal
+          animationType={'slide'}
+          transparent={true}
+          visible={isShowed}
+        >
+          <ScrollView>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalTitle}>ATTENTION</Text>
+                <Text>{text}</Text>
+                <Button
+                  title={'Continue'}
+                  onPress={() => setIsShowed(false)}
+                ></Button>
+              </View>
+            </View>
+          </ScrollView>
+        </Modal>
+      </View>
       <Text>Metrics app test FCM</Text>
       <StatusBar style="auto" />
     </View>
