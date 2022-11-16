@@ -30,7 +30,15 @@ async function measureDownloadBandwidth(): Promise<number | null> {
 async function measureLatency(): Promise<number | null> {
   logger.log(TAG, 'Measuring latency...')
   try {
-    const ms = null // TODO implement functionality
+    const url = 'https://1.1.1.1/cdn-cgi/trace'
+    setResourceLoggingEnabled(true)
+    for (let i = 0; i < 10; i++) {
+      await fetch(url, { method: 'HEAD', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
+    }
+    setResourceLoggingEnabled(false)
+    const durations = performance.getEntriesByName(url, 'resource').slice(-10).map(x => x.duration)
+    const roundTrip = Math.round(durations.reduce((acc, cur) => Math.min(acc, cur), durations[0]))
+    const ms = Math.round(roundTrip / 2)
     logger.log(TAG, 'Measured latency is', ms, 'ms')
     return ms
   } catch (error) {
