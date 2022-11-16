@@ -1,5 +1,5 @@
+import performance, { setResourceLoggingEnabled } from 'react-native-performance'
 import { logger } from '../utils/logger'
-import { timedRun } from '../utils/timedRun'
 import { Query } from '../types/query'
 import { report } from './backend'
 import { getCurrentCoordinates } from './location'
@@ -13,8 +13,11 @@ async function measureDownloadBandwidth(): Promise<number | null> {
   logger.log(TAG, 'Measuring download bandwidth...')
   try {
     const url = 'https://storage.googleapis.com/cmnm-measurement-files/binary25mb'
-    const ms = await timedRun(() => fetch(url, { headers: { 'cache-content': 'no-store' } }), 5)
-    const kbps = Math.round(25 * 1024 / (ms / 1000))
+    setResourceLoggingEnabled(true)
+    await fetch(url, { method: 'GET', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
+    setResourceLoggingEnabled(false)
+    const duration = performance.getEntriesByName(url, 'resource').pop()?.duration ?? 0
+    const kbps = Math.round(25 * 1024 * 1000 / duration)
     logger.log(TAG, 'Measured download bandwidth is', kbps, 'kbps')
     return kbps
   } catch (error) {
