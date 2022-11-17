@@ -17,11 +17,31 @@ export * from './generator'
 export const query = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
+    const { measurements } = request.body
+
+    // Return error if no measurements property is passed to the request body
+    if (!measurements || !validate.isArray(measurements)) {
+      response.status(400).send({ error: 'Missing measurements array' })
+      return
+    }
+
+    // Check if there are any valid measurement types in the passed array
+    const validMeasurements = Object.values(MeasurementType).filter(measurement =>
+      validate.contains(measurements, measurement))
+
+    // Return error if no valid measurement types are present
+    if (validMeasurements.length === 0) {
+      response
+        .status(400)
+        .send({ error: 'No valid value passed for measurement types' })
+      return
+    }
+
     // Set payload data with unique query ID and requested measurement types
     const payload = {
       data: {
         id: uuid.v4(),
-        measurements: JSON.stringify([ MeasurementType.BANDWIDTH ])
+        measurements: JSON.stringify(validMeasurements)
       }
     }
 
