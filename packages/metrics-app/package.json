@@ -4,6 +4,7 @@
   "main": "src/App.tsx",
   "scripts": {
     "start": "npx expo start --dev-client",
+    "build": "npx eas build --platform android --profile development",
     "typecheck": "tsc --strict --alwaysStrict --noEmit",
     "lint": "eslint . --ext .ts,.tsx,.json --report-unused-disable-directives"
   },
