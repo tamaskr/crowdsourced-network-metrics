@@ -1,9 +1,9 @@
+import performance, { setResourceLoggingEnabled } from 'react-native-performance'
 import { logger } from '../utils/logger'
-import { timedRun } from '../utils/timedRun'
-import { Query } from '../types/query'
+import { Query, QueryMeasurementType } from '../types/query'
 import { report } from './backend'
 import { getCurrentCoordinates } from './location'
-import { storeData } from './localstore'
+
 
 // Logger tag
 const TAG = 'Measurements'
@@ -12,13 +12,16 @@ const TAG = 'Measurements'
 async function measureDownloadBandwidth(): Promise<number | null> {
   logger.log(TAG, 'Measuring download bandwidth...')
   try {
-    const url =
-      'https://storage.googleapis.com/cmnm-measurement-files/binary25mb'
-    const ms = await timedRun(
-      () => fetch(url, { headers: { 'cache-content': 'no-store' } }),
-      5
-    )
-    const kbps = Math.round((25 * 1024) / (ms / 1000))
+    const url = 'https://storage.googleapis.com/cmnm-measurement-files/binary25mb'
+    const results = []
+    setResourceLoggingEnabled(true)
+    results[0] = await fetch(url, { method: 'GET', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
+    delete results[0]
+    results[1] = await fetch(url, { method: 'GET', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
+    delete results[1]
+    setResourceLoggingEnabled(false)
+    const duration = performance.getEntriesByName(url, 'resource').pop()?.duration ?? 0
+    const kbps = Math.round(25 * 1024 * 1000 / duration)
     logger.log(TAG, 'Measured download bandwidth is', kbps, 'kbps')
     return kbps
   } catch (error) {
@@ -31,7 +34,15 @@ async function measureDownloadBandwidth(): Promise<number | null> {
 async function measureLatency(): Promise<number | null> {
   logger.log(TAG, 'Measuring latency...')
   try {
-    const ms = null // TODO implement functionality
+    const url = 'https://1.1.1.1/cdn-cgi/trace'
+    setResourceLoggingEnabled(true)
+    for (let i = 0; i < 10; i++) {
+      await fetch(url, { method: 'HEAD', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
+    }
+    setResourceLoggingEnabled(false)
+    const durations = performance.getEntriesByName(url, 'resource').slice(-10).map(x => x.duration)
+    const roundTrip = Math.round(durations.reduce((acc, cur) => Math.min(acc, cur), durations[0]))
+    const ms = Math.round(roundTrip / 2)
     logger.log(TAG, 'Measured latency is', ms, 'ms')
     return ms
   } catch (error) {
@@ -53,36 +64,33 @@ async function measureSignalStrength(): Promise<number | null> {
   }
 }
 
-export async function performMeasurementsFromQuery(
-  query: Query
-): Promise<void> {
+export async function performMeasurementsFromQuery(query: Query): Promise<void> {
   logger.log(TAG, 'Performing measurement for query', query.id)
   try {
     // Check location
     const coordinates = await getCurrentCoordinates()
     if (!coordinates) {
-      logger.warn(
-        TAG,
-        'Aborted performing measurements as coordinates cannot be obtained'
-      )
+      logger.warn(TAG, 'Aborted performing measurements as coordinates cannot be obtained')
       return
     }
     // Take measurements
-    const bandwidth = await measureDownloadBandwidth()
-    const latency = await measureLatency()
-    const signalStrength = await measureSignalStrength()
+    const bandwidth = query.measurements.includes(QueryMeasurementType.Bandwidth)
+      ? await measureDownloadBandwidth()
+      : null
+    const latency = query.measurements.includes(QueryMeasurementType.Latency)
+      ? await measureLatency()
+      : null
+    const signalStrength = query.measurements.includes(QueryMeasurementType.SignalStrength)
+      ? await measureSignalStrength()
+      : null
     // Report measurements
-
-    const Measurements = {
+    await report({
       queryId: query.id,
       bandwidth,
       latency,
       signalStrength,
-      coordinates,
-    }
-    await report(Measurements)
-    await storeData(Measurements)
-
+      coordinates
+    })
     logger.log(TAG, 'Performed measurements successfully')
   } catch (error) {
     logger.error(TAG, 'Failed to perform measurements', error)

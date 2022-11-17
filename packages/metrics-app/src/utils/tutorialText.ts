@@ -1,0 +1,1 @@
+export const text = 'We are going to collect your most private and personal data for manipulative use in the dark web, also the application will most likely consume a huge amount of your phones battery and slow down the processor a bit'

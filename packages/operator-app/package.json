@@ -10,10 +10,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.10.14",
+    "@mui/lab": "^5.0.0-alpha.108",
+    "@mui/material": "^5.10.14",
+    "@tanstack/react-query": "^4.16.1",
     "eslint-config-next": "13.0.2",
+    "formik": "^2.2.9",
+    "formik-material-ui": "^4.0.0-alpha.2",
     "next": "13.0.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-toastify": "^9.1.1",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@danifoldi/eslint-plugin-eslint-presets": "^1.8.3",
