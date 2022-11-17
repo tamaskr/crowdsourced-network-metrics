@@ -12,8 +12,8 @@ const TAG = 'Measurements'
 async function measureDownloadBandwidth(): Promise<number | null> {
   logger.log(TAG, 'Measuring download bandwidth...')
   try {
-    const url
-      = 'https://storage.googleapis.com/cmnm-measurement-files/binary25mb'
+    const url =
+      'https://storage.googleapis.com/cmnm-measurement-files/binary25mb'
     const ms = await timedRun(
       () => fetch(url, { headers: { 'cache-content': 'no-store' } }),
       5
@@ -53,7 +53,9 @@ async function measureSignalStrength(): Promise<number | null> {
   }
 }
 
-export async function performMeasurementsFromQuery(query: Query): Promise<void> {
+export async function performMeasurementsFromQuery(
+  query: Query
+): Promise<void> {
   logger.log(TAG, 'Performing measurement for query', query.id)
   try {
     // Check location
@@ -76,7 +78,7 @@ export async function performMeasurementsFromQuery(query: Query): Promise<void> 
       bandwidth,
       latency,
       signalStrength,
-      coordinates
+      coordinates,
     }
     await report(Measurements)
     await storeData(Measurements)

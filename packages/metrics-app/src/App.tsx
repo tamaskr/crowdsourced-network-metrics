@@ -6,12 +6,11 @@ import {
   checkMessagingPermissions,
   enableMessaging,
   setBackgroundMessageListener,
-  setForegroundMessageListener
+  setForegroundMessageListener,
 } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
 import { checkLocationPermissions } from './services/location'
 import { getData } from './services/localstore'
-
 
 const styles = StyleSheet.create({
   // eslint-disable-next-line react-native/no-color-literals
@@ -19,8 +18,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 })
 
 function App() {
@@ -30,7 +29,7 @@ function App() {
     // Check location permissions
     checkLocationPermissions()
     // Enable messaging if permissions have been granted
-    checkMessagingPermissions().then(granted => {
+    checkMessagingPermissions().then((granted) => {
       if (granted) enableMessaging()
     })
     // Set the foreground message listener
