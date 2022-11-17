@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 import { registerRootComponent } from 'expo'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View } from 'react-native'
+import { Button, StyleSheet, Text, View } from 'react-native'
+import * as React from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import {
   checkMessagingPermissions,
   enableMessaging,
@@ -10,6 +12,7 @@ import {
 } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
 import { checkLocationPermissions } from './services/location'
+import Tutorial from './components/Tutorial'
 
 
 const styles = StyleSheet.create({
@@ -34,9 +37,17 @@ function App() {
     return setForegroundMessageListener(performMeasurementsFromQuery)
   }, [])
 
+
   return (
     <View style={styles.container}>
+      <Tutorial></Tutorial>
       <Text>Metrics app test FCM</Text>
+      <Button
+        title={'clear storage'}
+        onPress={() => {
+          AsyncStorage.removeItem('tutorial')
+        }}
+      ></Button>
       <StatusBar style="auto" />
     </View>
   )
