@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { Button, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { text } from '../utils/tutorialText'
@@ -90,4 +89,3 @@ const styles = StyleSheet.create({
 })
 
 export default Tutorial
-// backgroundColor: 'rgba(0, 0, 0, 0.5)',
