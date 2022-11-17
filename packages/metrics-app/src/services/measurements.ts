@@ -1,4 +1,5 @@
 import performance, { setResourceLoggingEnabled } from 'react-native-performance'
+import { getSignalStrength } from 'expo-cellular'
 import { logger } from '../utils/logger'
 import { Query, QueryMeasurementType } from '../types/query'
 import { report } from './backend'
@@ -55,7 +56,7 @@ async function measureLatency(): Promise<number | null> {
 async function measureSignalStrength(): Promise<number | null> {
   logger.log(TAG, 'Measuring signal strength...')
   try {
-    const value = null // TODO implement functionality
+    const value = await getSignalStrength()
     logger.log(TAG, 'Measured signal strength is', value)
     return value
   } catch (error) {
