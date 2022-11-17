@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Measurement } from '../types/measurement'
 
+
 export async function storeData(value: unknown): Promise<void> {
   try {
     const oldValues = await AsyncStorage.getItem('@history')

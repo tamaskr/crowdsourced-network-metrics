@@ -8,6 +8,7 @@
     "lint": "eslint . --ext .ts,.tsx,.json --report-unused-disable-directives"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-native-firebase/app": "^16.4.3",
     "@react-native-firebase/messaging": "^16.4.3",
     "@types/webrtc": "^0.0.33",
@@ -17,15 +18,14 @@
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-native": "0.69.6",
-    "react-native-web": "~0.18.7",
-    "@react-native-async-storage/async-storage": "~1.17.3"
+    "react-native-web": "~0.18.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@danifoldi/eslint-plugin-eslint-presets": "^1.8.3",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
-    "@types/react-native": "~0.69.1",
+    "@types/react-native": "^0.69.15",
     "eslint": "^8.27.0",
     "typescript": "^4.8.4"
   }

@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
 
 function App() {
   useEffect(() => {
+    // get saved Data locally
     getData()
     // Check location permissions
     checkLocationPermissions()
