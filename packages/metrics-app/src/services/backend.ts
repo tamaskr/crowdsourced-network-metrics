@@ -1,4 +1,5 @@
 import { Measurement } from '../types/measurement'
+import { storeMeasurement } from '../utils/asyncStorage'
 import { logger } from '../utils/logger'
 
 
@@ -18,6 +19,8 @@ export async function report(measurement: Omit<Measurement, 'id' | 'timestamp'>)
       logger.error(TAG, 'Reporting measurements failed', responseData.errors)
     } else {
       logger.log(TAG, 'Reporting measurements successful')
+      // Save measurement value to AsyncStorage
+      responseData.data && await storeMeasurement(responseData.data)
     }
   } catch (error) {
     logger.error(TAG, 'Reporting measurements failed', error)

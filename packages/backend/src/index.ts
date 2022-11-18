@@ -6,6 +6,7 @@ import validate from 'validate.js'
 import { measurementValidationConstraints } from './utils/validation'
 import { Measurement, MeasurementType } from './types/measurement'
 import { MEASUREMENT_COLLECTION, QUERY_TOPIC } from './constants'
+import { cors } from './utils/cors'
 
 
 admin.initializeApp({ credential: applicationDefault() })
@@ -17,6 +18,10 @@ export * from './generator'
 export const query = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
+    // Handle CORS
+    const isPreflight = cors(request, response)
+    if (isPreflight) return
+
     const { measurements } = request.body
 
     // Return error if no measurements property is passed to the request body
@@ -63,6 +68,10 @@ export const query = functions
 export const report = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
+    // Handle CORS
+    const isPreflight = cors(request, response)
+    if (isPreflight) return
+
     // Get all the query data from the request body
     const { queryId, bandwidth, latency, signalStrength, coordinates }
       = request.body
@@ -114,7 +123,11 @@ export const report = functions
         .set(normalizedData)
       response
         .status(200)
-        .send({ ok: true, message: `Measurement added with id ${uniqueId}` })
+        .send({
+          ok: true,
+          message: `Measurement added with id ${uniqueId}`,
+          data: normalizedData
+        })
     } catch (error) {
       response.status(500).send({ error: (error as FirebaseError).message })
     }
@@ -124,6 +137,9 @@ export const report = functions
 export const measurements = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
+    // Handle CORS
+    const isPreflight = cors(request, response)
+    if (isPreflight) return
     // Fetches all measurements from the Firestore database collection
     await admin
       .firestore()

@@ -1,55 +1,56 @@
-import { useEffect } from 'react'
 import { registerRootComponent } from 'expo'
-import { StatusBar } from 'expo-status-bar'
-import { Button, StyleSheet, Text, View } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import {
-  checkMessagingPermissions,
-  enableMessaging,
-  setBackgroundMessageListener,
-  setForegroundMessageListener,
-} from './services/messaging'
+import { StyleSheet } from 'react-native'
+import { NavigationContainer } from '@react-navigation/native'
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { RootSiblingParent } from 'react-native-root-siblings'
+import { setBackgroundMessageListener } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
-import { checkLocationPermissions } from './services/location'
-import Tutorial from './components/Tutorial'
-// eslint-disable-next-line import/newline-after-import
-import { getCurrentCoordinates } from './services/devicelocation'
+import HistoryScreen from './screens/HistoryScreen'
+import HomeScreen from './screens/HomeScreen'
+import { colors } from './theme/colors'
+
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  navigator: {
+    backgroundColor: colors.primary,
+    height: 60,
+    justifyContent: 'center'
+  }
 })
 
-function App() {
-  useEffect(() => {
-    // Check location permissions
-    checkLocationPermissions()
-    // device location coordinates
-    getCurrentCoordinates()
-    // Enable messaging if permissions have been granted
-    checkMessagingPermissions().then((granted) => {
-      if (granted) enableMessaging()
-    })
-    // Set the foreground message listener
-    return setForegroundMessageListener(performMeasurementsFromQuery)
-  }, [])
+const Tab = createMaterialBottomTabNavigator()
 
+function App() {
   return (
-    <View style={styles.container}>
-      <Tutorial></Tutorial>
-      <Text>Metrics app test FCM</Text>
-      <Button
-        title={'clear storage'}
-        onPress={() => {
-          AsyncStorage.removeItem('tutorial')
-        }}
-      ></Button>
-      <StatusBar style='auto' />
-    </View>
+    <RootSiblingParent>
+      <NavigationContainer>
+        <Tab.Navigator
+          initialRouteName="Feed"
+          activeColor={colors.background.white}
+          barStyle={styles.navigator}
+        >
+          <Tab.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons name="home-variant-outline" color={color} size={26} />
+              )
+            }}
+          />
+          <Tab.Screen
+            name="History"
+            component={HistoryScreen}
+            options={{
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons name="history" color={color} size={26} />
+              )
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </RootSiblingParent>
   )
 }
 
