@@ -21,6 +21,12 @@ const setDatabase = (list: Measurement[]): boolean => {
 
 // https request with the query parameter of the desired number of generated documents
 export const generate = functions.region('europe-west1').https.onRequest((request, response) => {
+  // Handle CORS
+  response.setHeader('Access-Control-Allow-Origin', '*')
+  if (request.method === 'OPTIONS') {
+    response.status(204).send('')
+    return
+  }
   // setting 10 as default amount of added documents
   let count = 10
   if (request.query && request.query.count) {

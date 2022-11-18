@@ -17,7 +17,12 @@ export * from './generator'
 export const query = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
-    const { measurements } = request.body
+    // Handle CORS
+    response.setHeader('Access-Control-Allow-Origin', '*')
+    if (request.method === 'OPTIONS') {
+      response.status(204).send('')
+      return
+    }
 
     // Return error if no measurements property is passed to the request body
     if (!measurements || !validate.isArray(measurements)) {
@@ -63,6 +68,13 @@ export const query = functions
 export const report = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
+    // Handle CORS
+    response.setHeader('Access-Control-Allow-Origin', '*')
+    if (request.method === 'OPTIONS') {
+      response.status(204).send('')
+      return
+    }
+
     // Get all the query data from the request body
     const { queryId, bandwidth, latency, signalStrength, coordinates }
       = request.body
@@ -124,6 +136,12 @@ export const report = functions
 export const measurements = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
+    // Handle CORS
+    response.setHeader('Access-Control-Allow-Origin', '*')
+    if (request.method === 'OPTIONS') {
+      response.status(204).send('')
+      return
+    }
     // Fetches all measurements from the Firestore database collection
     await admin
       .firestore()
