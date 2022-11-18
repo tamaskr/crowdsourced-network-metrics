@@ -66,7 +66,7 @@ const Home: NextPage = () => {
   // Show toasts for query request
   useEffect(() => {
     if (queryError) {
-      toast.error('Error while fetching measurement data')
+      toast.error('Error while trying to make a query')
     }
     if (queryData?.error) {
       toast.error(queryData.error)

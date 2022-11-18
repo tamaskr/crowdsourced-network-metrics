@@ -17,6 +17,8 @@ export * from './generator'
 export const query = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
+    const { measurements } = request.body
+
     // Handle CORS
     response.setHeader('Access-Control-Allow-Origin', '*')
     if (request.method === 'OPTIONS') {
@@ -126,7 +128,11 @@ export const report = functions
         .set(normalizedData)
       response
         .status(200)
-        .send({ ok: true, message: `Measurement added with id ${uniqueId}` })
+        .send({
+          ok: true,
+          message: `Measurement added with id ${uniqueId}`,
+          data: normalizedData
+        })
     } catch (error) {
       response.status(500).send({ error: (error as FirebaseError).message })
     }
