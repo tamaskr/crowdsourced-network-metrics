@@ -26,25 +26,33 @@ function App() {
     <RootSiblingParent>
       <NavigationContainer>
         <Tab.Navigator
-          initialRouteName="Feed"
+          initialRouteName='Feed'
           activeColor={colors.background.white}
           barStyle={styles.navigator}
         >
           <Tab.Screen
-            name="Home"
+            name='Home'
             component={HomeScreen}
             options={{
               tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="home-variant-outline" color={color} size={26} />
+                <MaterialCommunityIcons
+                  name='home-variant-outline'
+                  color={color}
+                  size={26}
+                />
               )
             }}
           />
           <Tab.Screen
-            name="History"
+            name='History'
             component={HistoryScreen}
             options={{
               tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="history" color={color} size={26} />
+                <MaterialCommunityIcons
+                  name='history'
+                  color={color}
+                  size={26}
+                />
               )
             }}
           />

@@ -1,10 +1,11 @@
-/* eslint-disable import/exports-last */
 import * as Location from 'expo-location'
 import { logger } from '../utils/logger'
+
 
 const TAG = 'Location'
 
 // Check if permissions for location have been granted and request them if not
+// eslint-disable-next-line import/exports-last
 export async function checkLocationPermissions(): Promise<boolean> {
   logger.log(TAG, 'Checking location permissions...')
   try {
@@ -40,7 +41,7 @@ export async function getCurrentCoordinates(): Promise<{
     const location = await Location.getCurrentPositionAsync()
     const coordinates = {
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
+      longitude: location.coords.longitude
     }
     logger.log(TAG, 'Gotten current coordinates', coordinates)
     return coordinates
