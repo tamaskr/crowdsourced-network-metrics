@@ -9,31 +9,28 @@ const Tutorial = () => {
   const [ isLoading, setIsLoading ] = useState(true)
 
   useEffect(() => {
-    const value = AsyncStorage.getItem('tutorial').then(value => {
-      console.log(value)
+    AsyncStorage.getItem('tutorial').then(value => {
       setIsShowed(value !== null)
       setIsLoading(false)
     })
   }, [])
 
-  if (isLoading) {
-    return null
-  }
-
+  if (isLoading) return null
   return (
     <Modal
-      animationType={'slide'}
-      transparent={true}
-      visible={!isShowed}>
+      animationType="slide"
+      transparent
+      visible={!isShowed}
+    >
       <View style={styles.container}>
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>ATTENTION</Text>
           <Text>{text}</Text>
           <Pressable
             style={[ styles.button, styles.buttonClose ]}
-            onPress={  () => {
+            onPress={() => {
               setIsShowed(true)
-              AsyncStorage.setItem('tutorial', JSON.stringify(true))
+              AsyncStorage.setItem('tutorial', 'true')
             }}>
             <Text style={styles.textStyle}>Continue</Text>
           </Pressable>
@@ -85,7 +82,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18
   }
-
 })
 
 export default Tutorial

@@ -1,7 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
-import { Button, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import Tutorial from '../components/Tutorial'
 import { checkLocationPermissions } from '../services/location'
 import { performMeasurementsFromQuery } from '../services/measurements'
@@ -31,17 +30,10 @@ function HomeScreen() {
     return setForegroundMessageListener(performMeasurementsFromQuery)
   }, [])
 
-
   return (
     <View style={styles.container}>
       <Tutorial />
       <Text>Metrics app test FCM</Text>
-      <Button
-        title={'clear storage'}
-        onPress={() => {
-          AsyncStorage.removeItem('tutorial')
-        }}
-      ></Button>
       <StatusBar style="auto" />
     </View>
   )
