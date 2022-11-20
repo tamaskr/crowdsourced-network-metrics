@@ -33,7 +33,7 @@ function HomeScreen() {
   return (
     <View style={styles.container}>
       <Tutorial />
-      <Text>Metrics app test FCM</Text>
+      <Text>You have opted in to metrics collection</Text>
       <StatusBar style="auto" />
     </View>
   )
