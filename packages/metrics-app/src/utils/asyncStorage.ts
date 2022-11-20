@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Measurement } from './../types/measurement'
+import { Measurement } from '../types/measurement'
 import { logger } from './logger'
 
 

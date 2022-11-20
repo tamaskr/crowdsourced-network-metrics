@@ -77,9 +77,9 @@ function HistoryScreen() {
       <FlatList
         data={history}
         contentContainerStyle={styles.list}
-        onRefresh={async () => {
+        onRefresh={() => {
           setIsLoading(true)
-          await getMeasurementHistory().then(() => {
+          getMeasurementHistory().then(() => {
             Toast.show('History refreshed successfully!', {
               duration: Toast.durations.SHORT,
               position: 120,

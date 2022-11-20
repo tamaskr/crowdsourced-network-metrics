@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { format } from 'date-fns'
 import { View, StyleSheet, Text, ViewStyle } from 'react-native'
 import { Divider } from 'react-native-paper'
@@ -70,7 +71,7 @@ export const HistoryCard = ({ measurement, style }: HistoryCardProps) => {
         // Measurement value with unit
         const value = measurement[m] ? `${measurement[m]} ${unit ?? ''}` : '-'
         return (
-          <>
+          <Fragment key={m}>
             <Divider style={styles.divider} />
             <View key={m} style={styles.measurementContainer}>
               <MaterialCommunityIcons
@@ -84,7 +85,7 @@ export const HistoryCard = ({ measurement, style }: HistoryCardProps) => {
                 <Text style={styles.measurementValue}>{value}</Text>
               </View>
             </View>
-          </>
+          </Fragment>
         )
       })}
     </View>
