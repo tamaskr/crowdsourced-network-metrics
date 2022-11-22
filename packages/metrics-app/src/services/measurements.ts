@@ -1,5 +1,6 @@
 import performance, { setResourceLoggingEnabled } from 'react-native-performance'
-import { getSignalStrength } from 'expo-cellular'
+import { getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
+import { PermissionStatus } from 'expo-modules-core'
 import { logger } from '../utils/logger'
 import { Query, QueryMeasurementType } from '../types/query'
 import { report } from './backend'
@@ -56,7 +57,9 @@ async function measureLatency(): Promise<number | null> {
 async function measureSignalStrength(): Promise<number | null> {
   logger.log(TAG, 'Measuring signal strength...')
   try {
-    const value = await getSignalStrength()
+    const permission = await getPermissionsAsync()
+    const granted = permission.status === PermissionStatus.GRANTED
+    const value = granted ? await getSignalStrengthAsync() : null
     logger.log(TAG, 'Measured signal strength is', value)
     return value
   } catch (error) {
