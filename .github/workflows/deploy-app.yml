@@ -35,22 +35,21 @@ jobs:
 #        run: |
 #          expo-cli doctor
 
-#      - name: Export google-services.json
-#        working-directory: packages/metrics-app
-#        run: |
-#          echo ${{ secrets.GOOGLE_SERVICES }} > google-services.json
+      - name: Export google-services.json
+        working-directory: packages/metrics-app
+        run: |
+          echo ${{ secrets.GOOGLE_SERVICES }} > google-services.json
 
       - name: Generate native directories (Android)
         working-directory: packages/metrics-app
         run: |
-          npx expo prebuild --platform android --clean --npm
+          npx expo prebuild --platform android
 
       - name: Build debug application (Android)
-        working-directory: packages/metrics-app
         uses: sparkfabrik/android-build-action@v1.2.0
         with:
-          project-path: android
-          output-path: cmnm-debug.apk
+          project-path: packages/metrics-app/android
+          output-path: packages/metrics-app/cmnm-debug.apk
           gradle-task: assembleDebug
 
       - name: Test
