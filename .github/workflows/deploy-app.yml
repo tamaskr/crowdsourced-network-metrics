@@ -32,15 +32,10 @@ jobs:
           npm ci --no-progress
 
       - name: Get the current app version
-        id: metrics-app-version
+        id: get-version
         working-directory: packages/metrics-app
         run: |
           echo "current-version=$(cat ./app.json | jq '.expo.version' | tr -d '"')" >> $GITHUB_OUTPUT
-
-      - name: Debug
-        working-directory: packages/metrics-app
-        run: |
-          echo '${{ steps.metrics-app-version.outputs.current-version }}'
 
 #      - name: Install expo cli
 #        working-directory: packages/metrics-app
@@ -62,22 +57,29 @@ jobs:
         run: |
           npx expo prebuild --platform android
 
-      - name: Build debug application (Android)
+      - name: Build development application (Android)
         uses: sparkfabrik/android-build-action@v1.2.0
         with:
           project-path: packages/metrics-app/android
           output-path: cmnm-dev.apk
           gradle-task: assembleDebug
 
+      - name: Build production application (Android)
+        uses: sparkfabrik/android-build-action@v1.2.0
+        with:
+          project-path: packages/metrics-app/android
+          output-path: cmnm-prod.apk
+          gradle-task: assembleRelease
+
       - name: Tag the latest commit
         env:
-          version: ${{ steps.metrics-app-version.outputs.current-version }}
+          version: ${{ steps.get-version.outputs.current-version }}
         run: |
           git tag "v${{ env.version }}" -a -m "Create tag v${{ env.version }}"
           git push origin --tags
 
       - name: Create a GitHub release
         env:
-          version: ${{ steps.metrics-app-version.outputs.current-version }}
+          version: ${{ steps.get-version.outputs.current-version }}
         run: |
-          gh release create "v${{ env.version }}" 'cmnm-dev.apk' --generate-notes
+          gh release create "v${{ env.version }}" 'cmnm-dev.apk' 'cmnm-prod.apk' --generate-notes
