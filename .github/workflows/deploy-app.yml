@@ -46,6 +46,7 @@ jobs:
           npx expo prebuild --platform android --clean --npm
 
       - name: Build debug application (Android)
+        working-directory: packages/metrics-app
         uses: sparkfabrik/android-build-action@v1.2.0
         with:
           project-path: android
