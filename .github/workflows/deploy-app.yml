@@ -1,0 +1,57 @@
+name: Deploy metrics app
+
+on:
+  push:
+    branches:
+      - main
+      - build-metrics-app
+
+jobs:
+  deploy-metrics-app:
+    name: Deploy metrics app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+
+      - name: Install dependencies
+        working-directory: packages/metrics-app
+        run: |
+          npm ci --no-progress
+
+      - name: Install expo cli
+        working-directory: packages/metrics-app
+        run: |
+          npm install expo-cli
+
+      - name: Check if expo dependencies are compatible
+        working-directory: packages/metrics-app
+        run: |
+          expo-cli doctor
+
+#      - name: Export google-services.json
+#        working-directory: packages/metrics-app
+#        run: |
+#          echo ${{ secrets.GOOGLE_SERVICES }} > google-services.json
+
+      - name: Generate native directories (Android)
+        working-directory: packages/metrics-app
+        run: |
+          expo prebuild --platform android --clean --npm
+
+      - name: Build debug application (Android)
+        uses: sparkfabrik/android-build-action@v1.2.0
+        with:
+          project-path: android
+          output-path: cmnm-debug.apk
+          gradle-task: assembleDebug
+
+      - name: Test
+        run: |
+          ls

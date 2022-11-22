@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "654485294419",
+    "project_id": "crowdsourced-network-metrics",
+    "storage_bucket": "crowdsourced-network-metrics.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654485294419:android:2da0cb5cf44a0baff8e5a6",
+        "android_client_info": {
+          "package_name": "com.cmnm.metricsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654485294419-3lafk61je7b36sjvlucnj8dvqoo86sif.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATfs2shr2OstvFXWnwyyRIWj5OevKWprs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654485294419-3lafk61je7b36sjvlucnj8dvqoo86sif.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "654485294419-j3qlak89u8hkndjf6288toauig7r3218.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cmnm.metricsapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
