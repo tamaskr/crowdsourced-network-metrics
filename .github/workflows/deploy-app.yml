@@ -33,10 +33,12 @@ jobs:
 
       - name: Get the current app version
         id: metrics-app-version
+        working-directory: packages/metrics-app
         run: |
-          echo ::set-output name=current-version::$(cat ./app.json | jq '.version' | tr -d '"')
+          echo "current-version=$(cat ./app.json | jq '.expo.version' | tr -d '"')" >> $GITHUB_OUTPUT
 
       - name: Debug
+        working-directory: packages/metrics-app
         run: |
           echo '${{ steps.metrics-app-version.outputs.current-version }}'
 
