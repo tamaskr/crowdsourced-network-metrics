@@ -1,10 +1,9 @@
-name: Deploy metrics app
+name: Deployments
 
 on:
   push:
     branches:
       - main
-      - build-metrics-app
 
 jobs:
   deploy-metrics-app:
