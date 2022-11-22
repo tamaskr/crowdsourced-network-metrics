@@ -1,6 +1,7 @@
 {
   "name": "metrics-app",
   "private": true,
+  "version": "1.0.0",
   "main": "src/App.tsx",
   "scripts": {
     "start": "npx expo start --dev-client",
@@ -20,6 +21,7 @@
     "expo": "^47.0.0",
     "expo-cellular": "~4.3.0",
     "expo-dev-client": "~2.0.0",
+    "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
     "patch-package": "^6.5.0",
     "react": "18.1.0",
