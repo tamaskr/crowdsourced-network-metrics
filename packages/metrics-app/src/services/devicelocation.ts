@@ -1,6 +1,7 @@
 import * as Location from 'expo-location'
 import { logger } from '../utils/logger'
 
+
 const TAG = 'Location'
 
 // Check if permissions for location have been granted and request them if not
