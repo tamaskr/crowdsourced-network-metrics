@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - build-metrics-app
 
 jobs:
   deploy-metrics-app:
@@ -22,17 +21,12 @@ jobs:
           gh auth setup-git
           git config user.name "GitHub Actions"
 
-      - name: Get the current app version
+      - name: Get the last and current app version
         id: get-version
         working-directory: packages/metrics-app
         run: |
           echo "current-version=v$(cat ./app.json | jq '.expo.version' | tr -d '"')" >> $GITHUB_OUTPUT
           echo "last-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
-
-      - name: Debug
-        run: |
-          echo 'current: ${{ steps.get-version.outputs.current-version }}'
-          echo 'last: ${{ steps.get-version.outputs.last-version }}'
 
       - name: Install node
         if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
