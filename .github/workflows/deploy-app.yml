@@ -25,15 +25,15 @@ jobs:
         run: |
           npm ci --no-progress
 
-      - name: Install expo cli
-        working-directory: packages/metrics-app
-        run: |
-          npm install --global expo-cli
+#      - name: Install expo cli
+#        working-directory: packages/metrics-app
+#        run: |
+#          npm install --global expo-cli
 
-      - name: Check if expo dependencies are compatible
-        working-directory: packages/metrics-app
-        run: |
-          expo-cli doctor
+#      - name: Check if expo dependencies are compatible
+#        working-directory: packages/metrics-app
+#        run: |
+#          expo-cli doctor
 
 #      - name: Export google-services.json
 #        working-directory: packages/metrics-app
