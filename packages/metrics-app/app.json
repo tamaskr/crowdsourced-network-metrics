@@ -2,7 +2,6 @@
   "expo": {
     "name": "Metrics App",
     "slug": "metrics-app",
-    "owner": "cmnm",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -32,11 +31,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "8c4f39a7-b83f-4be8-8c59-51dd99cbb1c2"
-      }
     }
   }
 }
