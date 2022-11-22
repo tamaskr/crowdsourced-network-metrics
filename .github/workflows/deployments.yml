@@ -34,7 +34,13 @@ jobs:
         id: get-version
         working-directory: packages/metrics-app
         run: |
-          echo "current-version=$(cat ./app.json | jq '.expo.version' | tr -d '"')" >> $GITHUB_OUTPUT
+          echo "current-version=v$(cat ./app.json | jq '.expo.version' | tr -d '"')" >> $GITHUB_OUTPUT
+          echo "last-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
+      - name: Debug
+        run: |
+          echo 'current: ${{ steps.get-version.outputs.current-version }}'
+          echo 'last: ${{ steps.get-version.outputs.last-version }}'
 
 #      - name: Install expo cli
 #        working-directory: packages/metrics-app
@@ -47,16 +53,19 @@ jobs:
 #          expo-cli doctor
 
       - name: Create google-services.json
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
         working-directory: packages/metrics-app
         run: |
           echo '${{ secrets.GOOGLE_SERVICES }}' > google-services.json
 
       - name: Generate native directories (Android)
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
         working-directory: packages/metrics-app
         run: |
           npx expo prebuild --platform android
 
       - name: Build development application (Android)
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
         uses: sparkfabrik/android-build-action@v1.2.0
         with:
           project-path: packages/metrics-app/android
@@ -64,6 +73,7 @@ jobs:
           gradle-task: assembleDebug
 
       - name: Build production application (Android)
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
         uses: sparkfabrik/android-build-action@v1.2.0
         with:
           project-path: packages/metrics-app/android
@@ -71,14 +81,16 @@ jobs:
           gradle-task: assembleRelease
 
       - name: Tag the latest commit
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
         env:
           version: ${{ steps.get-version.outputs.current-version }}
         run: |
-          git tag "v${{ env.version }}" -a -m "Create tag v${{ env.version }}"
+          git tag "${{ env.version }}" -a -m "Create tag ${{ env.version }}"
           git push origin --tags
 
       - name: Create a GitHub release
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
         env:
           version: ${{ steps.get-version.outputs.current-version }}
         run: |
-          gh release create "v${{ env.version }}" 'cmnm-dev.apk' 'cmnm-prod.apk' --generate-notes
+          gh release create "${{ env.version }}" 'cmnm-dev.apk' 'cmnm-prod.apk' --generate-notes
