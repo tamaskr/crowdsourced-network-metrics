@@ -35,25 +35,17 @@ jobs:
           echo 'last: ${{ steps.get-version.outputs.last-version }}'
 
       - name: Install node
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
         uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: npm
 
       - name: Install dependencies
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
         working-directory: packages/metrics-app
         run: |
           npm ci --no-progress
-
-#      - name: Install expo cli
-#        working-directory: packages/metrics-app
-#        run: |
-#          npm install --global expo-cli
-
-#      - name: Check if expo dependencies are compatible
-#        working-directory: packages/metrics-app
-#        run: |
-#          expo-cli doctor
 
       - name: Create google-services.json
         if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
