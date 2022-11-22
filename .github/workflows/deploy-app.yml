@@ -14,6 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up git and github cli
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          gh auth setup-git
+          git config user.name "GitHub Actions"
+
       - name: Install node
         uses: actions/setup-node@v3
         with:
@@ -24,6 +30,15 @@ jobs:
         working-directory: packages/metrics-app
         run: |
           npm ci --no-progress
+
+      - name: Get the current app version
+        id: metrics-app-version
+        run: |
+          echo ::set-output name=current-version::$(cat ./app.json | jq '.version' | tr -d '"')
+
+      - name: Debug
+        run: |
+          echo '${{ steps.metrics-app-version.outputs.current-version }}'
 
 #      - name: Install expo cli
 #        working-directory: packages/metrics-app
@@ -49,9 +64,18 @@ jobs:
         uses: sparkfabrik/android-build-action@v1.2.0
         with:
           project-path: packages/metrics-app/android
-          output-path: packages/metrics-app/cmnm-debug.apk
+          output-path: cmnm-dev.apk
           gradle-task: assembleDebug
 
-      - name: Test
+      - name: Tag the latest commit
+        env:
+          version: ${{ steps.metrics-app-version.outputs.current-version }}
         run: |
-          ls
+          git tag "v${{ env.version }}" -a -m "Create tag v${{ env.version }}"
+          git push origin --tags
+
+      - name: Create a GitHub release
+        env:
+          version: ${{ steps.metrics-app-version.outputs.current-version }}
+        run: |
+          gh release create "v${{ env.version }}" 'cmnm-dev.apk' --generate-notes
