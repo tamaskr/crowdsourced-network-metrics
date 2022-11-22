@@ -43,7 +43,7 @@ jobs:
       - name: Generate native directories (Android)
         working-directory: packages/metrics-app
         run: |
-          expo prebuild --platform android --clean --npm
+          npx expo prebuild --platform android --clean --npm
 
       - name: Build debug application (Android)
         uses: sparkfabrik/android-build-action@v1.2.0
