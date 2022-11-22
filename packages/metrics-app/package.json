@@ -1,7 +1,6 @@
 {
   "name": "metrics-app",
   "private": true,
-  "version": "1.0.0",
   "main": "src/App.tsx",
   "scripts": {
     "start": "npx expo start --dev-client",
