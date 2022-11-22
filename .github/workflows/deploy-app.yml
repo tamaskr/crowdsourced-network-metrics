@@ -28,7 +28,7 @@ jobs:
       - name: Install expo cli
         working-directory: packages/metrics-app
         run: |
-          npm install expo-cli
+          npm install --global expo-cli
 
       - name: Check if expo dependencies are compatible
         working-directory: packages/metrics-app
