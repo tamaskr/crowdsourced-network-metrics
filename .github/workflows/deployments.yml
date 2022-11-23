@@ -1,0 +1,85 @@
+name: Deployments
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-metrics-app:
+    name: Deploy metrics app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up git and github cli
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          gh auth setup-git
+          git config user.name "GitHub Actions"
+
+      - name: Get the last and current app version
+        id: get-version
+        working-directory: packages/metrics-app
+        run: |
+          echo "current-version=v$(cat ./app.json | jq '.expo.version' | tr -d '"')" >> $GITHUB_OUTPUT
+          echo "last-version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
+      - name: Install node
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
+        working-directory: packages/metrics-app
+        run: |
+          npm ci --no-progress
+
+      - name: Create google-services.json
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
+        working-directory: packages/metrics-app
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES }}' > google-services.json
+
+      - name: Generate native directories (Android)
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
+        working-directory: packages/metrics-app
+        run: |
+          npx expo prebuild --platform android
+
+      - name: Build development application (Android)
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
+        uses: sparkfabrik/android-build-action@v1.2.0
+        with:
+          project-path: packages/metrics-app/android
+          output-path: cmnm-dev.apk
+          gradle-task: assembleDebug
+
+      - name: Build production application (Android)
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
+        uses: sparkfabrik/android-build-action@v1.2.0
+        with:
+          project-path: packages/metrics-app/android
+          output-path: cmnm-prod.apk
+          gradle-task: assembleRelease
+
+      - name: Tag the latest commit
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
+        env:
+          version: ${{ steps.get-version.outputs.current-version }}
+        run: |
+          git tag "${{ env.version }}" -a -m "Create tag ${{ env.version }}"
+          git push origin --tags
+
+      - name: Create a GitHub release
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
+        env:
+          version: ${{ steps.get-version.outputs.current-version }}
+        run: |
+          gh release create "${{ env.version }}" 'cmnm-dev.apk' 'cmnm-prod.apk' --generate-notes

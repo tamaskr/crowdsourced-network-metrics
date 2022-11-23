@@ -1,76 +1,100 @@
 diff --git a/node_modules/expo-cellular/android/src/main/java/expo/modules/cellular/CellularModule.kt b/node_modules/expo-cellular/android/src/main/java/expo/modules/cellular/CellularModule.kt
-index 958b215..a6aa85a 100644
+index 1dca391..e4c8565 100644
 --- a/node_modules/expo-cellular/android/src/main/java/expo/modules/cellular/CellularModule.kt
 +++ b/node_modules/expo-cellular/android/src/main/java/expo/modules/cellular/CellularModule.kt
-@@ -53,6 +53,10 @@ class CellularModule : Module() {
-     AsyncFunction("getMobileNetworkCodeAsync") {
+@@ -58,6 +58,10 @@ class CellularModule : Module() {
        telephonyManager()?.simOperator?.substring(3)
      }
-+
-+    AsyncFunction("getSignalStrength") {
+ 
++    AsyncFunction("getSignalStrengthAsync") {
 +      telephonyManager()?.signalStrength?.level
 +    }
-   }
- 
-   private fun telephonyManager() =
++
+     AsyncFunction("requestPermissionsAsync") { promise: Promise ->
+       Permissions.askForPermissionsWithPermissionsManager(
+         permissionsManager,
 diff --git a/node_modules/expo-cellular/build/Cellular.d.ts b/node_modules/expo-cellular/build/Cellular.d.ts
-index 4a0d3b4..3591653 100644
+index 033e593..69d224f 100644
 --- a/node_modules/expo-cellular/build/Cellular.d.ts
 +++ b/node_modules/expo-cellular/build/Cellular.d.ts
-@@ -196,4 +196,8 @@ export declare function getMobileCountryCodeAsync(): Promise<string | null>;
+@@ -200,6 +200,19 @@ export declare function getMobileCountryCodeAsync(): Promise<string | null>;
   * ```
   */
  export declare function getMobileNetworkCodeAsync(): Promise<string | null>;
 +/**
-+ * @returns Returns the mobile network signal strength 0-4, only works on Android, while iOS and Web both return null
++ * @return Returns the signal strength value of the user's current network.
++ *
++ * On Android, the value will be a number between 0 and 4.
++ *
++ * On iOS and the web, this returns `null`.
++ *
++ * @example
++ * ```ts
++ * await Cellular.getSignalStrengthAsync(); // 3
++ * ```
 + */
-+export declare function getSignalStrength(): Promise<number | null>;
- //# sourceMappingURL=Cellular.d.ts.map
++export async function getSignalStrengthAsync(): Promise<number | null>;
+ /**
+  * Checks user's permissions for accessing phone state.
+  */
 diff --git a/node_modules/expo-cellular/build/Cellular.js b/node_modules/expo-cellular/build/Cellular.js
-index 2a42f57..bcdcfec 100644
+index 2b4a68d..7c550fd 100644
 --- a/node_modules/expo-cellular/build/Cellular.js
 +++ b/node_modules/expo-cellular/build/Cellular.js
-@@ -238,4 +238,13 @@ export async function getMobileNetworkCodeAsync() {
+@@ -242,6 +242,24 @@ export async function getMobileNetworkCodeAsync() {
      }
      return await ExpoCellular.getMobileNetworkCodeAsync();
  }
 +/**
-+ * @returns Returns the mobile network signal strength 0-4, only works on Android, while iOS and Web both return null
++ * @return Returns the signal strength value of the user's current network.
++ *
++ * On Android, the value will be a number between 0 and 4.
++ *
++ * On iOS and the web, this returns `null`.
++ *
++ * @example
++ * ```ts
++ * await Cellular.getSignalStrengthAsync(); // 3
++ * ```
 + */
-+export async function getSignalStrength() {
-+    if (!ExpoCellular.getSignalStrength) {
-+        throw new UnavailabilityError('expo-cellular', 'getSignalStrength');
-+    }
-+    return await ExpoCellular.getSignalStrength();
++export async function getSignalStrengthAsync() {
++  if (!ExpoCellular.getSignalStrengthAsync) {
++    throw new UnavailabilityError('expo-cellular', 'getSignalStrengthAsync');
++  }
++  return await ExpoCellular.getSignalStrengthAsync();
 +}
- //# sourceMappingURL=Cellular.js.map
+ /**
+  * Checks user's permissions for accessing phone state.
+  */
 diff --git a/node_modules/expo-cellular/build/ExpoCellular.web.d.ts b/node_modules/expo-cellular/build/ExpoCellular.web.d.ts
-index 45484aa..3e43216 100644
+index 45484aa..2cdda17 100644
 --- a/node_modules/expo-cellular/build/ExpoCellular.web.d.ts
 +++ b/node_modules/expo-cellular/build/ExpoCellular.web.d.ts
 @@ -11,6 +11,7 @@ declare const _default: {
      getCarrierNameAsync(): Promise<string | null>;
      getMobileCountryCodeAsync(): Promise<string | null>;
      getMobileNetworkCodeAsync(): Promise<string | null>;
-+    getSignalStrength(): Promise<number | null>;
++    getSignalStrengthAsync(): Promise<number | null>;
  };
  export default _default;
  //# sourceMappingURL=ExpoCellular.web.d.ts.map
+\ No newline at end of file
 diff --git a/node_modules/expo-cellular/build/ExpoCellular.web.js b/node_modules/expo-cellular/build/ExpoCellular.web.js
-index 32d0234..fe4d725 100644
+index 32d0234..6fc48a2 100644
 --- a/node_modules/expo-cellular/build/ExpoCellular.web.js
 +++ b/node_modules/expo-cellular/build/ExpoCellular.web.js
 @@ -49,5 +49,8 @@ export default {
      async getMobileNetworkCodeAsync() {
          return null;
      },
-+    async getSignalStrength() {
++	async getSignalStrengthAsync() {
 +        return null;
-+    },
++	},
  };
  //# sourceMappingURL=ExpoCellular.web.js.map
+\ No newline at end of file
 diff --git a/node_modules/expo-cellular/ios/CellularModule.swift b/node_modules/expo-cellular/ios/CellularModule.swift
-index a07cd62..5bbb308 100644
+index a07cd62..f739d6b 100644
 --- a/node_modules/expo-cellular/ios/CellularModule.swift
 +++ b/node_modules/expo-cellular/ios/CellularModule.swift
 @@ -32,6 +32,10 @@ public class CellularModule: Module {
@@ -78,45 +102,51 @@ index a07cd62..5bbb308 100644
        Self.currentCarrier()?.mobileNetworkCode
      }
 +
-+    AsyncFunction("getSignalStrength") { () -> String? in
++    AsyncFunction("getSignalStrengthAsync") { () -> Int? in
 +      nil
 +    }
    }
  
    // MARK: - internals
 diff --git a/node_modules/expo-cellular/src/Cellular.ts b/node_modules/expo-cellular/src/Cellular.ts
-index 1c89c8f..c3a8ab5 100644
+index 2a12a2d..9d5a11c 100644
 --- a/node_modules/expo-cellular/src/Cellular.ts
 +++ b/node_modules/expo-cellular/src/Cellular.ts
-@@ -251,3 +251,13 @@ export async function getMobileNetworkCodeAsync(): Promise<string | null> {
-   }
+@@ -261,6 +261,25 @@ export async function getMobileNetworkCodeAsync(): Promise<string | null> {
    return await ExpoCellular.getMobileNetworkCodeAsync();
  }
-+
+ 
 +/**
-+ * @returns Returns the mobile network signal strength 0-4, only works on Android, while iOS and Web both return null
++ * @return Returns the signal strength value of the user's current network.
++ *
++ * On Android, the value will be a number between 0 and 4.
++ *
++ * On iOS and the web, this returns `null`.
++ *
++ * @example
++ * ```ts
++ * await Cellular.getSignalStrengthAsync(); // 3
++ * ```
 + */
-+export async function getSignalStrength(): Promise<number | null> {
-+  if (!ExpoCellular.getSignalStrength) {
-+    throw new UnavailabilityError('expo-cellular', 'getSignalStrength');
++export async function getSignalStrengthAsync() {
++  if (!ExpoCellular.getSignalStrengthAsync) {
++    throw new UnavailabilityError('expo-cellular', 'getSignalStrengthAsync');
 +  }
-+  return await ExpoCellular.getSignalStrength();
++  return await ExpoCellular.getSignalStrengthAsync();
 +}
++
+ /**
+  * Checks user's permissions for accessing phone state.
+  */
 diff --git a/node_modules/expo-cellular/src/ExpoCellular.web.ts b/node_modules/expo-cellular/src/ExpoCellular.web.ts
-index a7498ef..e68325d 100644
+index a7498ef..1f5dbab 100644
 --- a/node_modules/expo-cellular/src/ExpoCellular.web.ts
 +++ b/node_modules/expo-cellular/src/ExpoCellular.web.ts
-@@ -1,4 +1,5 @@
- import { CellularGeneration } from './Cellular.types';
-+import { getSignalStrength } from 'expo-cellular/src/Cellular'
- 
- export default {
-   get allowsVoip(): null {
-@@ -51,4 +52,7 @@ export default {
+@@ -51,4 +51,7 @@ export default {
    async getMobileNetworkCodeAsync(): Promise<string | null> {
      return null;
    },
-+  async getSignalStrength(): Promise<number | null> {
++  async getSignalStrengthAsync(): Promise<number | null> {
 +    return null;
 +  },
  };

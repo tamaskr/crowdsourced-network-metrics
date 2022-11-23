@@ -2,8 +2,7 @@
   "expo": {
     "name": "Metrics App",
     "slug": "metrics-app",
-    "owner": "cmnm",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,9 +14,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [ "**/*" ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cmnm.metricsapp"
     },
     "android": {
       "package": "com.cmnm.metricsapp",
@@ -29,11 +31,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "8c4f39a7-b83f-4be8-8c59-51dd99cbb1c2"
-      }
     }
   }
 }

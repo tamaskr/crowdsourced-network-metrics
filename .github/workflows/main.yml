@@ -53,3 +53,12 @@ jobs:
 #    with:
 #      working-directory: packages/operator-app
 #      run: npm run typecheck
+
+  dependency-check-metrics-app:
+    name: Check if the dependencies are compatible (metrics-app)
+    uses: ./.github/workflows/npm-action.yml
+    with:
+      working-directory: packages/metrics-app
+      run: |
+        npm install --global expo-cli
+        expo-cli doctor
