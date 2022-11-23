@@ -5,24 +5,7 @@ import { Measurement, MeasurementType } from '../types/measurement'
 
 // Formats the labels on the statistics chart's Y axis from 0-100
 export const getYAxisLabel = (value: number) => {
-  switch (value) {
-    case 0: {
-      return ChartLabels[0]
-    }
-    case 25: {
-      return ChartLabels[1]
-    }
-    case 50: {
-      return ChartLabels[2]
-    }
-    case 75: {
-      return ChartLabels[3]
-    }
-    case 100: {
-      return ChartLabels[4]
-    }
-  }
-  return '-'
+  return ChartLabels[value / 25]
 }
 
 // Returns average measurement values for the given array (null values are also returned)

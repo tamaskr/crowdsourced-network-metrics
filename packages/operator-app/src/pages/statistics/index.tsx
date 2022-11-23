@@ -1,14 +1,13 @@
-import { CircularProgress } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { NextPage } from 'next'
 import { useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import { Layout } from '../../components/layout'
-import { LoadingWrapper } from '../../theme/common'
 import { formatChartData } from '../../utils/chart'
 import { getMeasurements } from '../../services/queries'
 import { FormattedChartData } from '../../types/chart'
 import { StatisticsChart } from '../../components/charts/statistics'
+import { Loading } from '../../components/loading'
 
 
 const Statistics: NextPage = () => {
@@ -32,9 +31,7 @@ const Statistics: NextPage = () => {
   return (
     <Layout>
       {isLoading ? (
-        <LoadingWrapper>
-          <CircularProgress />
-        </LoadingWrapper>
+        <Loading />
       ) : (
         <StatisticsChart
           chartData={chartData}
