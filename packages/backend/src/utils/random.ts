@@ -4,12 +4,15 @@ import { Measurement } from '../types/measurement'
 
 // function that generate fake measurements
 export const generateMeasurement = (count: number): Measurement[] => {
+  const now = Date.now()
+  const weekAgo = Date.now() - 6.048e+8
+
   const list: Measurement[] = []
   for (let i = 0; i < count; i++) {
     list.push({
       id: uuid.v4(),
       queryId: uuid.v4(),
-      timestamp: Date.now(),
+      timestamp: faker.date.between(weekAgo, now).valueOf(),
       coordinates: {
         latitude: Number(faker.address.latitude(60.3, 60.15, 6)),
         longitude: Number(faker.address.longitude(25.2, 24.6, 6))
