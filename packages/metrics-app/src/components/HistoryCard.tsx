@@ -47,7 +47,7 @@ interface HistoryCardProps {
 const getMeasurementData = (measurement: MeasurementType) => {
   switch (measurement) {
     case MeasurementType.BANDWIDTH: {
-      return { label: 'Bandwidth', icon: 'collapse-all-outline', unit: 'kB/s' }
+      return { label: 'Bandwidth', icon: 'collapse-all-outline', unit: 'Mbit/s' }
     }
     case MeasurementType.LATENCY: {
       return { label: 'Latency', icon: 'clock-fast', unit: 'ms' }
