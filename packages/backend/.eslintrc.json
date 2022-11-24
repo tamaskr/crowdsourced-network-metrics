@@ -2,6 +2,7 @@
   "extends": [ "plugin:@danifoldi/eslint-presets/react-native-ts" ],
   "rules": {
     "@typescript-eslint/member-ordering": "off",
-    "sort-keys": "off"
+    "sort-keys": "off",
+    "import/newline-after-import": [ "error", { "count": 2 }]
   }
 }
