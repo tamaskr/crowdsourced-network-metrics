@@ -12,6 +12,8 @@ import {
   Button,
   Drawer
 } from '@mui/material'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { FunctionComponent, ReactNode, useState } from 'react'
 import { theme } from '../../theme/default'
 
@@ -20,21 +22,34 @@ export const NavBar: FunctionComponent<{
   children?: ReactNode
 }> = () => {
   const [ mobileOpen, setMobileOpen ] = useState(false)
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen)
-  }
-  // TODO - add navigation routes and labels
-  const navItems = [ 'Home' ]
+  const { pathname } = useRouter()
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen)
+
+  const navItems = [
+    { label: 'Home', route: '/' },
+    { label: 'Statistics', route: '/statistics' },
+    {
+      label: 'New query',
+      route: '/query'
+    }
+  ]
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ marginTop: theme.spacing(5) }}>
       <List>
-        {navItems.map(item => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={item} />
-            </ListItemButton>
-          </ListItem>
+        {navItems.map(({ label, route }) => (
+          <Link
+            href={route}
+            key={route}
+            passHref
+            style={{ textDecoration: 'none' }}
+          >
+            <ListItem key={route} disablePadding>
+              <ListItemButton>
+                <ListItemText primary={label} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
     </Box>
@@ -43,7 +58,12 @@ export const NavBar: FunctionComponent<{
   return (
     <>
       <AppBar component="nav" position="sticky">
-        <Toolbar sx={{ alignSelf: 'center', width: { xs: '100%', xl: `${5 / 6 * 100}%` } }}>
+        <Toolbar
+          sx={{
+            alignSelf: 'center',
+            width: { xs: '100%', xl: `${(5 / 6) * 100}%` }
+          }}
+        >
           <IconButton
             color="inherit"
             edge="start"
@@ -52,14 +72,34 @@ export const NavBar: FunctionComponent<{
           >
             <Menu />
           </IconButton>
-          <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+          <Typography
+            variant="h5"
+            component="div"
+            sx={{ flexGrow: 1, cursor: 'default' }}
+          >
             CMNM OPERATOR
           </Typography>
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            {navItems.map(item => (
-              <Button key={item} sx={{ color: theme.palette.secondary.light }}>
-                {item}
-              </Button>
+          <Box
+            sx={{ display: { xs: 'none', sm: 'block' }, gap: theme.spacing(2) }}
+          >
+            {navItems.map(({ label, route }) => (
+              <Link
+                href={route}
+                key={route}
+                passHref
+                style={{ textDecoration: 'none' }}
+              >
+                <Button
+                  key={route}
+                  sx={{
+                    color: theme.palette.secondary.light,
+                    marginRight: theme.spacing(2),
+                    border: pathname === route ? '1px solid white' : 'none'
+                  }}
+                >
+                  {label}
+                </Button>
+              </Link>
             ))}
           </Box>
         </Toolbar>

@@ -1,3 +1,8 @@
 {
-  "extends": [ "plugin:@danifoldi/eslint-presets/react-native-ts" ]
+  "extends": ["plugin:@danifoldi/eslint-presets/react-native-ts"],
+  "rules": {
+    "sort-keys": "off",
+    "@typescript-eslint/member-ordering": "off",
+    "react-native/no-inline-styles": 0
+  }
 }

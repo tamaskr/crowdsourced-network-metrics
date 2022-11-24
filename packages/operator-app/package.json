@@ -16,6 +16,7 @@
     "@mui/lab": "^5.0.0-alpha.108",
     "@mui/material": "^5.10.14",
     "@tanstack/react-query": "^4.16.1",
+    "date-fns": "^2.29.3",
     "eslint-config-next": "13.0.2",
     "formik": "^2.2.9",
     "formik-material-ui": "^4.0.0-alpha.2",
@@ -23,6 +24,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-toastify": "^9.1.1",
+    "recharts": "^2.1.16",
     "yup": "^0.32.11"
   },
   "devDependencies": {
