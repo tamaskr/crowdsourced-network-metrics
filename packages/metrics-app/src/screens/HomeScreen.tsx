@@ -4,17 +4,19 @@ import {
   Text,
   View,
   TouchableOpacity,
-  ToastAndroid,
+  // eslint-disable-next-line react-native/split-platform-components
+  ToastAndroid
 } from 'react-native'
 import Tutorial from '../components/Tutorial'
 import { enableMessaging, disableMessaging } from '../services/messaging'
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding: 10
   },
   // eslint-disable-next-line react-native/no-color-literals
   Subscribebutton: {
@@ -31,7 +33,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#5d57ff',
     textAlign: 'center',
-    textAlignVertical: 'center',
+    textAlignVertical: 'center'
   },
   // eslint-disable-next-line react-native/no-color-literals
   unsubscribebutton: {
@@ -48,8 +50,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#5d57ff',
     textAlign: 'center',
-    textAlignVertical: 'center',
-  },
+    textAlignVertical: 'center'
+  }
 })
 
 function HomeScreen() {

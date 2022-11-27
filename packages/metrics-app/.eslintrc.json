@@ -1,9 +1,9 @@
 {
-  "extends": ["plugin:@danifoldi/eslint-presets/react-native-ts"],
+  "extends": [ "plugin:@danifoldi/eslint-presets/react-native-ts" ],
   "rules": {
     "unicorn/consistent-function-scoping": "off",
     "@typescript-eslint/member-ordering": "off",
     "sort-keys": "off",
-    "import/newline-after-import": ["error", { "count": 2 }]
+    "import/newline-after-import": [ "error", { "count": 2 }]
   }
 }
