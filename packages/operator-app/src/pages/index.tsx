@@ -2,8 +2,9 @@ import { LoadingButton } from '@mui/lab'
 import { Typography } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import { NextPage } from 'next'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import Link from 'next/link'
 import { Layout } from '../components/layout'
 import { getMeasurements } from '../services/queries'
 import { theme } from '../theme/default'
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
   } = useMutation(getMeasurements, {
     cacheTime: 0
   })
+  const [ measurements, setMeasurements ] = useState([])
 
   // Show toasts for measurement data fetching and log data to console if available
   useEffect(() => {
@@ -28,8 +30,12 @@ const Home: NextPage = () => {
       toast.success(`Measurements fetched successully! (${measurementData.data.length} items)`)
       console.log('Measurement data')
       console.log(measurementData.data)
+      setMeasurements(measurementData.data)
     }
   }, [ measurementError, measurementData ])
+
+  const keyId = 'queryId'
+  const sortedMeasurements = [ ...new Map(measurements.map(item => [ item[keyId], item ])).values() ]
 
   return (
     <Layout>
@@ -46,6 +52,11 @@ const Home: NextPage = () => {
       >
         Fetch data
       </LoadingButton>
+      <ul>
+        {sortedMeasurements.map(({ queryId, timestamp }) => (
+          <li key={queryId}>{timestamp}</li>
+        ))}
+      </ul>
     </Layout>
   )
 }
