@@ -7,7 +7,6 @@ import {
   ToastAndroid,
 } from 'react-native'
 import Tutorial from '../components/Tutorial'
-import { colors } from '../theme/colors'
 import { enableMessaging, disableMessaging } from '../services/messaging'
 
 const styles = StyleSheet.create({
@@ -54,16 +53,16 @@ const styles = StyleSheet.create({
 })
 
 function HomeScreen() {
-  function ToastSubscribe() {
+  function ToastOptIn() {
     ToastAndroid.show(
-      'Opt in, start recieve FCM Messages and send reports!',
-      ToastAndroid.LONG
+      'User start recieve FCM Messages and send reports!',
+      ToastAndroid.SHORT
     )
   }
-  function ToastUnsubscribe() {
+  function ToastOptOut() {
     ToastAndroid.show(
-      'opt Out, no longer receive FCM messages and send reports!',
-      ToastAndroid.LONG
+      'User no longer receive FCM messages and send reports!',
+      ToastAndroid.SHORT
     )
   }
   return (
@@ -73,19 +72,19 @@ function HomeScreen() {
       <TouchableOpacity
         onPress={() => {
           enableMessaging()
-          ToastSubscribe()
+          ToastOptIn()
         }}
       >
-        <Text style={styles.Subscribebutton}> Subscribe to Topic</Text>
+        <Text style={styles.Subscribebutton}> Opt-In</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
           disableMessaging()
-          ToastUnsubscribe()
+          ToastOptOut()
         }}
       >
-        <Text style={styles.unsubscribebutton}> Unsubscribe to Topic</Text>
+        <Text style={styles.unsubscribebutton}> Opt-Out</Text>
       </TouchableOpacity>
       <StatusBar style='auto' />
     </View>
