@@ -33,7 +33,7 @@ const Home: NextPage = () => {
     }
   )
 
-  const formattedData: FormattedQueryData[] = useMemo(() => {
+  const fetchedData: FormattedQueryData[] = useMemo(() => {
     if (!data?.data) return []
     return data.data
   }, [ data ])
@@ -51,7 +51,7 @@ const Home: NextPage = () => {
   }, [ measurementError, measurementData ])
 
   const keyId = 'queryId'
-  const sortedMeasurements = [ ...new Map(formattedData.map(item => [ item[keyId], item ])).values() ]
+  const sortedMeasurements = [ ...new Map(fetchedData.map(item => [ item[keyId], item ])).values() ]
 
   return (
     <Layout>
@@ -71,11 +71,16 @@ const Home: NextPage = () => {
       {isLoading ? (
         <Loading />
       ) : (
+
         <ul>
           {sortedMeasurements.map(({ queryId, timestamp }) => (
-            <li key={queryId}>{timestamp}</li>
+            <Link href={`/details?id=${queryId}`} key={`/details?id=${queryId}`}>
+              <li key={queryId}>{timestamp}</li>
+            </Link>
           ))}
         </ul>
+
+
       )}
     </Layout>
   )
