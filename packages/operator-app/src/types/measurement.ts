@@ -10,6 +10,10 @@ export interface Measurement {
   latency: number | null
   signalStrength: number | null
 }
+export interface FormattedQueryData {
+  timestamp: number
+  queryId: number
+}
 
 export enum MeasurementType {
   BANDWIDTH = 'bandwidth',
