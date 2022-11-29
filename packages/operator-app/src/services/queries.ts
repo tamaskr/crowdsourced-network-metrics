@@ -1,5 +1,6 @@
 import { MeasurementType } from '../types/measurement'
 
+
 // Base URL for queries to backend
 const baseUrl = 'https://europe-west1-crowdsourced-network-metrics.cloudfunctions.net/'
 // Local emulator base URL for development purposes
@@ -13,9 +14,9 @@ export async function getMeasurements() {
   return await response.json()
 }
 
-// function to get measurements by queryId
+// Get measurements by query id
 export async function getMeasurementsByQueryId(queryId: string) {
-  const response = await fetch(`${baseUrl}getMeasurmentsByqueryId?queryId=${queryId}`, { method: 'GET' })
+  const response = await fetch(`${baseUrl}getMeasurmentsByQueryId?queryId=${queryId}`, { method: 'GET' })
   return await response.json()
 }
 
