@@ -1,12 +1,15 @@
 import { LoadingButton } from '@mui/lab'
 import { Typography } from '@mui/material'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { NextPage } from 'next'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { toast } from 'react-toastify'
+import Link from 'next/link'
 import { Layout } from '../components/layout'
 import { getMeasurements } from '../services/queries'
 import { theme } from '../theme/default'
+import { FormattedQueryData } from '../types/measurement'
+import { Loading } from '../components/loading'
 
 
 const Home: NextPage = () => {
@@ -19,6 +22,22 @@ const Home: NextPage = () => {
     cacheTime: 0
   })
 
+  const { isLoading, data } = useQuery(
+    [ '/measurements' ],
+    () =>
+      getMeasurements().catch(() =>
+        toast.error('Error while fetching measurement data')),
+    {
+      cacheTime: 0,
+      refetchOnWindowFocus: false
+    }
+  )
+
+  const fetchedData: FormattedQueryData[] = useMemo(() => {
+    if (!data?.data) return []
+    return data.data
+  }, [ data ])
+
   // Show toasts for measurement data fetching and log data to console if available
   useEffect(() => {
     if (measurementError) {
@@ -30,6 +49,9 @@ const Home: NextPage = () => {
       console.log(measurementData.data)
     }
   }, [ measurementError, measurementData ])
+
+  const keyId = 'queryId'
+  const sortedMeasurements = [ ...new Map(fetchedData.map(item => [ item[keyId], item ])).values() ]
 
   return (
     <Layout>
@@ -46,6 +68,20 @@ const Home: NextPage = () => {
       >
         Fetch data
       </LoadingButton>
+      {isLoading ? (
+        <Loading />
+      ) : (
+
+        <ul>
+          {sortedMeasurements.map(({ queryId, timestamp }) => (
+            <Link href={`/details?id=${queryId}`} key={`/details?id=${queryId}`}>
+              <li key={queryId}>{new Date(timestamp).toLocaleString()}</li>
+            </Link>
+          ))}
+        </ul>
+
+
+      )}
     </Layout>
   )
 }
