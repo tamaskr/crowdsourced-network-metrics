@@ -1,4 +1,5 @@
-import { useState } from 'react'
+
+import { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import {
   StyleSheet,
@@ -40,23 +41,29 @@ const styles = StyleSheet.create({
 })
 
 function HomeScreen() {
-  const [ optIn, setOptIn ] = useState(true)
+  const [ optIn, setOptIn ] = useState(false)
 
-  function enable() {
+  useEffect(() => {
+    AsyncStorage.clear()
+  })
+
+  function subscribe() {
     enableMessaging()
     ToastAndroid.show(
       'User starts recieve FCM Messages and send reports!',
       ToastAndroid.SHORT
     )
     AsyncStorage.setItem('user', 'opted in')
+    setOptIn(true)
   }
-  function disable() {
+  function unsubscribe() {
     disableMessaging()
     ToastAndroid.show(
       'User no longer receive FCM messages and send reports!',
       ToastAndroid.SHORT
     )
     AsyncStorage.setItem('user', 'opted out')
+    setOptIn(false)
   }
   return (
     <View style={styles.container}>
@@ -64,12 +71,12 @@ function HomeScreen() {
       <Text>You have opted in to metrics collection</Text>
       <TouchableOpacity
         onPress={() => {
-          !optIn ? disable() : enable()
+          optIn ? unsubscribe() : subscribe()
           setOptIn(!optIn)
         }}
       >
         <Text style={styles.optinoutbutton}>
-          {!optIn ? 'opt-out' : 'opt-in'}
+          {optIn ? 'opt-out' : 'opt-in'}
         </Text>
       </TouchableOpacity>
       <StatusBar style='auto' />
