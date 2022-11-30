@@ -75,7 +75,7 @@ const Home: NextPage = () => {
         <ul>
           {sortedMeasurements.map(({ queryId, timestamp }) => (
             <Link href={`/details?id=${queryId}`} key={`/details?id=${queryId}`}>
-              <li key={queryId}>{timestamp}</li>
+              <li key={queryId}>{new Date(timestamp).toLocaleString()}</li>
             </Link>
           ))}
         </ul>

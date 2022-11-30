@@ -41,7 +41,7 @@ export async function getCurrentCoordinates(): Promise<{
     const location = await Location.getCurrentPositionAsync()
     const coordinates = {
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
+      longitude: location.coords.longitude
     }
     logger.log(TAG, 'Gotten current coordinates', coordinates)
     return coordinates

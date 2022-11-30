@@ -31,7 +31,9 @@ export const query = functions
     }
 
     // Check if there are any valid measurement types in the passed array
-    const validMeasurements = Object.values(MeasurementType).filter(measurement => validate.contains(measurements, measurement))
+    const validMeasurements = Object.values(MeasurementType).filter(measurement => (
+      validate.contains(measurements, measurement)
+    ))
 
     // Return error if no valid measurement types are present
     if (validMeasurements.length === 0) {
@@ -51,13 +53,13 @@ export const query = functions
 
     try {
       // Send FCM message to all devices that are subscribed to the query topic
-      const msg = await admin.messaging().sendToTopic(QUERY_TOPIC, payload, {
+      await admin.messaging().sendToTopic(QUERY_TOPIC, payload, {
         // Required for background messages on iOS
         contentAvailable: true,
         // Required for background messages on Android
         priority: 'high'
       })
-      response.status(200).send({ ok: true, ...msg })
+      response.status(200).send({ ok: true, queryId: payload.data.id })
     } catch (error) {
       response.status(500).send({ error: (error as FirebaseError).message })
     }
@@ -156,11 +158,10 @@ export const measurements = functions
       })
   })
 
-// Get all measurements from the database based on queryId
-export const getMeasurmentsByqueryId = functions
+// Get all measurements from the database based on their queryId
+export const getMeasurmentsByQueryId = functions
   .region('europe-west1')
   .https.onRequest(async (request, response) => {
-    const { queryId } = request.query
     // Handle CORS
     const isPreflight = cors(request, response)
     if (isPreflight) return
@@ -168,11 +169,11 @@ export const getMeasurmentsByqueryId = functions
     await admin
       .firestore()
       .collection(MEASUREMENT_COLLECTION)
-      .where('queryId', '==', queryId)
+      .where('queryId', '==', request.query.queryId)
       .get()
-      .then(snap => {
+      .then(querySnapshot => {
         const data: Measurement[] = []
-        snap.forEach(doc => {
+        querySnapshot.forEach(doc => {
           // Validates data before pushing to the response's data array
           const errors = validate(doc.data(), measurementValidationConstraints)
           if (!errors) data.push(doc.data() as Measurement)
