@@ -7,7 +7,7 @@ import { object, array, number } from 'yup'
 import { theme } from '../../theme/default'
 import { MeasurementType } from '../../types/measurement'
 import { convertToDecimalDegrees } from '../../utils/coordinates'
-import { QueryFormProps } from './types'
+import { QueryDTO, QueryFormProps } from './types'
 import { QueryMap } from './map'
 import { ButtonWrapper, StyledFormGroup } from './styles'
 import { QuerySlider } from './slider'
@@ -52,12 +52,7 @@ export const QueryForm = ({ onSubmit }: QueryFormProps) => {
         longitude,
         latitude,
         range
-      }: {
-        measurements: MeasurementType[]
-        longitude: number
-        latitude: number
-        range: number
-      }) => {
+      }: QueryDTO) => {
         const formattedRange = convertToDecimalDegrees(range)
         await onSubmit({
           measurements,

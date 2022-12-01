@@ -26,7 +26,7 @@ const Query: NextPage = () => {
       longitude: number
       latitude: number
       range: number
-    }) => postQuery(measurements, longitude, latitude, range),
+    }) => postQuery({ measurements, longitude, latitude, range }),
     {
       cacheTime: 0
     }
