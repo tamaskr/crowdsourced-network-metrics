@@ -3,12 +3,13 @@ import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
 import { CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts'
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import {  getMeasurementsByQueryId } from '../../services/queries'
 import { Layout } from '../../components/layout'
 import { Loading } from '../../components/loading'
 import { Measurement } from '../../types/measurement'
+import { theme } from '../../theme/default'
 
 
 const Details: NextPage = () => {
@@ -60,7 +61,21 @@ const Details: NextPage = () => {
       ) : (
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <h1>Query {queryId} ({measurements.length})</h1>
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              color={theme.palette.primary.main}
+              textAlign="center"
+            >
+              QUERY DETAILS - {queryId}
+            </Typography>
+            <Typography
+              variant="h6"
+              color={theme.palette.primary.light}
+              textAlign="center"
+            >
+              Showing data from {measurements.length} responses
+            </Typography>
           </Grid>
           <Grid item xs={8}>
             <h3>Bandwidth and Latency</h3>

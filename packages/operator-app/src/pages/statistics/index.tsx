@@ -2,12 +2,14 @@ import { useQuery } from '@tanstack/react-query'
 import { NextPage } from 'next'
 import { useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
+import { Typography } from '@mui/material'
 import { Layout } from '../../components/layout'
 import { formatChartData } from '../../utils/chart'
 import { getMeasurements } from '../../services/queries'
 import { FormattedChartData } from '../../types/chart'
 import { StatisticsChart } from '../../components/charts/statistics'
 import { Loading } from '../../components/loading'
+import { theme } from '../../theme/default'
 
 
 const Statistics: NextPage = () => {
@@ -33,11 +35,21 @@ const Statistics: NextPage = () => {
       {isLoading ? (
         <Loading />
       ) : (
-        <StatisticsChart
-          chartData={chartData}
-          days={days}
-          onDaysChange={event => setDays(Number(event.target.value))}
-        />
+        <>
+          <Typography
+            variant="h4"
+            fontWeight="bold"
+            color={theme.palette.primary.main}
+            textAlign="center"
+          >
+            STATISTICS
+          </Typography>
+          <StatisticsChart
+            chartData={chartData}
+            days={days}
+            onDaysChange={event => setDays(Number(event.target.value))}
+          />
+        </>
       )}
     </Layout>
   )
