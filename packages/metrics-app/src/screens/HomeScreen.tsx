@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import {
@@ -41,42 +40,57 @@ const styles = StyleSheet.create({
 })
 
 function HomeScreen() {
-  const [ optIn, setOptIn ] = useState(false)
+  const [ isOptIn, setIsOptIn ] = useState(false)
+  const [ isLoading, setIsLoading ] = useState(true)
 
   useEffect(() => {
-    AsyncStorage.clear()
-  })
+    async function fetchOpt() {
+      await AsyncStorage.getItem('user').then(value => {
+        console.log('value of opted:', value)
+        if (value === null || value === JSON.stringify(true)) {
+          setIsOptIn(true)
+        }
+        setIsOptIn(value === JSON.stringify(true))
+        setIsLoading(false)
+      })
+    }
+    fetchOpt()
+  }, [])
 
+  // user subscribe to get FCM messages and send reports
   function subscribe() {
     enableMessaging()
     ToastAndroid.show(
       'User starts recieve FCM Messages and send reports!',
       ToastAndroid.SHORT
     )
-    AsyncStorage.setItem('user', 'opted in')
-    setOptIn(true)
+    // save the user opt-in to AsyncStorage
+    AsyncStorage.setItem('user', JSON.stringify(true))
   }
+  // user unsubscribe and no longer to get FCM messages and send reports
   function unsubscribe() {
     disableMessaging()
     ToastAndroid.show(
       'User no longer receive FCM messages and send reports!',
       ToastAndroid.SHORT
     )
-    AsyncStorage.setItem('user', 'opted out')
-    setOptIn(false)
+    // save the user opt-out to AsyncStorage
+    AsyncStorage.setItem('user', JSON.stringify(false))
   }
+
+  if (isLoading) return null
   return (
     <View style={styles.container}>
       <Tutorial />
       <Text>You have opted in to metrics collection</Text>
       <TouchableOpacity
         onPress={() => {
-          optIn ? unsubscribe() : subscribe()
-          setOptIn(!optIn)
+          isOptIn ? unsubscribe() : subscribe()
+          setIsOptIn(!isOptIn)
         }}
       >
         <Text style={styles.optinoutbutton}>
-          {optIn ? 'opt-out' : 'opt-in'}
+          {isOptIn ? 'opt-out' : 'opt-in'}
         </Text>
       </TouchableOpacity>
       <StatusBar style='auto' />
