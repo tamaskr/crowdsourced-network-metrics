@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { theme } from '../theme/default'
 import type { AppProps } from 'next/app'
 import 'react-toastify/dist/ReactToastify.css'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 
 const queryClient = new QueryClient()
@@ -14,7 +15,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Head>
-          <title>CMNM OPERATOR</title>
+          <title>CMNM Operator</title>
         </Head>
         <Component {...pageProps} />
       </ThemeProvider>

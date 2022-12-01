@@ -16,13 +16,25 @@ export async function getMeasurements() {
 
 // Get measurements by query id
 export async function getMeasurementsByQueryId(queryId: string) {
-  const response = await fetch(`${baseUrl}getMeasurmentsByQueryId?queryId=${queryId}`, { method: 'GET' })
+  const response = await fetch(
+    `${baseUrl}getMeasurmentsByQueryId?queryId=${queryId}`,
+    { method: 'GET' }
+  )
   return await response.json()
 }
 
 // Report a measurement to the backend to be stored
-export async function postQuery(measurements: MeasurementType[]) {
-  const body = JSON.stringify({ measurements })
-  const response = await fetch(`${baseUrl}query`, { method: 'POST', headers, body })
+export async function postQuery(
+  measurements: MeasurementType[],
+  longitude: number,
+  latitude: number,
+  range: number
+) {
+  const body = JSON.stringify({ measurements, longitude, latitude, range })
+  const response = await fetch(`${baseUrl}query`, {
+    method: 'POST',
+    headers,
+    body
+  })
   return await response.json()
 }
