@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
-import { generateMeasurement } from './utils/random'
-import { Measurement } from './types/measurement'
-import { MEASUREMENT_COLLECTION } from './constants'
-import { cors } from './utils/cors'
+import { MEASUREMENT_COLLECTION, REGION } from '../utils/constants'
+import { cors } from '../utils/cors'
+import { generateMeasurement } from '../utils/random'
+import { Measurement } from '../types/types'
 
 
 // function to add documents to collection in firebase db
@@ -21,7 +21,7 @@ const setDatabase = (list: Measurement[]): boolean => {
 }
 
 // https request with the query parameter of the desired number of generated documents
-export const generate = functions.region('europe-west1').https.onRequest((request, response) => {
+export const generate = functions.region(REGION).https.onRequest((request, response) => {
   // Handle CORS
   const isPreflight = cors(request, response)
   if (isPreflight) return

@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import * as uuid from 'uuid'
-import { Measurement } from '../types/measurement'
+import { Measurement } from '../types/types'
+
 
 // function that generate fake measurements
 export const generateMeasurement = (count: number): Measurement[] => {
