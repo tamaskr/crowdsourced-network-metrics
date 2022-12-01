@@ -1,5 +1,4 @@
-import { MeasurementType } from '../types/measurement'
-
+import { QueryDTO } from '../components/queryForm/types'
 
 // Base URL for queries to backend
 const baseUrl = 'https://europe-west1-crowdsourced-network-metrics.cloudfunctions.net/'
@@ -9,20 +8,32 @@ const baseUrl = 'https://europe-west1-crowdsourced-network-metrics.cloudfunction
 const headers = { 'Content-Type': 'application/json' }
 
 // Report a measurement to the backend to be stored
-export async function getMeasurements() {
+export const getMeasurements = async () => {
   const response = await fetch(`${baseUrl}measurements`, { method: 'GET' })
   return await response.json()
 }
 
 // Get measurements by query id
-export async function getMeasurementsByQueryId(queryId: string) {
-  const response = await fetch(`${baseUrl}getMeasurmentsByQueryId?queryId=${queryId}`, { method: 'GET' })
+export const getMeasurementsByQueryId = async (queryId: string) => {
+  const response = await fetch(
+    `${baseUrl}getMeasurmentsByQueryId?queryId=${queryId}`,
+    { method: 'GET' }
+  )
   return await response.json()
 }
 
 // Report a measurement to the backend to be stored
-export async function postQuery(measurements: MeasurementType[]) {
-  const body = JSON.stringify({ measurements })
-  const response = await fetch(`${baseUrl}query`, { method: 'POST', headers, body })
+export const postQuery = async ({
+  measurements,
+  longitude,
+  latitude,
+  range
+}: QueryDTO) => {
+  const body = JSON.stringify({ measurements, longitude, latitude, range })
+  const response = await fetch(`${baseUrl}query`, {
+    method: 'POST',
+    headers,
+    body
+  })
   return await response.json()
 }
