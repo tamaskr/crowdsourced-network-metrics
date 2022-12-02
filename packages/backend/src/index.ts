@@ -4,7 +4,7 @@ import * as functions from 'firebase-functions'
 import * as uuid from 'uuid'
 import validate from 'validate.js'
 import { measurementValidationConstraints } from './utils/validation'
-import { Measurement, MeasurementType } from './types/measurement'
+import {  Measurement, MeasurementType } from './types/measurement'
 import { MEASUREMENT_COLLECTION, QUERY_TOPIC } from './constants'
 import { cors } from './utils/cors'
 
@@ -22,7 +22,7 @@ export const query = functions
     const isPreflight = cors(request, response)
     if (isPreflight) return
 
-    const { measurements } = request.body
+    const { measurements, coordinates: { latitude, longitude }, range } = request.body
 
     // Return error if no measurements property is passed to the request body
     if (!measurements || !validate.isArray(measurements)) {
@@ -47,10 +47,12 @@ export const query = functions
     const payload = {
       data: {
         id: uuid.v4(),
-        measurements: JSON.stringify(validMeasurements)
+        measurements: JSON.stringify(validMeasurements),
+        latitude: JSON.stringify(latitude),
+        longitude: JSON.stringify(longitude),
+        range: JSON.stringify(range)
       }
     }
-
     try {
       // Send FCM message to all devices that are subscribed to the query topic
       await admin.messaging().sendToTopic(QUERY_TOPIC, payload, {
