@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import * as uuid from 'uuid'
-import { MEASUREMENT_COLLECTION, REGION } from '../utils/constants'
+import { MEASUREMENT_COLLECTION, QUERY_COLLECTION, REGION } from '../utils/constants'
 import { cors } from '../utils/cors'
 import { measurementSchema } from '../utils/schemas'
 import { Measurement } from '../types/types'
@@ -33,6 +33,10 @@ export const report = functions.region(REGION).https.onRequest(async (request, r
 
     // Save the measurement to the database
     await admin.firestore().collection(MEASUREMENT_COLLECTION).doc(measurement.id).set(measurement)
+
+    // Increment the response count of the query by one
+    const update = { responseCount: admin.firestore.FieldValue.increment(1) }
+    await admin.firestore().collection(QUERY_COLLECTION).doc(measurement.queryId).update(update)
 
     // Respond with the created measurement
     response.status(200).json({ success: true, measurement })
