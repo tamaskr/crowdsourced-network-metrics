@@ -21,15 +21,28 @@ export const report = functions.region(REGION).https.onRequest(async (request, r
     }
 
     // Validate the request body with the schema
-    const schema = measurementSchema.pick({ queryId: true, bandwidth: true, latency: true, signalStrength: true, coordinates: true })
+    const schema = measurementSchema.pick({
+      queryId: true,
+      bandwidth: true,
+      latency: true,
+      signalStrength: true,
+      coordinates: true
+    })
     const result = schema.safeParse(request.body)
     if (!result.success) {
-      response.status(400).json({ success: false, message: result.error.message, errors: result.error.errors })
+      response.status(400).json({ success: false, errors: result.error.errors })
       return
     }
 
     // Data format for storing data in the database
     const measurement: Measurement = { id: uuid.v4(), timestamp: Date.now(), ...result.data }
+
+    // Check if the query exists
+    const query = await admin.firestore().collection(QUERY_COLLECTION).doc(measurement.queryId).get()
+    if (!query.exists) {
+      response.status(404).json({ success: false })
+      return
+    }
 
     // Save the measurement to the database
     await admin.firestore().collection(MEASUREMENT_COLLECTION).doc(measurement.id).set(measurement)
@@ -41,7 +54,7 @@ export const report = functions.region(REGION).https.onRequest(async (request, r
     // Respond with the created measurement
     response.status(200).json({ success: true, measurement })
   } catch (error) {
-    console.error(error)
+    functions.logger.error(error)
     response.status(500).json({ success: false })
   }
 })

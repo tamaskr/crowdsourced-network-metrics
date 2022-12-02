@@ -21,10 +21,12 @@ export const measurements = functions.region(REGION).https.onRequest(async (requ
     }
 
     // Validate the request query
-    const schema = z.object({ queryId: z.string().uuid().optional() }).strict()
+    const schema = z.object({
+      queryId: z.string().uuid().optional()
+    }).strict()
     const result = schema.safeParse(request.query)
     if (!result.success) {
-      response.status(400).json({ success: false, message: result.error.message, errors: result.error.errors })
+      response.status(400).json({ success: false, errors: result.error.errors })
       return
     }
 
@@ -42,7 +44,7 @@ export const measurements = functions.region(REGION).https.onRequest(async (requ
     // Respond with the list of requested measurements
     response.status(200).send({ success: true, measurements })
   } catch (error) {
-    console.error(error)
+    functions.logger.error(error)
     response.status(500).json({ success: false })
   }
 })

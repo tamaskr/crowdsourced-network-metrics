@@ -37,10 +37,14 @@ export const query = functions.region(REGION).https.onRequest(async (request, re
     }
 
     // Validate the request body
-    const schema = querySchema.pick({ measurements: true, coordinates: true, range: true })
+    const schema = querySchema.pick({
+      measurements: true,
+      coordinates: true,
+      range: true
+    })
     const result = schema.safeParse(request.body)
     if (!result.success) {
-      response.status(400).json({ success: false, message: result.error.message, errors: result.error.errors })
+      response.status(400).json({ success: false, errors: result.error.errors })
       return
     }
 
@@ -70,7 +74,7 @@ export const query = functions.region(REGION).https.onRequest(async (request, re
     // Respond with the id of the created query
     response.status(200).json({ success: true, query })
   } catch (error) {
-    console.error(error)
+    functions.logger.error(error)
     response.status(500).json({ success: false })
   }
 })
