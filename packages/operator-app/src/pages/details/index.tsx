@@ -16,7 +16,7 @@ const Details: NextPage = () => {
   const { query: { id: queryId } } = useRouter()
 
   // Fetch all measurements by query id
-  const { isLoading, data } = useQuery<{ ok: boolean; data: Measurement[] }>(
+  const { isLoading, data } = useQuery<{ success: boolean; measurements: Measurement[] }>(
     [ `/getMeasurmentsByqueryId?queryId=${queryId}` ],
     () =>
       getMeasurementsByQueryId(queryId as string).catch(() =>
@@ -29,7 +29,7 @@ const Details: NextPage = () => {
   )
 
   // Measurements array
-  const measurements = useMemo(() => data?.data ?? [], [ data ])
+  const measurements = useMemo(() => data?.measurements ?? [], [ data ])
 
   // Scatter chart data with bandwidth and latency
   const scatterChartData = useMemo(() => {

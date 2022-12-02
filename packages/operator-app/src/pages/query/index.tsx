@@ -40,8 +40,8 @@ const Query: NextPage = () => {
     if (data?.error) {
       toast.error(data.error)
     }
-    if (data?.queryId) {
-      toast.success(`Query successful with id ${data?.queryId}`)
+    if (data?.query?.id) {
+      toast.success(`Query successful with id ${data?.query?.id}`)
     }
   }, [ error, data ])
 
