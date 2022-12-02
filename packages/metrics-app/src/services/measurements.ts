@@ -2,7 +2,7 @@ import performance, { setResourceLoggingEnabled } from 'react-native-performance
 import { getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
 import { PermissionStatus } from 'expo-modules-core'
 import { logger } from '../utils/logger'
-import { Query, QueryMeasurementType } from '../types/query'
+import { MeasurementType, Query } from '../types/types'
 import { report } from './backend'
 import { getCurrentCoordinates } from './location'
 
@@ -78,13 +78,13 @@ export async function performMeasurementsFromQuery(query: Query): Promise<void> 
       return
     }
     // Take measurements
-    const bandwidth = query.measurements.includes(QueryMeasurementType.Bandwidth)
+    const bandwidth = query.measurements.includes(MeasurementType.Bandwidth)
       ? await measureDownloadBandwidth()
       : null
-    const latency = query.measurements.includes(QueryMeasurementType.Latency)
+    const latency = query.measurements.includes(MeasurementType.Latency)
       ? await measureLatency()
       : null
-    const signalStrength = query.measurements.includes(QueryMeasurementType.SignalStrength)
+    const signalStrength = query.measurements.includes(MeasurementType.SignalStrength)
       ? await measureSignalStrength()
       : null
     // Report measurements

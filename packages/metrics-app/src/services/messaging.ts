@@ -1,5 +1,5 @@
 import messaging from '@react-native-firebase/messaging'
-import { Query } from '../types/query'
+import { Query } from '../types/types'
 import { logger } from '../utils/logger'
 
 

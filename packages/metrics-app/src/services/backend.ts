@@ -1,4 +1,4 @@
-import { Measurement } from '../types/measurement'
+import { Measurement } from '../types/types'
 import { storeMeasurement } from '../utils/asyncStorage'
 import { logger } from '../utils/logger'
 
