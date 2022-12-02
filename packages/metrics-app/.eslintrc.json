@@ -3,6 +3,7 @@
   "rules": {
     "unicorn/consistent-function-scoping": "off",
     "@typescript-eslint/member-ordering": "off",
-    "sort-keys": "off"
+    "sort-keys": "off",
+    "import/newline-after-import": [ "error", { "count": 2 }]
   }
 }
