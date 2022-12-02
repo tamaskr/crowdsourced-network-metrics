@@ -4,7 +4,7 @@ import * as uuid from 'uuid'
 import { QUERY_COLLECTION, QUERY_TOPIC, REGION } from '../utils/constants'
 import { cors } from '../utils/cors'
 import { querySchema } from '../utils/schemas'
-import { Query } from '../types/types'
+import { FCMDataMessage, Query } from '../types/types'
 
 
 // Create and read queries
@@ -51,14 +51,16 @@ export const query = functions.region(REGION).https.onRequest(async (request, re
     await admin.firestore().collection(QUERY_COLLECTION).doc(query.id).set(query)
 
     // Transform the query to be a record of string keys and string values
-    const payload = {
-      data: Object.entries(query).reduce((acc, cur) => ({
-        [cur[0]]: JSON.stringify(cur[1])
-      }), {})
+    const data: FCMDataMessage = {
+      id: query.id,
+      measurements: query.measurements.join(','),
+      latitude: query.coordinates.latitude.toString(),
+      longitude: query.coordinates.longitude.toString(),
+      range: query.range.toString()
     }
 
     // Send FCM message to all devices that are subscribed to the query topic
-    await admin.messaging().sendToTopic(QUERY_TOPIC, payload, {
+    await admin.messaging().sendToTopic(QUERY_TOPIC, { data }, {
       // Required for background messages on iOS
       contentAvailable: true,
       // Required for background messages on Android

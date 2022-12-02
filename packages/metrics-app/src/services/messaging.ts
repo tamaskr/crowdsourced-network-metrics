@@ -1,5 +1,5 @@
 import messaging from '@react-native-firebase/messaging'
-import { Query } from '../types/types'
+import { FCMDataMessage } from '../types/types'
 import { logger } from '../utils/logger'
 
 
@@ -49,12 +49,12 @@ export async function disableMessaging(): Promise<void> {
 }
 
 // Add a foreground message listener, returns the remover function that must be called before the app closes
-export function setForegroundMessageListener(handler: (query: Query) => unknown): () => void {
+export function setForegroundMessageListener(handler: (query: FCMDataMessage) => unknown): () => void {
   logger.log(TAG, 'Adding foreground message listener')
   const unsubscribe = messaging().onMessage(async message => {
     try {
-      logger.log(TAG, 'Foreground message received')
-      await handler(message.data as unknown as Query)
+      logger.log(TAG, 'Foreground message received', message.data)
+      await handler(message.data as FCMDataMessage)
     } catch (error) {
       logger.error(TAG, 'Failed to handle foreground message', error)
     }
@@ -66,12 +66,12 @@ export function setForegroundMessageListener(handler: (query: Query) => unknown)
 }
 
 // Add a background message listener, use it outside the root component
-export function setBackgroundMessageListener(handler: (query: Query) => unknown) {
+export function setBackgroundMessageListener(handler: (query: FCMDataMessage) => unknown) {
   logger.log(TAG, 'Adding background message listener')
   messaging().setBackgroundMessageHandler(async message => {
     try {
-      logger.log(TAG, 'Background message received')
-      await handler(message.data as unknown as Query)
+      logger.log(TAG, 'Background message received', message.data)
+      await handler(message.data as FCMDataMessage)
     } catch (error) {
       logger.error(TAG, 'Failed to handle background message', error)
     }

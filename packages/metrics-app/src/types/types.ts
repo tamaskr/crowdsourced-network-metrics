@@ -28,3 +28,12 @@ export interface Query {
   responseCount: number
   timestamp: number
 }
+
+export interface FCMDataMessage {
+  [key: string]: string
+  id: string
+  measurements: string
+  latitude: string
+  longitude: string
+  range: string
+}

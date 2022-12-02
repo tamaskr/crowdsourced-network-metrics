@@ -2,7 +2,7 @@ import performance, { setResourceLoggingEnabled } from 'react-native-performance
 import { getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
 import { PermissionStatus } from 'expo-modules-core'
 import { logger } from '../utils/logger'
-import { MeasurementType, Query } from '../types/types'
+import { FCMDataMessage, MeasurementType } from '../types/types'
 import { report } from './backend'
 import { getCurrentCoordinates } from './location'
 
@@ -68,7 +68,7 @@ async function measureSignalStrength(): Promise<number | null> {
   }
 }
 
-export async function performMeasurementsFromQuery(query: Query): Promise<void> {
+export async function performMeasurementsFromQuery(query: FCMDataMessage): Promise<void> {
   logger.log(TAG, 'Performing measurement for query', query.id)
   try {
     // Check location
