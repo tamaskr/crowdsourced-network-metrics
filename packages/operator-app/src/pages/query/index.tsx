@@ -8,6 +8,7 @@ import { postQuery } from '../../services/queries'
 import { theme } from '../../theme/default'
 import { MeasurementType } from '../../types/measurement'
 import { QueryForm } from '../../components/queryForm'
+import { QueryDTO } from '../../components/queryForm/types'
 
 
 const Query: NextPage = () => {
@@ -16,17 +17,8 @@ const Query: NextPage = () => {
     data,
     mutateAsync: makeQuery
   } = useMutation(
-    ({
-      measurements,
-      longitude,
-      latitude,
-      range
-    }: {
-      measurements: MeasurementType[]
-      longitude: number
-      latitude: number
-      range: number
-    }) => postQuery({ measurements, longitude, latitude, range }),
+    ({ measurements, longitude, latitude, range }: QueryDTO) =>
+      postQuery({ measurements, longitude, latitude, range }),
     {
       cacheTime: 0
     }
@@ -40,8 +32,8 @@ const Query: NextPage = () => {
     if (data?.error) {
       toast.error(data.error)
     }
-    if (data?.queryId) {
-      toast.success(`Query successful with id ${data?.queryId}`)
+    if (data?.query?.id) {
+      toast.success(`Query successful with id ${data?.query?.id}`)
     }
   }, [ error, data ])
 

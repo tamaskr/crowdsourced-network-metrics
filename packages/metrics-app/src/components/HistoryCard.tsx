@@ -4,7 +4,7 @@ import { View, StyleSheet, Text, ViewStyle } from 'react-native'
 import { Divider } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { colors } from '../theme/colors'
-import { Measurement, MeasurementType } from '../types/measurement'
+import { Measurement, MeasurementType } from '../types/types'
 
 
 const styles = StyleSheet.create({
@@ -46,13 +46,13 @@ interface HistoryCardProps {
 // Returns all the properties that are needed to display the measurements
 const getMeasurementData = (measurement: MeasurementType) => {
   switch (measurement) {
-    case MeasurementType.BANDWIDTH: {
+    case MeasurementType.Bandwidth: {
       return { label: 'Bandwidth', icon: 'collapse-all-outline', unit: 'Mbit/s' }
     }
-    case MeasurementType.LATENCY: {
+    case MeasurementType.Latency: {
       return { label: 'Latency', icon: 'clock-fast', unit: 'ms' }
     }
-    case MeasurementType.SIGNAL_STRENGTH: {
+    case MeasurementType.SignalStrength: {
       return { label: 'Signal strength', icon: 'signal' }
     }
   }

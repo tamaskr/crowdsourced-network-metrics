@@ -9,9 +9,10 @@ const StyledFormGroup = styled(FormGroup)(({ theme }) => ({
   justifyContent: 'center'
 }))
 
-const ButtonWrapper = styled('div')({
+const ButtonWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
-  justifyContent: 'flex-end'
-})
+  justifyContent: 'center',
+  marginTop: theme.spacing(2)
+}))
 
 export { StyledFormGroup, ButtonWrapper }

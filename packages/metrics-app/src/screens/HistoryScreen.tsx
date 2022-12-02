@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-root-toast'
 import { logger } from '../utils/logger'
-import { Measurement } from '../types/measurement'
+import { Measurement } from '../types/types'
 import { HistoryCard } from '../components/HistoryCard'
 import { colors } from '../theme/colors'
 

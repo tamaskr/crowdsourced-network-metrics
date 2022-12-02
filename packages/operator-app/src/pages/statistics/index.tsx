@@ -26,8 +26,8 @@ const Statistics: NextPage = () => {
   )
 
   const chartData: FormattedChartData[] = useMemo(() => {
-    if (!data?.data) return []
-    return formatChartData(data.data, days)
+    if (!data?.measurements) return []
+    return formatChartData(data.measurements, days)
   }, [ data, days ])
 
   return (
