@@ -93,7 +93,8 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       bandwidth,
       latency,
       signalStrength,
-      coordinates
+      coordinates,
+      area: 'Test' // TODO implement reverse geocoded locality here
     })
     logger.log(TAG, 'Performed measurements successfully')
   } catch (error) {

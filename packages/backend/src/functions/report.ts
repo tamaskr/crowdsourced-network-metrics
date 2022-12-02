@@ -23,10 +23,11 @@ export const report = functions.region(REGION).https.onRequest(async (request, r
     // Validate the request body with the schema
     const schema = measurementSchema.pick({
       queryId: true,
+      coordinates: true,
+      area: true,
       bandwidth: true,
       latency: true,
-      signalStrength: true,
-      coordinates: true
+      signalStrength: true
     })
     const result = schema.safeParse(request.body)
     if (!result.success) {
