@@ -38,7 +38,7 @@ export const generateMockData = (count: number): [ Query[], Measurement[] ] => {
         queryId,
         timestamp,
         coordinates,
-        area: 'Test',
+        area: null,
         bandwidth: faker.datatype.number({ min: 0, max: 50000 }),
         latency: faker.datatype.number({ min: 0, max: 100 }),
         signalStrength: faker.datatype.number({ min: 0, max: 4 })

@@ -5,7 +5,7 @@ export interface Measurement {
     latitude: number
     longitude: number
   }
-  area: string
+  area: string | null
   bandwidth: number | null
   latency: number | null
   signalStrength: number | null
