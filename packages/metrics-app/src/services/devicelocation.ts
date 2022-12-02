@@ -1,7 +1,6 @@
 import * as Location from 'expo-location'
 import { logger } from '../utils/logger'
 
-
 const TAG = 'Location'
 
 // Check if permissions for location have been granted and request them if not
@@ -41,7 +40,7 @@ export async function getCurrentCoordinates(): Promise<{
     const location = await Location.getCurrentPositionAsync()
     const coordinates = {
       latitude: location.coords.latitude,
-      longitude: location.coords.longitude
+      longitude: location.coords.longitude,
     }
     logger.log(TAG, 'Gotten current coordinates', coordinates)
     return coordinates
@@ -49,4 +48,10 @@ export async function getCurrentCoordinates(): Promise<{
     logger.error(TAG, 'Failed to get current coordinates', error)
     return null
   }
+}
+
+export async function getAddress(): Promise<any> {
+  const location = await Location.getCurrentPositionAsync()
+  const address = await Location.reverseGeocodeAsync(location.coords)
+  logger.log(TAG, 'Gotten current address', address)
 }
