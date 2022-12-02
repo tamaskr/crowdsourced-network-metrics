@@ -32,15 +32,14 @@ export const generate = functions.region(REGION).https.onRequest(async (request,
     }
 
     // Generate mock query and measurements
-    const [ query, measurements ] = generateMockData(result.data.count)
+    const [ queries, measurements ] = generateMockData(result.data.count)
 
-    // Save the query to the database
-    await admin.firestore().collection(QUERY_COLLECTION).doc(query.id).set(query)
-
-    // Save the measurements to the database, using a batch write for performance reasons
-    const collection = admin.firestore().collection(MEASUREMENT_COLLECTION)
+    // Save the queries and measurements to the database using a batch write for better performance
     const batchWrite = admin.firestore().batch()
-    measurements.forEach(measurement => batchWrite.set(collection.doc(measurement.id), measurement))
+    const queryCollection = admin.firestore().collection(QUERY_COLLECTION)
+    queries.forEach(query => batchWrite.set(queryCollection.doc(query.id), query))
+    const measurementCollection = admin.firestore().collection(MEASUREMENT_COLLECTION)
+    measurements.forEach(measurement => batchWrite.set(measurementCollection.doc(measurement.id), measurement))
     await batchWrite.commit()
 
     // Respond with success true
