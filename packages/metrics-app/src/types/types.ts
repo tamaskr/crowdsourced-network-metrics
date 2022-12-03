@@ -12,15 +12,10 @@ export interface Measurement {
   timestamp: number
 }
 
-export interface FormattedQueryData {
-  timestamp: number
-  queryId: number
-}
-
 export enum MeasurementType {
-  BANDWIDTH = 'bandwidth',
-  LATENCY = 'latency',
-  SIGNAL_STRENGTH = 'signalStrength'
+  Bandwidth = 'bandwidth',
+  Latency = 'latency',
+  SignalStrength = 'signalStrength'
 }
 
 export interface Query {
@@ -35,7 +30,11 @@ export interface Query {
   timestamp: number
 }
 
-export enum MeasurementUnits {
-  BANDWIDTH = 'kB/s',
-  LATENCY = 'ms',
+export interface FCMDataMessage {
+  [key: string]: string
+  id: string
+  measurements: string
+  latitude: string
+  longitude: string
+  range: string
 }

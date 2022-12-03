@@ -22,8 +22,8 @@ const Home: NextPage = () => {
   )
 
   const uniqueQueries: FormattedQueryData[] = useMemo(() => {
-    if (!data?.data) return []
-    return data.data.filter((value: Measurement, index: number, self: Measurement[]) =>
+    if (!data?.measurements) return []
+    return data.measurements.filter((value: Measurement, index: number, self: Measurement[]) =>
       self.findIndex((measurement: Measurement) => measurement.queryId === value.queryId) === index)
   }, [ data ])
 

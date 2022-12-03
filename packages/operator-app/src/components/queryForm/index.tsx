@@ -42,7 +42,11 @@ export const QueryForm = ({ onSubmit }: QueryFormProps) => {
   return (
     <Formik
       initialValues={{
-        measurements: [ MeasurementType.BANDWIDTH ],
+        measurements: [
+          MeasurementType.BANDWIDTH,
+          MeasurementType.LATENCY,
+          MeasurementType.SIGNAL_STRENGTH
+        ],
         latitude: 60.171342,
         longitude: 24.940873,
         range: 2000
@@ -85,6 +89,20 @@ export const QueryForm = ({ onSubmit }: QueryFormProps) => {
                 <Typography color="error">{errors.measurements}</Typography>
               </div>
             )}
+            <ButtonWrapper>
+              <LoadingButton
+                disabled={!!errors.measurements}
+                loading={isSubmitting}
+                endIcon={<SendIcon />}
+                variant="contained"
+                sx={{
+                  padding: `${theme.spacing(1)} ${theme.spacing(3)}`
+                }}
+                type="submit"
+              >
+                Send query
+              </LoadingButton>
+            </ButtonWrapper>
             <QuerySlider
               range={values.range}
               onChange={(_, newValue) => {
@@ -106,21 +124,6 @@ export const QueryForm = ({ onSubmit }: QueryFormProps) => {
                 }))
               }}
             />
-            <ButtonWrapper>
-              <LoadingButton
-                disabled={!!errors.measurements}
-                loading={isSubmitting}
-                endIcon={<SendIcon />}
-                variant="contained"
-                sx={{
-                  marginTop: theme.spacing(1),
-                  padding: `${theme.spacing(1)} ${theme.spacing(3)}`
-                }}
-                type="submit"
-              >
-                Send query
-              </LoadingButton>
-            </ButtonWrapper>
           </Form>
         )
       }}
