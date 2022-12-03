@@ -29,20 +29,23 @@ const Home: NextPage = () => {
           color={theme.palette.text.primary}
           textAlign="center"
         >
-          No queries found.
+          No queries available
         </Typography>
       )
 
-    return data.queries.map((query: Query) => (
-      <Link
-        href={`/details?id=${query.id}`}
-        key={query.id}
-        passHref
-        style={{ textDecoration: 'none' }}
-      >
-        <QueryCard query={query} />
-      </Link>
-    ))
+    return data.queries
+      .sort((a: Query, b: Query) => b.timestamp - a.timestamp)
+      .map((query: Query) => (
+        <div key={query.id} style={{ marginBottom: theme.spacing(2) }}>
+          <Link
+            href={`/details?id=${query.id}`}
+            passHref
+            style={{ textDecoration: 'none' }}
+          >
+            <QueryCard query={query} />
+          </Link>
+        </div>
+      ))
   }, [ data, isLoading ])
 
   return <Layout>{children}</Layout>
