@@ -74,7 +74,7 @@ const Details: NextPage = () => {
               color={theme.palette.primary.light}
               textAlign="center"
             >
-              Showing data from {measurements.length} responses
+              Showing data from {measurements.length} {measurements.length === 1 ? 'response' : 'responses'}
             </Typography>
           </Grid>
           <Grid item xs={8}>

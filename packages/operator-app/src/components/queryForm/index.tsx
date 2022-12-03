@@ -7,26 +7,11 @@ import { object, array, number } from 'yup'
 import { theme } from '../../theme/default'
 import { MeasurementType } from '../../types/measurement'
 import { convertToDecimalDegrees } from '../../utils/coordinates'
+import { measurementOptions } from '../../utils/measurement'
 import { QueryDTO, QueryFormProps } from './types'
 import { QueryMap } from './map'
 import { ButtonWrapper, StyledFormGroup } from './styles'
 import { QuerySlider } from './slider'
-
-// Lists all measurement types with labels
-const measurementOptions = [
-  {
-    label: 'bandwidth',
-    value: MeasurementType.BANDWIDTH
-  },
-  {
-    label: 'latency',
-    value: MeasurementType.LATENCY
-  },
-  {
-    label: 'signal strength',
-    value: MeasurementType.SIGNAL_STRENGTH
-  }
-]
 
 // Basic validation schema for query form
 const validationSchema = object().shape({

@@ -9,10 +9,6 @@ const marks = [
     label: '100 m'
   },
   {
-    value: 1000,
-    label: '1 000 m'
-  },
-  {
     value: 2000,
     label: '2 000 m'
   },

@@ -68,7 +68,7 @@ export const NavBar: FunctionComponent<{
             color="inherit"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
+            sx={{ mr: 2, display: { md: 'none' } }}
           >
             <Menu />
           </IconButton>
@@ -80,7 +80,7 @@ export const NavBar: FunctionComponent<{
             CMNM OPERATOR
           </Typography>
           <Box
-            sx={{ display: { xs: 'none', sm: 'block' }, gap: theme.spacing(2) }}
+            sx={{ display: { xs: 'none', md: 'block' }, gap: theme.spacing(2) }}
           >
             {navItems.map(({ label, route }) => (
               <Link
@@ -94,7 +94,8 @@ export const NavBar: FunctionComponent<{
                   sx={{
                     color: theme.palette.secondary.light,
                     marginRight: theme.spacing(2),
-                    border: pathname === route ? '1px solid white' : 'none'
+                    border: pathname === route ? '1px solid white' : 'none',
+                    borderRadius: theme.spacing(1)
                   }}
                 >
                   {label}
@@ -113,7 +114,7 @@ export const NavBar: FunctionComponent<{
             keepMounted: true
           }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
+            display: { xs: 'block', md: 'none' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: '50%' }
           }}
         >
