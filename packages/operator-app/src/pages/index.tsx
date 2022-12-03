@@ -13,7 +13,7 @@ import { theme } from '../theme/default'
 
 
 const Home: NextPage = () => {
-  const { isLoading, data } = useQuery([ '/measurements' ], () => getQueries(), {
+  const { isLoading, data } = useQuery([ 'queries' ], () => getQueries(), {
     cacheTime: 0,
     refetchOnWindowFocus: false,
     onError: () => toast.error('Error while fetching query data')

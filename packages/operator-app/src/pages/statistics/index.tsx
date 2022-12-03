@@ -17,7 +17,7 @@ const Statistics: NextPage = () => {
   const [ selectedArea, setSelectedArea ] = useState<string | null>(null)
 
   const { isLoading, data } = useQuery(
-    [ '/measurements' ],
+    [ 'measurements' ],
     () =>
       getMeasurements().catch(() =>
         toast.error('Error while fetching measurement data')),
