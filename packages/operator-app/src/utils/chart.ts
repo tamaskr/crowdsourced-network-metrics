@@ -3,6 +3,14 @@ import { ChartLabels, FormattedChartData } from '../types/chart'
 import { Measurement, MeasurementType } from '../types/measurement'
 
 
+// Finds all the unique areas in an array of measurements and filters out nullable area values
+export const getAllUniqueAreas = (measurements: Measurement[]): string[] => {
+  const allAreas = measurements
+    .map((measurement: Measurement) => measurement.area as string)
+    .filter(Boolean)
+  return [ ...new Set(allAreas) ]
+}
+
 // Formats the labels on the statistics chart's Y axis from 0-100
 export const getYAxisLabel = (value: number) => {
   return ChartLabels[value / 25]
@@ -24,7 +32,7 @@ export const getMeasurementAverages = (measurements: Measurement[]): {
     const sum = values.reduce((a, b) => Number(a) + Number(b), 0)
     // If there are no usable values, return null for the average
     if (values.length === 0 || !sum) return { [type]: null }
-    return { [type]: Math.round(sum / values.length) }
+    return { [type]: sum / values.length }
   })
   // Group all the data into one object
   return Object.assign({}, ...averagesArray)
@@ -32,7 +40,7 @@ export const getMeasurementAverages = (measurements: Measurement[]): {
 
 // Calculates bandwidth quality for statistics chart
 export const getNormalizedBandwidth = (bandwidth: number) => {
-  const value = bandwidth / 220
+  const value = bandwidth / 260
   return value > 100 ? 100 : value
 }
 
@@ -83,15 +91,25 @@ export const getNormalizedChartMeasurements = (measurements: {
 }
 
 // Endpoint data is formatted for the statistics chart
-export const formatChartData = (measurements: Measurement[], days: number): FormattedChartData[] => {
+export const formatChartData = (
+  measurements: Measurement[],
+  days: number,
+  area: string | null
+): FormattedChartData[] => {
   let currentDay = startOfTomorrow()
   const chartData = []
   // Depending on the "days" parameter, the chart will display data for the past x days, with data grouped to each day
   for (let i = 0; i < days; i++) {
     currentDay = addDays(currentDay, -1)
     // Filter measurements for the specific day
-    const dailyMeasurements = measurements.filter(measurement =>
-      isSameDay(measurement.timestamp, currentDay))
+    const dailyMeasurements = measurements.filter(measurement => {
+      // Check if the measurement has been taken on the current day
+      const validDay = isSameDay(measurement.timestamp, currentDay)
+      // Check if the measurement's area matches with the area parameter
+      // If no area has been passed to the function, then the area filter is ignored
+      const validArea = measurement.area === area || !area
+      return validDay && validArea
+    })
     // Get average measurement values (or null, if there are no measurements for that day)
     const averages = getMeasurementAverages(dailyMeasurements)
     // Format average values to fit the statistics chart formatting

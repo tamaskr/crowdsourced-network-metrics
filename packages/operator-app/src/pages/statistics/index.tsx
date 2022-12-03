@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import { Typography } from '@mui/material'
 import { Layout } from '../../components/layout'
-import { formatChartData } from '../../utils/chart'
+import { formatChartData, getAllUniqueAreas } from '../../utils/chart'
 import { getMeasurements } from '../../services/queries'
 import { FormattedChartData } from '../../types/chart'
 import { StatisticsChart } from '../../components/charts/statistics'
@@ -13,7 +13,9 @@ import { theme } from '../../theme/default'
 
 
 const Statistics: NextPage = () => {
-  const [ days, setDays ] = useState<number>(7)
+  const [ selectedTimePeriod, setSelectedTimePeriod ] = useState<number>(7)
+  const [ selectedArea, setSelectedArea ] = useState<string | null>(null)
+
   const { isLoading, data } = useQuery(
     [ '/measurements' ],
     () =>
@@ -27,8 +29,13 @@ const Statistics: NextPage = () => {
 
   const chartData: FormattedChartData[] = useMemo(() => {
     if (!data?.measurements) return []
-    return formatChartData(data.measurements, days)
-  }, [ data, days ])
+    return formatChartData(data.measurements, selectedTimePeriod, selectedArea)
+  }, [ data, selectedTimePeriod, selectedArea ])
+
+  const areas: string[] = useMemo(() => {
+    if (!data?.measurements) return []
+    return getAllUniqueAreas(data.measurements)
+  }, [ data ])
 
   return (
     <Layout>
@@ -46,8 +53,16 @@ const Statistics: NextPage = () => {
           </Typography>
           <StatisticsChart
             chartData={chartData}
-            days={days}
-            onDaysChange={event => setDays(Number(event.target.value))}
+            selectedTimePeriod={selectedTimePeriod}
+            selectedArea={selectedArea}
+            allAreas={areas}
+            handleAreaChange={event => {
+              const newArea = event.target.value
+              setSelectedArea(newArea === 'all' ? null : newArea)
+            }}
+            handleDaysChange={event =>
+              setSelectedTimePeriod(Number(event.target.value))
+            }
           />
         </>
       )}
