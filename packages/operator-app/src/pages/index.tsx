@@ -3,45 +3,49 @@ import { NextPage } from 'next'
 import { useMemo } from 'react'
 import { toast } from 'react-toastify'
 import Link from 'next/link'
+import { Typography } from '@mui/material'
 import { Layout } from '../components/layout'
-import { getMeasurements } from '../services/queries'
-import { FormattedQueryData, Measurement } from '../types/measurement'
+import { getQueries } from '../services/queries'
+import { Query } from '../types/measurement'
 import { Loading } from '../components/loading'
+import { QueryCard } from '../components/queryCard'
+import { theme } from '../theme/default'
 
 
 const Home: NextPage = () => {
-  const { isLoading, data } = useQuery(
-    [ '/measurements' ],
-    () =>
-      getMeasurements().catch(() =>
-        toast.error('Error while fetching measurement data')),
-    {
-      cacheTime: 0,
-      refetchOnWindowFocus: false
-    }
-  )
+  const { isLoading, data } = useQuery([ '/measurements' ], () => getQueries(), {
+    cacheTime: 0,
+    refetchOnWindowFocus: false,
+    onError: () => toast.error('Error while fetching query data')
+  })
 
-  const uniqueQueries: FormattedQueryData[] = useMemo(() => {
-    if (!data?.measurements) return []
-    return data.measurements.filter((value: Measurement, index: number, self: Measurement[]) =>
-      self.findIndex((measurement: Measurement) => measurement.queryId === value.queryId) === index)
-  }, [ data ])
+  const children = useMemo(() => {
+    if (isLoading) return <Loading />
 
-  return (
-    <Layout>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <ul>
-          {uniqueQueries.map(({ queryId, timestamp }) => (
-            <Link href={`/details?id=${queryId}`} key={queryId}>
-              <li key={queryId}>{new Date(timestamp).toLocaleString()}</li>
-            </Link>
-          ))}
-        </ul>
-      )}
-    </Layout>
-  )
+    if (!data?.queries || data?.queries?.length === 0)
+      return (
+        <Typography
+          variant="h5"
+          color={theme.palette.text.primary}
+          textAlign="center"
+        >
+          No queries found.
+        </Typography>
+      )
+
+    return data.queries.map((query: Query) => (
+      <Link
+        href={`/details?id=${query.id}`}
+        key={query.id}
+        passHref
+        style={{ textDecoration: 'none' }}
+      >
+        <QueryCard query={query} />
+      </Link>
+    ))
+  }, [ data, isLoading ])
+
+  return <Layout>{children}</Layout>
 }
 
 export default Home
