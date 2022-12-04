@@ -4,7 +4,7 @@ import { PermissionStatus } from 'expo-modules-core'
 import { logger } from '../utils/logger'
 import { FCMDataMessage, MeasurementType } from '../types/types'
 import { report } from './backend'
-import { getCurrentCoordinates } from './location'
+import { getDistanceOfCoordinates, getCurrentCoordinates } from './location'
 
 
 // Logger tag
@@ -78,7 +78,16 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       return
     }
 
-    // TODO check coordinates
+    // Parse coordinates and range from query
+    const center = { latitude: Number.parseFloat(query.latitude), longitude: Number.parseFloat(query.longitude) }
+    const range = Number.parseFloat(query.range)
+
+    // Check that the coordinates are within the queried area
+    const distance = getDistanceOfCoordinates(center, coordinates)
+    if (distance > range) {
+      logger.log(TAG, 'Aborted performing measurements as coordinates are out of the queried range')
+      return
+    }
 
     // Take measurements
     const bandwidth = query.measurements.includes(MeasurementType.Bandwidth)
@@ -90,6 +99,7 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
     const signalStrength = query.measurements.includes(MeasurementType.SignalStrength)
       ? await measureSignalStrength()
       : null
+
     // Report measurements
     await report({
       queryId: query.id,

@@ -13,7 +13,7 @@ import {
   setForegroundMessageListener
 } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
-import { checkLocationPermissions, getCurrentCoordinates } from './services/location'
+import { checkLocationPermissions } from './services/location'
 import HistoryScreen from './screens/HistoryScreen'
 import HomeScreen from './screens/HomeScreen'
 import { colors } from './theme/colors'
