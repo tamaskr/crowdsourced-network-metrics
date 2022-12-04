@@ -13,7 +13,7 @@ import {
   setForegroundMessageListener
 } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
-import { checkLocationPermissions } from './services/location'
+import { checkLocationPermissions, getCurrentCoordinates } from './services/location'
 import HistoryScreen from './screens/HistoryScreen'
 import HomeScreen from './screens/HomeScreen'
 import { colors } from './theme/colors'
@@ -33,10 +33,12 @@ function App() {
 
   // Check if permissions exist, request them if not
   useEffect(() => {
-    checkCellularPermissions()
-    checkLocationPermissions()
-    checkMessagingPermissions().then(granted => {
-      if (granted) enableMessaging()
+    checkCellularPermissions().then(() => {
+      checkLocationPermissions().then(() => {
+        checkMessagingPermissions().then(granted => {
+          if (granted) enableMessaging()
+        })
+      })
     })
   }, [])
 

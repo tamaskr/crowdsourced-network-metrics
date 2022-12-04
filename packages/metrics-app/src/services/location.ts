@@ -9,10 +9,11 @@ const TAG = 'Location'
 export async function checkLocationPermissions(): Promise<boolean> {
   logger.log(TAG, 'Checking location permissions...')
   try {
-    const permissionResponse = await Location.requestBackgroundPermissionsAsync()
-    const hasPermission = permissionResponse.granted
-    logger.log(TAG, 'Checked location permissions, granted =', hasPermission)
-    return hasPermission
+    const foregroundPermissionResponse = await Location.requestForegroundPermissionsAsync()
+    logger.log(TAG, 'Checked foreground location permissions, granted =', foregroundPermissionResponse.granted)
+    const backgroundPermissionResponse = await Location.requestBackgroundPermissionsAsync()
+    logger.log(TAG, 'Checked background location permissions, granted =', backgroundPermissionResponse.granted)
+    return foregroundPermissionResponse.granted && backgroundPermissionResponse.granted
   } catch (error) {
     logger.error(TAG, 'Failed to check location permissions', error)
     return false
@@ -23,8 +24,9 @@ export async function checkLocationPermissions(): Promise<boolean> {
 export async function getCurrentCoordinates(): Promise<{ latitude: number; longitude: number } | null> {
   logger.log(TAG, 'Getting current coordinates...')
   try {
-    const permissionResponse = await Location.getBackgroundPermissionsAsync()
-    if (!permissionResponse.granted) {
+    const foregroundPermissionResponse = await Location.getForegroundPermissionsAsync()
+    const backgroundPermissionResponse = await Location.getBackgroundPermissionsAsync()
+    if (!foregroundPermissionResponse.granted || !backgroundPermissionResponse.granted) {
       logger.log(TAG, 'Location permissions not granted')
       return null
     }
