@@ -83,4 +83,4 @@ jobs:
         env:
           version: ${{ steps.get-version.outputs.current-version }}
         run: |
-          gh release create "${{ env.version }}" 'cmnm-dev.apk' 'cmnm-prod.apk' --generate-notes
+          gh release create "${{ env.version }}" 'cmnm-dev.apk' --generate-notes
