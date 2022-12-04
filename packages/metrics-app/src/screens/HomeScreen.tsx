@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  // eslint-disable-next-line react-native/split-platform-components
-  ToastAndroid
-} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import Toast from 'react-native-root-toast'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Tutorial from '../components/Tutorial'
 import { enableMessaging, disableMessaging } from '../services/messaging'
+import { colors } from '../theme/colors'
 
 
 const styles = StyleSheet.create({
@@ -20,7 +15,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10
   },
-  // eslint-disable-next-line react-native/no-color-literals
   optinoutbutton: {
     marginVertical: 10,
     height: 40,
@@ -33,64 +27,60 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
     borderWidth: 2,
-    borderColor: '#5d57ff',
+    borderColor: colors.primary,
     textAlign: 'center',
     textAlignVertical: 'center'
   }
 })
 
 function HomeScreen() {
-  const [ isOptIn, setIsOptIn ] = useState(false)
+  const [ isOptedIn, setIsOptedIn ] = useState(false)
   const [ isLoading, setIsLoading ] = useState(true)
 
+  // Check on app launch if the user has opted in or out before
   useEffect(() => {
-    async function fetchOpt() {
-      await AsyncStorage.getItem('user').then(value => {
-        console.log('value of opted:', value)
-        if (value === null || value === JSON.stringify(true)) {
-          setIsOptIn(true)
-        }
-        setIsOptIn(value === JSON.stringify(true))
-        setIsLoading(false)
-      })
-    }
-    fetchOpt()
+    AsyncStorage.getItem('isUserOptedIn').then(value => {
+      if (value !== null) setIsOptedIn(value === 'true')
+      setIsLoading(false)
+    })
   }, [])
 
   // user subscribe to get FCM messages and send reports
-  function subscribe() {
+  function optin() {
     enableMessaging()
-    ToastAndroid.show(
-      'User starts recieve FCM Messages and send reports!',
-      ToastAndroid.SHORT
-    )
+    Toast.show('Opted in to metrics collection!', {
+      duration: Toast.durations.SHORT,
+      position: 120,
+      animation: true,
+      backgroundColor: colors.primary
+    })
     // save the user opt-in to AsyncStorage
-    AsyncStorage.setItem('user', JSON.stringify(true))
+    AsyncStorage.setItem('isUserOptedIn', JSON.stringify(true))
+    setIsOptedIn(true)
   }
+
   // user unsubscribe and no longer to get FCM messages and send reports
-  function unsubscribe() {
+  function optout() {
     disableMessaging()
-    ToastAndroid.show(
-      'User no longer receive FCM messages and send reports!',
-      ToastAndroid.SHORT
-    )
+    Toast.show('Opted out from metrics collection!', {
+      duration: Toast.durations.SHORT,
+      position: 120,
+      animation: true,
+      backgroundColor: colors.primary
+    })
     // save the user opt-out to AsyncStorage
-    AsyncStorage.setItem('user', JSON.stringify(false))
+    AsyncStorage.setItem('isUserOptedIn', JSON.stringify(false))
+    setIsOptedIn(false)
   }
 
   if (isLoading) return null
   return (
     <View style={styles.container}>
       <Tutorial />
-      <Text>You have opted in to metrics collection</Text>
-      <TouchableOpacity
-        onPress={() => {
-          isOptIn ? unsubscribe() : subscribe()
-          setIsOptIn(!isOptIn)
-        }}
-      >
+      <Text>Metrics collection {isOptedIn ? 'enabled' : 'disabled'}</Text>
+      <TouchableOpacity onPress={isOptedIn ? optout : optin}>
         <Text style={styles.optinoutbutton}>
-          {isOptIn ? 'opt-out' : 'opt-in'}
+          {isOptedIn ? 'Opt out' : 'Opt in'}
         </Text>
       </TouchableOpacity>
       <StatusBar style='auto' />

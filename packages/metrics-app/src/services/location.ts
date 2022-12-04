@@ -8,7 +8,7 @@ const TAG = 'Location'
 // Radius of the Earth in meters
 const EARTH_RADIUS = 6378137
 
-interface Coordinate {
+export interface Coordinate {
   latitude: number
   longitude: number
 }
@@ -70,4 +70,26 @@ export function getDistanceOfCoordinates(coordinate1: Coordinate, coordinate2: C
 
   // Return the distance multiplied by the Earth's radius
   return Math.round(EARTH_RADIUS * distance)
+}
+
+// Get the area (aka locality) of the coordinates
+export async function getReverseGeocodedArea(coordinate: Coordinate): Promise<string | null> {
+  try {
+    const BIGDATACLOUD_API_KEY = 'bdc_ec1c6c097de9484c8db9633444fb8cca'
+    const url = `https://api.bigdatacloud.net/data/reverse-geocode?latitude=${coordinate?.latitude}&longitude=${coordinate?.longitude}&localityLanguage=en&key=${BIGDATACLOUD_API_KEY}`
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      logger.error(TAG, 'Failed to reverse geocode the area')
+      return null
+    }
+
+    const data = await response.json()
+    const area = data.locality ?? null
+    logger.log(TAG, 'Reverse geocoded area is', area)
+    return area
+  } catch (error) {
+    logger.error(TAG, 'Failed to reverse geocode the area', error)
+    return null
+  }
 }

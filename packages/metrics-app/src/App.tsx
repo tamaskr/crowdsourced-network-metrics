@@ -6,12 +6,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
-import {
-  checkMessagingPermissions,
-  enableMessaging,
-  setBackgroundMessageListener,
-  setForegroundMessageListener
-} from './services/messaging'
+import { checkMessagingPermissions, setBackgroundMessageListener, setForegroundMessageListener } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
 import { checkLocationPermissions } from './services/location'
 import HistoryScreen from './screens/HistoryScreen'
@@ -33,11 +28,9 @@ function App() {
 
   // Check if permissions exist, request them if not
   useEffect(() => {
-    checkCellularPermissions().then(() => {
-      checkLocationPermissions().then(() => {
-        checkMessagingPermissions().then(granted => {
-          if (granted) enableMessaging()
-        })
+    checkMessagingPermissions().then(() => {
+      checkCellularPermissions().then(() => {
+        checkLocationPermissions()
       })
     })
   }, [])

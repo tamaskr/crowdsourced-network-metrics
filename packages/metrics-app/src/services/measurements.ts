@@ -4,7 +4,7 @@ import { PermissionStatus } from 'expo-modules-core'
 import { logger } from '../utils/logger'
 import { FCMDataMessage, MeasurementType } from '../types/types'
 import { report } from './backend'
-import { getDistanceOfCoordinates, getCurrentCoordinates } from './location'
+import { getDistanceOfCoordinates, getCurrentCoordinates, getReverseGeocodedArea } from './location'
 
 
 // Logger tag
@@ -23,7 +23,7 @@ async function measureDownloadBandwidth(): Promise<number | null> {
     delete results[1]
     setResourceLoggingEnabled(false)
     const duration = performance.getEntriesByName(url, 'resource').pop()?.duration ?? 0
-    const kbps = Math.round(25 * 1024 * 1000 / duration)
+    const kbps = Math.round((25 * 1024 * 1000) / duration)
     logger.log(TAG, 'Measured download bandwidth is', kbps, 'kbps')
     return kbps
   } catch (error) {
@@ -100,6 +100,9 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       ? await measureSignalStrength()
       : null
 
+    // Check the area of the coordinates
+    const area = await getReverseGeocodedArea(coordinates)
+
     // Report measurements
     await report({
       queryId: query.id,
@@ -107,7 +110,7 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       latency,
       signalStrength,
       coordinates,
-      area: null // TODO implement reverse geocoded locality here
+      area
     })
     logger.log(TAG, 'Performed measurements successfully')
   } catch (error) {
