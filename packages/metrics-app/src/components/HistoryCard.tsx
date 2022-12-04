@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { View, StyleSheet, Text, ViewStyle } from 'react-native'
 import { Divider } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { useTranslation } from 'react-i18next'
 import { colors } from '../theme/colors'
 import { Measurement, MeasurementType } from '../types/types'
 
@@ -45,15 +46,17 @@ interface HistoryCardProps {
 
 // Returns all the properties that are needed to display the measurements
 const getMeasurementData = (measurement: MeasurementType) => {
+  const { t } = useTranslation()
+
   switch (measurement) {
     case MeasurementType.Bandwidth: {
-      return { label: 'Bandwidth', icon: 'collapse-all-outline', unit: 'Mbit/s' }
+      return { label: t('historyPage.bandwidth'), icon: 'collapse-all-outline', unit: 'Mbit/s' }
     }
     case MeasurementType.Latency: {
-      return { label: 'Latency', icon: 'clock-fast', unit: 'ms' }
+      return { label: t('historyPage.latency'), icon: 'clock-fast', unit: 'ms' }
     }
     case MeasurementType.SignalStrength: {
-      return { label: 'Signal strength', icon: 'signal' }
+      return { label: t('historyPage.signalStr'), icon: 'signal' }
     }
   }
 }

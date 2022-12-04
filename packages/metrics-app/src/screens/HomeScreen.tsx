@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { StatusBar } from 'expo-status-bar'
+import { useTranslation } from 'react-i18next'
+import SwitchSelector from 'react-native-switch-selector'
 import {
   StyleSheet,
   Text,
@@ -11,6 +13,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Tutorial from '../components/Tutorial'
 import { enableMessaging, disableMessaging } from '../services/messaging'
+import { colors } from '../theme/colors'
 
 
 const styles = StyleSheet.create({
@@ -36,12 +39,24 @@ const styles = StyleSheet.create({
     borderColor: '#5d57ff',
     textAlign: 'center',
     textAlignVertical: 'center'
+  },
+  langSelector: {
+    marginVertical: 20,
+    paddingHorizontal: 80,
+    alignItems: 'center'
   }
 })
 
 function HomeScreen() {
   const [ isOptIn, setIsOptIn ] = useState(false)
   const [ isLoading, setIsLoading ] = useState(true)
+  const { t, i18n } = useTranslation()
+
+  const options = [
+    { label: 'EN', value: 'en' },
+    { label: 'SU', value: 'fi' }
+  ]
+
 
   useEffect(() => {
     async function fetchOpt() {
@@ -61,7 +76,7 @@ function HomeScreen() {
   function subscribe() {
     enableMessaging()
     ToastAndroid.show(
-      'User starts recieve FCM Messages and send reports!',
+      t('homePage.infoToastIN'),
       ToastAndroid.SHORT
     )
     // save the user opt-in to AsyncStorage
@@ -71,7 +86,7 @@ function HomeScreen() {
   function unsubscribe() {
     disableMessaging()
     ToastAndroid.show(
-      'User no longer receive FCM messages and send reports!',
+      t('homePage.infoToastOUT'),
       ToastAndroid.SHORT
     )
     // save the user opt-out to AsyncStorage
@@ -82,7 +97,7 @@ function HomeScreen() {
   return (
     <View style={styles.container}>
       <Tutorial />
-      <Text>You have opted in to metrics collection</Text>
+      <Text>{t('homePage.infoMsg')}</Text>
       <TouchableOpacity
         onPress={() => {
           isOptIn ? unsubscribe() : subscribe()
@@ -90,11 +105,25 @@ function HomeScreen() {
         }}
       >
         <Text style={styles.optinoutbutton}>
-          {isOptIn ? 'opt-out' : 'opt-in'}
+          {isOptIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
         </Text>
       </TouchableOpacity>
       <StatusBar style='auto' />
+      <View style={styles.langSelector}>
+        <SwitchSelector
+          options={options}
+          initial={0}
+          selectedColor={colors.background.white}
+          buttonColor={colors.primary}
+          borderColor={colors.primary}
+          hasPadding
+          onPress={language => {
+            i18n.changeLanguage(language)
+          }}/>
+      </View>
     </View>
+
+
   )
 }
 

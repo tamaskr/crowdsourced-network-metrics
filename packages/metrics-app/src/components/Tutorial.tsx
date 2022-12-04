@@ -1,12 +1,14 @@
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useTranslation } from 'react-i18next'
 import { text } from '../utils/tutorialText'
 
 
 const Tutorial = () => {
   const [ isShowed, setIsShowed ] = useState(false)
   const [ isLoading, setIsLoading ] = useState(true)
+  const { t } = useTranslation()
 
   useEffect(() => {
     AsyncStorage.getItem('tutorial').then(value => {
@@ -24,7 +26,7 @@ const Tutorial = () => {
     >
       <View style={styles.container}>
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>ATTENTION</Text>
+          <Text style={styles.modalTitle}>{t('tutorial.title')}</Text>
           <Text>{text}</Text>
           <Pressable
             style={[ styles.button, styles.buttonClose ]}
