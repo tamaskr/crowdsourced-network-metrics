@@ -8,7 +8,7 @@ const TAG = 'Location'
 // Radius of the Earth in meters
 const EARTH_RADIUS = 6378137
 
-interface Coordinate {
+export interface Coordinate {
   latitude: number
   longitude: number
 }
