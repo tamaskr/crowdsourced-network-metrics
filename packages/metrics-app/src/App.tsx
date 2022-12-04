@@ -17,6 +17,7 @@ import { checkLocationPermissions } from './services/location'
 import HistoryScreen from './screens/HistoryScreen'
 import HomeScreen from './screens/HomeScreen'
 import { colors } from './theme/colors'
+import './localization/i18n'
 
 
 const styles = StyleSheet.create({
@@ -44,7 +45,6 @@ function App() {
   useEffect(() => {
     return setForegroundMessageListener(performMeasurementsFromQuery)
   }, [])
-
   return (
     <RootSiblingParent>
       <NavigationContainer>
