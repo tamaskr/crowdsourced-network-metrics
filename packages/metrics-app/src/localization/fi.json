@@ -1,28 +1,28 @@
 {
   "bottomNav": {
-    "home": "Home",
-    "history": "History"
+    "home": "Koti",
+    "history": "Historia"
   },
   "homePage": {
     "optInBtn": "OPT-IN",
     "optOutBtn": "OPT-OUT",
-    "infoMsg": "You have to opt in to metrics collection",
-    "infoToastIN": "User starts receive FCM Messages and send reports",
-    "infoToastOUT": "User no longer receive FCM messages and send reports"
+    "infoMsg": "Sinun on hyväksyttävä mittareiden kerääminen",
+    "infoToastIN": "Käyttäjä alkaa vastaanottaa FCM-viestejä ja lähettää raportteja",
+    "infoToastOUT": "Käyttäjä ei enää vastaanota FCM-viestejä ja lähetä raportteja"
   },
   "historyPage": {
-    "historyTitle": "History",
-    "bandwidth": "Bandwidth",
-    "latency": "Latency",
-    "signalStr": "Signal strength",
-    "historyRfshToast": "History refreshed successfully",
+    "historyTitle": "Historia",
+    "bandwidth": "Kaistanleveys",
+    "latency": "Viive",
+    "signalStr": "Signaalin voimakkuus",
+    "historyRfshToast": "Historia on päivitetty",
     "mbit": "Mbit/s",
     "ms": "ms",
-    "noDataYet": "No measurements have been recorded yet"
+    "noDataYet": "Mittauksia ei ole vielä tehty"
   },
   "tutorial": {
-    "tutorialText" : "We are going to collect your most private and personal data for manipulative use in the dark web, also the application will most likely consume a huge amount of your phones battery and slow down the processor a bit",
-    "title": "ATTENTION",
-    "okBtn": "Continue"
+    "tutorialText" : "Keräämme yksityisimmät ja henkilökohtaisimmat tietosi manipuloivaa käyttöä varten pimeässä verkossa, myös sovellus kuluttaa todennäköisesti valtavan määrän puhelimesi akkua ja hidastaa hieman prosessoria",
+    "title": "HUOMIO",
+    "okBtn": "Jatkaa"
   }
 }
