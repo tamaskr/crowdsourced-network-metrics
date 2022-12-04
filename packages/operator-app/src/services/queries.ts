@@ -7,9 +7,16 @@ const baseUrl = 'https://europe-west1-crowdsourced-network-metrics.cloudfunction
 
 const headers = { 'Content-Type': 'application/json' }
 
-// Report a measurement to the backend to be stored
+
+// Get all measurements
 export const getMeasurements = async () => {
   const response = await fetch(`${baseUrl}measurements`, { method: 'GET' })
+  return await response.json()
+}
+
+// Get all queries
+export const getQueries = async () => {
+  const response = await fetch(`${baseUrl}query`, { method: 'GET' })
   return await response.json()
 }
 

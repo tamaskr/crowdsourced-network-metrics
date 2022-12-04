@@ -17,7 +17,7 @@ const Details: NextPage = () => {
 
   // Fetch all measurements by query id
   const { isLoading, data } = useQuery<{ success: boolean; measurements: Measurement[] }>(
-    [ `/getMeasurmentsByqueryId?queryId=${queryId}` ],
+    [ 'details', { queryId }],
     () =>
       getMeasurementsByQueryId(queryId as string).catch(() =>
         toast.error('Error while fetching measurement data')),
@@ -74,7 +74,7 @@ const Details: NextPage = () => {
               color={theme.palette.primary.light}
               textAlign="center"
             >
-              Showing data from {measurements.length} responses
+              Showing data from {measurements.length} {measurements.length === 1 ? 'response' : 'responses'}
             </Typography>
           </Grid>
           <Grid item xs={8}>
