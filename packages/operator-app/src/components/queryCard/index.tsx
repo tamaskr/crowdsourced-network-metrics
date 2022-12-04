@@ -27,15 +27,13 @@ export const QueryCard = ({
 }: {
   query: Query
 }) => {
-  // Converted range from decimal range to kilometers
-  const rangeInKilometers = range * 111
   /*
     Calculates map zoom based on the given range parameter
      - if range is 15 kilometers (max), then the map zoom should be 8
      - if the range is 0, map zoom should be 11
      - anything in between those values should have the proportionate value between 8 and 11
   */
-  const mapZoom = 11 - rangeInKilometers / 5
+  const mapZoom = 11 - range / 5
   return (
     <CardContainer>
       <ContentContainer>
@@ -101,7 +99,7 @@ export const QueryCard = ({
           <Source
             id="range"
             type="geojson"
-            data={turf.circle([ longitude, latitude ], rangeInKilometers)}
+            data={turf.circle([ longitude, latitude ], range)}
           >
             <Layer
               id="range-circle"
