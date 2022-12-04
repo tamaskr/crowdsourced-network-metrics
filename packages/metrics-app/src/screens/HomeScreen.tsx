@@ -34,12 +34,12 @@ const styles = StyleSheet.create({
 })
 
 function HomeScreen() {
-  const [ isOptedIn, setIsOptedIn ] = useState(true)
+  const [ isOptedIn, setIsOptedIn ] = useState(false)
   const [ isLoading, setIsLoading ] = useState(true)
 
   // Check on app launch if the user has opted in or out before
   useEffect(() => {
-    AsyncStorage.getItem('user').then(value => {
+    AsyncStorage.getItem('isUserOptedIn').then(value => {
       if (value !== null) setIsOptedIn(value === 'true')
       setIsLoading(false)
     })
@@ -55,7 +55,7 @@ function HomeScreen() {
       backgroundColor: colors.primary
     })
     // save the user opt-in to AsyncStorage
-    AsyncStorage.setItem('user', JSON.stringify(true))
+    AsyncStorage.setItem('isUserOptedIn', JSON.stringify(true))
     setIsOptedIn(true)
   }
 
@@ -69,7 +69,7 @@ function HomeScreen() {
       backgroundColor: colors.primary
     })
     // save the user opt-out to AsyncStorage
-    AsyncStorage.setItem('user', JSON.stringify(false))
+    AsyncStorage.setItem('isUserOptedIn', JSON.stringify(false))
     setIsOptedIn(false)
   }
 
