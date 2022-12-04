@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - location-report
 
 jobs:
   deploy-metrics-app:
@@ -62,13 +61,13 @@ jobs:
           output-path: cmnm-dev.apk
           gradle-task: assembleDebug
 
-#      - name: Build production application (Android)
-#        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
-#        uses: sparkfabrik/android-build-action@v1.2.0
-#        with:
-#          project-path: packages/metrics-app/android
-#          output-path: cmnm-prod.apk
-#          gradle-task: assembleRelease
+      - name: Build production application (Android)
+        if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
+        uses: sparkfabrik/android-build-action@v1.2.0
+        with:
+          project-path: packages/metrics-app/android
+          output-path: cmnm-prod.apk
+          gradle-task: assembleRelease
 
       - name: Tag the latest commit
         if: steps.get-version.outputs.current-version != steps.get-version.outputs.last-version
@@ -83,4 +82,4 @@ jobs:
         env:
           version: ${{ steps.get-version.outputs.current-version }}
         run: |
-          gh release create "${{ env.version }}" 'cmnm-dev.apk' --generate-notes
+          gh release create "${{ env.version }}" 'cmnm-dev.apk' 'cmnm-prod.apk' --generate-notes
