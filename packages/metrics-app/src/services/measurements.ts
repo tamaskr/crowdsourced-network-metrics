@@ -3,9 +3,8 @@ import { getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
 import { PermissionStatus } from 'expo-modules-core'
 import { logger } from '../utils/logger'
 import { FCMDataMessage, MeasurementType } from '../types/types'
-import { getArea } from '../utils/reverseGeocode'
 import { report } from './backend'
-import { getDistanceOfCoordinates, getCurrentCoordinates } from './location'
+import { getDistanceOfCoordinates, getCurrentCoordinates, getReverseGeocodedArea } from './location'
 
 
 // Logger tag
@@ -102,7 +101,7 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       : null
 
     // Check the area of the coordinates
-    const area = await getArea(coordinates)
+    const area = await getReverseGeocodedArea(coordinates)
 
     // Report measurements
     await report({
