@@ -3,7 +3,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   Typography
 } from '@mui/material'
 import { format, isSameDay } from 'date-fns'
@@ -23,22 +22,21 @@ import {
   NameType
 } from 'recharts/src/component/DefaultTooltipContent'
 import { theme } from '../../../theme/default'
-import { FormattedChartData } from '../../../types/chart'
 import { MeasurementUnits } from '../../../types/measurement'
 import { getYAxisLabel } from '../../../utils/chart'
 import { FilterContainer } from './styles'
-import { CustomToolTipLabel } from './tooltip'
+import { CustomToolTipLabel } from './tooltipLabel'
+import { StatisticsChartProps } from './types'
 
 
 export const StatisticsChart = ({
   chartData,
-  days,
-  onDaysChange
-}: {
-  chartData: FormattedChartData[]
-  days: number
-  onDaysChange: (event: SelectChangeEvent<number>) => void
-}) => {
+  selectedTimePeriod,
+  selectedArea,
+  allAreas,
+  handleAreaChange,
+  handleDaysChange
+}: StatisticsChartProps) => {
   const CustomTooltip = ({
     active,
     payload,
@@ -70,6 +68,7 @@ export const StatisticsChart = ({
             label="Avg signal strength"
             color={theme.palette.grey[700]}
             value={signalStrength}
+            rounded={false}
           />
         </div>
       )
@@ -82,17 +81,27 @@ export const StatisticsChart = ({
       <FilterContainer>
         <FormControl style={{ width: '350px', paddingRight: theme.spacing(2) }}>
           <InputLabel>Location</InputLabel>
-          <Select value="all" label="Location" defaultValue="all">
+          <Select
+            value={selectedArea ?? 'all'}
+            label="Location"
+            onChange={handleAreaChange}
+            defaultValue="all"
+          >
             <MenuItem value="all">All locations</MenuItem>
+            {allAreas.map(area => (
+              <MenuItem value={area} key={area}>
+                {area}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl style={{ width: '300px' }}>
           <InputLabel>Time period</InputLabel>
           <Select
-            value={days}
+            value={selectedTimePeriod}
             label="Time period"
-            onChange={onDaysChange}
-            defaultValue={days}
+            onChange={handleDaysChange}
+            defaultValue={7}
           >
             <MenuItem value={3}>Past 3 days</MenuItem>
             <MenuItem value={7}>Past 7 days</MenuItem>
@@ -103,8 +112,11 @@ export const StatisticsChart = ({
           </Select>
         </FormControl>
       </FilterContainer>
-      <ResponsiveContainer width='100%' height={580}>
-        <LineChart data={chartData} margin={{ bottom: 12, left: 26, top: 12, right: 12 }} >
+      <ResponsiveContainer width="100%" height={580}>
+        <LineChart
+          data={chartData}
+          margin={{ bottom: 12, left: 26, top: 12, right: 12 }}
+        >
           <Legend verticalAlign="top" height={50} />
           <CartesianGrid stroke={theme.palette.grey[300]} strokeDasharray="4" />
           <XAxis
