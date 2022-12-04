@@ -6,7 +6,6 @@ import SendIcon from '@mui/icons-material/Send'
 import { object, array, number } from 'yup'
 import { theme } from '../../theme/default'
 import { MeasurementType } from '../../types/measurement'
-import { convertToDecimalDegrees } from '../../utils/coordinates'
 import { measurementOptions } from '../../utils/measurement'
 import { QueryDTO, QueryFormProps } from './types'
 import { QueryMap } from './map'
@@ -42,12 +41,11 @@ export const QueryForm = ({ onSubmit }: QueryFormProps) => {
         latitude,
         range
       }: QueryDTO) => {
-        const formattedRange = convertToDecimalDegrees(range)
         await onSubmit({
           measurements,
           longitude,
           latitude,
-          range: formattedRange
+          range
         })
       }}
       validationSchema={validationSchema}

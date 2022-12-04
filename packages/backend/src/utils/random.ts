@@ -27,7 +27,7 @@ export const generateMockData = (count: number): [ Query[], Measurement[] ] => {
       timestamp,
       measurements: [ MeasurementType.Bandwidth, MeasurementType.Latency, MeasurementType.SignalStrength ],
       coordinates,
-      range: 0.01,
+      range: 2000,
       responseCount
     })
 
