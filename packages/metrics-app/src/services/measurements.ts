@@ -77,6 +77,9 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       logger.warn(TAG, 'Aborted performing measurements as coordinates cannot be obtained')
       return
     }
+
+    // TODO check coordinates
+
     // Take measurements
     const bandwidth = query.measurements.includes(MeasurementType.Bandwidth)
       ? await measureDownloadBandwidth()

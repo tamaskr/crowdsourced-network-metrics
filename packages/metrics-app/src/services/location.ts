@@ -1,3 +1,4 @@
+import * as Location from 'expo-location'
 import { logger } from '../utils/logger'
 
 
@@ -8,8 +9,9 @@ const TAG = 'Location'
 export async function checkLocationPermissions(): Promise<boolean> {
   logger.log(TAG, 'Checking location permissions...')
   try {
-    const hasPermission = true // TODO implement functionality
-    logger.log(TAG, 'Checked location permissions, granted', hasPermission)
+    const permissionResponse = await Location.requestBackgroundPermissionsAsync()
+    const hasPermission = permissionResponse.granted
+    logger.log(TAG, 'Checked location permissions, granted =', hasPermission)
     return hasPermission
   } catch (error) {
     logger.error(TAG, 'Failed to check location permissions', error)
@@ -21,7 +23,13 @@ export async function checkLocationPermissions(): Promise<boolean> {
 export async function getCurrentCoordinates(): Promise<{ latitude: number; longitude: number } | null> {
   logger.log(TAG, 'Getting current coordinates...')
   try {
-    const coordinates = { latitude: 60.2, longitude: 24.8 } // TODO implement functionality
+    const permissionResponse = await Location.getBackgroundPermissionsAsync()
+    if (!permissionResponse.granted) {
+      logger.log(TAG, 'Location permissions not granted')
+      return null
+    }
+    const { coords: { latitude, longitude } } = await Location.getCurrentPositionAsync()
+    const coordinates = { latitude, longitude }
     logger.log(TAG, 'Gotten current coordinates', coordinates)
     return coordinates
   } catch (error) {
