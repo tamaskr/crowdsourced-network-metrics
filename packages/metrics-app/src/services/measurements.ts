@@ -1,5 +1,5 @@
 import performance, { setResourceLoggingEnabled } from 'react-native-performance'
-import { getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
+import { getCarrierNameAsync, getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
 import { PermissionStatus } from 'expo-modules-core'
 import { logger } from '../utils/logger'
 import { FCMDataMessage, MeasurementType } from '../types/types'
@@ -103,6 +103,9 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
     // Check the area of the coordinates
     const area = await getReverseGeocodedArea(coordinates)
 
+    // Get the carrier name
+    const carrier = await getCarrierNameAsync()
+
     // Report measurements
     await report({
       queryId: query.id,
@@ -110,7 +113,8 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       latency,
       signalStrength,
       coordinates,
-      area
+      area,
+      carrier
     })
     logger.log(TAG, 'Performed measurements successfully')
   } catch (error) {

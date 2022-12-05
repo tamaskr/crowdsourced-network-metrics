@@ -11,6 +11,7 @@ export const measurementSchema = z.object({
     longitude: z.number().nonnegative()
   }).strict(),
   area: z.string().nullable().default(null),
+  carrier: z.string().nullable().default(null),
   bandwidth: z.number().int().nullable().default(null),
   latency: z.number().int().nullable().default(null),
   signalStrength: z.number().int().nullable().default(null),

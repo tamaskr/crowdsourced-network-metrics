@@ -25,6 +25,7 @@ export const report = functions.region(REGION).https.onRequest(async (request, r
       queryId: true,
       coordinates: true,
       area: true,
+      carrier: true,
       bandwidth: true,
       latency: true,
       signalStrength: true
