@@ -11,6 +11,14 @@ export const getAllUniqueAreas = (measurements: Measurement[]): string[] => {
   return [ ...new Set(allAreas) ]
 }
 
+// Finds all the unique carriers in an array of measurements and filters out nullable carrier values
+export const getAllUniqueCarriers = (measurements: Measurement[]): string[] => {
+  const allCarriers = measurements
+    .map((measurement: Measurement) => measurement.carrier as string)
+    .filter(Boolean)
+  return [ ...new Set(allCarriers) ]
+}
+
 // Formats the labels on the statistics chart's Y axis from 0-100
 export const getYAxisLabel = (value: number) => {
   return ChartLabels[value / 25]
@@ -94,7 +102,8 @@ export const getNormalizedChartMeasurements = (measurements: {
 export const formatChartData = (
   measurements: Measurement[],
   days: number,
-  area: string | null
+  area: string | null,
+  carrier: string | null
 ): FormattedChartData[] => {
   let currentDay = startOfTomorrow()
   const chartData = []
@@ -108,7 +117,10 @@ export const formatChartData = (
       // Check if the measurement's area matches with the area parameter
       // If no area has been passed to the function, then the area filter is ignored
       const validArea = measurement.area === area || !area
-      return validDay && validArea
+      // Check if the measurement's carrier matches with the carrier parameter
+      // If no carrier has been passed to the function, then the carrier filter is ignored
+      const validCarrier = measurement.carrier === carrier || !carrier
+      return validDay && validArea && validCarrier
     })
     // Get average measurement values (or null, if there are no measurements for that day)
     const averages = getMeasurementAverages(dailyMeasurements)
