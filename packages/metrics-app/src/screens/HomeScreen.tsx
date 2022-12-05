@@ -1,12 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import Toast from 'react-native-root-toast'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
+import { checkLocationPermissions } from '../services/location'
+import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
 import Tutorial from '../components/Tutorial'
-import { enableMessaging, disableMessaging } from '../services/messaging'
 import { colors } from '../theme/colors'
+import { toast } from '../utils/toast'
+import { logger } from '../utils/logger'
 
+
+// Logger tag
+const TAG = 'HomeScreen'
 
 const styles = StyleSheet.create({
   container: {
@@ -37,41 +43,46 @@ function HomeScreen() {
   const [ isOptedIn, setIsOptedIn ] = useState(false)
   const [ isLoading, setIsLoading ] = useState(true)
 
-  // Check on app launch if the user has opted in or out before
+  // Check for a previously saved opted-in state
   useEffect(() => {
-    AsyncStorage.getItem('isUserOptedIn').then(value => {
-      if (value !== null) setIsOptedIn(value === 'true')
-      setIsLoading(false)
-    })
+    AsyncStorage.getItem('isUserOptedIn')
+      .then(value => {
+        if (value !== null) setIsOptedIn(value === 'true')
+        setIsLoading(false)
+      })
+      .catch(error => logger.error(TAG, 'Failed to check for previous opted-in state', error))
   }, [])
 
-  // user subscribe to get FCM messages and send reports
-  function optin() {
-    enableMessaging()
-    Toast.show('Opted in to metrics collection!', {
-      duration: Toast.durations.SHORT,
-      position: 120,
-      animation: true,
-      backgroundColor: colors.primary
-    })
-    // save the user opt-in to AsyncStorage
-    AsyncStorage.setItem('isUserOptedIn', JSON.stringify(true))
-    setIsOptedIn(true)
-  }
+  // Opt in by subscribing to the FCM topic and asking for permissions
+  const optin = useCallback(async () => {
+    try {
+      const messagingGranted = await checkMessagingPermissions()
+      const cellularGranted = await checkCellularPermissions()
+      const locationGranted = await checkLocationPermissions()
+      if (!messagingGranted || !cellularGranted || !locationGranted) {
+        toast('Permissions have not been granted.')
+        return
+      }
+      await enableMessaging()
+      toast('Opted in to metrics collection!')
+      await AsyncStorage.setItem('isUserOptedIn', 'true')
+      setIsOptedIn(true)
+    } catch (error) {
+      logger.error(TAG, 'Failed to opt in', error)
+    }
+  }, [])
 
-  // user unsubscribe and no longer to get FCM messages and send reports
-  function optout() {
-    disableMessaging()
-    Toast.show('Opted out from metrics collection!', {
-      duration: Toast.durations.SHORT,
-      position: 120,
-      animation: true,
-      backgroundColor: colors.primary
-    })
-    // save the user opt-out to AsyncStorage
-    AsyncStorage.setItem('isUserOptedIn', JSON.stringify(false))
-    setIsOptedIn(false)
-  }
+  // Opt out by unsubscribing from the FCM topic
+  const optout = useCallback(async () => {
+    try {
+      await disableMessaging()
+      toast('Opted out from metrics collection!')
+      await AsyncStorage.setItem('isUserOptedIn', 'false')
+      setIsOptedIn(false)
+    } catch (error) {
+      logger.error(TAG, 'Failed to opt out', error)
+    }
+  }, [])
 
   if (isLoading) return null
   return (
