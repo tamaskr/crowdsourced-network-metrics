@@ -5,6 +5,7 @@ import { logger } from '../utils/logger'
 import { FCMDataMessage, MeasurementType } from '../types/types'
 import { report } from './backend'
 import { getDistanceOfCoordinates, getCurrentCoordinates, getReverseGeocodedArea } from './location'
+import { getCachedMeasurements, setCacheMeasurements } from './cache'
 
 
 // Logger tag
@@ -89,6 +90,20 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       return
     }
 
+    // Check if cached measurements are available
+    const cachedMeasurements = await getCachedMeasurements()
+    if (cachedMeasurements) {
+      await report({
+        queryId: query.id,
+        coordinates,
+        area: cachedMeasurements.area,
+        bandwidth: cachedMeasurements.bandwidth,
+        latency: cachedMeasurements.latency,
+        signalStrength: cachedMeasurements.signalStrength
+      })
+      return
+    }
+
     // Take measurements
     const bandwidth = query.measurements.includes(MeasurementType.Bandwidth)
       ? await measureDownloadBandwidth()
@@ -103,14 +118,17 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
     // Check the area of the coordinates
     const area = await getReverseGeocodedArea(coordinates)
 
+    // Cache measurements
+    await setCacheMeasurements({ bandwidth, latency, signalStrength, area })
+
     // Report measurements
     await report({
       queryId: query.id,
+      coordinates,
+      area,
       bandwidth,
       latency,
-      signalStrength,
-      coordinates,
-      area
+      signalStrength
     })
     logger.log(TAG, 'Performed measurements successfully')
   } catch (error) {
