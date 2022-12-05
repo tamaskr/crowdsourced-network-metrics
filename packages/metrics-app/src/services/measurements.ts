@@ -121,7 +121,6 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
 
     // Get the carrier name
     const carrier = await getCarrierNameAsync()
-    console.log(carrier)
 
     // Cache measurements
     await setCacheMeasurements({ area, carrier, bandwidth, latency, signalStrength })
