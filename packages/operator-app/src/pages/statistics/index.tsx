@@ -30,8 +30,8 @@ const Statistics: NextPage = () => {
 
   const chartData: FormattedChartData[] = useMemo(() => {
     if (!data?.measurements) return []
-    return formatChartData(data.measurements, selectedTimePeriod, selectedArea)
-  }, [ data, selectedTimePeriod, selectedArea ])
+    return formatChartData(data.measurements, selectedTimePeriod, selectedArea, selectedCarrier)
+  }, [ data, selectedTimePeriod, selectedArea, selectedCarrier ])
 
   const areas: string[] = useMemo(() => {
     if (!data?.measurements) return []
