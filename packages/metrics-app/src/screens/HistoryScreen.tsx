@@ -3,11 +3,12 @@ import { StatusBar } from 'expo-status-bar'
 import { Text, StyleSheet, View, FlatList } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Toast from 'react-native-root-toast'
 import { logger } from '../utils/logger'
 import { Measurement } from '../types/types'
 import { HistoryCard } from '../components/HistoryCard'
 import { colors } from '../theme/colors'
+import { toast } from '../utils/toast'
+
 
 // Logger tag
 const TAG = 'HistoryScreen'
@@ -80,12 +81,7 @@ function HistoryScreen() {
         onRefresh={() => {
           setIsLoading(true)
           getMeasurementHistory().then(() => {
-            Toast.show('History refreshed successfully!', {
-              duration: Toast.durations.SHORT,
-              position: 120,
-              animation: true,
-              backgroundColor: colors.primary
-            })
+            toast('History refreshed successfully!')
           })
         }}
         refreshing={isLoading}
