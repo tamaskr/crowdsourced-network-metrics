@@ -120,6 +120,8 @@ const Details: NextPage = () => {
                     <TableCell><b>Bandwidth</b></TableCell>
                     <TableCell><b>Latency</b></TableCell>
                     <TableCell><b>Signal strength</b></TableCell>
+                    <TableCell><b>Area</b></TableCell>
+                    <TableCell><b>Carrier</b></TableCell>
                     <TableCell><b>Latitude</b></TableCell>
                     <TableCell><b>Longitude</b></TableCell>
                   </TableRow>
@@ -131,6 +133,8 @@ const Details: NextPage = () => {
                       <TableCell>{typeof measurement.bandwidth === 'number' ? `${measurement.bandwidth} kbps` : '-'}</TableCell>
                       <TableCell>{typeof measurement.latency === 'number' ? `${measurement.latency} ms` : '-'}</TableCell>
                       <TableCell>{typeof measurement.signalStrength === 'number' ? signalStrengthNames[measurement.signalStrength] : '-'}</TableCell>
+                      <TableCell>{measurement.area ?? 'Unknown'}</TableCell>
+                      <TableCell>{measurement.carrier ?? 'Unknown'}</TableCell>
                       <TableCell>{measurement.coordinates.latitude}&deg;</TableCell>
                       <TableCell>{measurement.coordinates.longitude}&deg;</TableCell>
                     </TableRow>
