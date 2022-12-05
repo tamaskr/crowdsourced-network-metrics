@@ -53,8 +53,8 @@ function HomeScreen() {
   const { t, i18n } = useTranslation()
 
   const options = [
-    { label: 'EN', value: 'en' },
-    { label: 'SU', value: 'fi' }
+    { label: 'English', value: 'en' },
+    { label: 'Suomi', value: 'fi' }
   ]
 
 
