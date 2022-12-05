@@ -12,10 +12,11 @@ const KEY = 'CachedMeasurements'
 const EXPIRY = 60 * 1000
 
 interface CachedMeasurements {
+  area: string | null
+  carrier: string | null
   bandwidth: number | null
   latency: number | null
   signalStrength: number | null
-  area: string | null
 }
 
 // Get cached measurements from AsyncStorage

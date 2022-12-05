@@ -97,7 +97,7 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
         queryId: query.id,
         coordinates,
         area: cachedMeasurements.area,
-        carrier: null,
+        carrier: cachedMeasurements.carrier,
         bandwidth: cachedMeasurements.bandwidth,
         latency: cachedMeasurements.latency,
         signalStrength: cachedMeasurements.signalStrength
@@ -121,9 +121,10 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
 
     // Get the carrier name
     const carrier = await getCarrierNameAsync()
+    console.log(carrier)
 
     // Cache measurements
-    await setCacheMeasurements({ bandwidth, latency, signalStrength, area })
+    await setCacheMeasurements({ area, carrier, bandwidth, latency, signalStrength })
 
     // Report measurements
     await report({
