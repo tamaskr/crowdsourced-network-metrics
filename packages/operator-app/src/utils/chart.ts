@@ -11,6 +11,14 @@ export const getAllUniqueAreas = (measurements: Measurement[]): string[] => {
   return [ ...new Set(allAreas) ]
 }
 
+// Finds all the unique carriers in an array of measurements and filters out nullable carrier values
+export const getAllUniqueCarriers = (measurements: Measurement[]): string[] => {
+  const allCarriers = measurements
+    .map((measurement: Measurement) => measurement.carrier as string)
+    .filter(Boolean)
+  return [ ...new Set(allCarriers) ]
+}
+
 // Formats the labels on the statistics chart's Y axis from 0-100
 export const getYAxisLabel = (value: number) => {
   return ChartLabels[value / 25]

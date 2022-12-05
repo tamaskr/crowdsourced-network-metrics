@@ -31,10 +31,13 @@ import { StatisticsChartProps } from './types'
 
 export const StatisticsChart = ({
   chartData,
-  selectedTimePeriod,
   selectedArea,
   allAreas,
   handleAreaChange,
+  selectedCarrier,
+  allCarriers,
+  handleCarrierChange,
+  selectedTimePeriod,
   handleDaysChange
 }: StatisticsChartProps) => {
   const CustomTooltip = ({
@@ -91,6 +94,22 @@ export const StatisticsChart = ({
             {allAreas.map(area => (
               <MenuItem value={area} key={area}>
                 {area}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl style={{ width: '350px', paddingRight: theme.spacing(2) }}>
+          <InputLabel>Carrier</InputLabel>
+          <Select
+            value={selectedCarrier ?? 'all'}
+            label="Carrier"
+            onChange={handleCarrierChange}
+            defaultValue="all"
+          >
+            <MenuItem value="all">All carriers</MenuItem>
+            {allCarriers.map(carrier => (
+              <MenuItem value={carrier} key={carrier}>
+                {carrier}
               </MenuItem>
             ))}
           </Select>
