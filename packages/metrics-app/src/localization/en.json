@@ -4,11 +4,14 @@
     "history": "History"
   },
   "homePage": {
-    "optInBtn": "OPT-IN",
-    "optOutBtn": "OPT-OUT",
-    "infoMsg": "You have to opt in to metrics collection",
-    "infoToastIN": "User starts receive FCM Messages and send reports",
-    "infoToastOUT": "User no longer receive FCM messages and send reports"
+    "optInBtn": "OPT IN",
+    "optOutBtn": "OPT OUT",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "infoMsg": "Metrics collection",
+    "infoToastIN": "Opted in to metrics collection!",
+    "infoToastOUT": "Opted out from metrics collection!",
+    "infoToastPermission": "Permissions have not been granted."
   },
   "historyPage": {
     "historyTitle": "History",

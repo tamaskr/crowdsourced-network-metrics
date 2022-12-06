@@ -4,11 +4,14 @@
     "history": "Historia"
   },
   "homePage": {
-    "optInBtn": "OPT-IN",
-    "optOutBtn": "OPT-OUT",
-    "infoMsg": "Sinun on hyväksyttävä mittareiden kerääminen",
-    "infoToastIN": "Käyttäjä alkaa vastaanottaa FCM-viestejä ja lähettää raportteja",
-    "infoToastOUT": "Käyttäjä ei enää vastaanota FCM-viestejä ja lähetä raportteja"
+    "optInBtn": "OPT IN",
+    "optOutBtn": "OPT OUT",
+    "enabled": "käytössä",
+    "disabled": "pois käytöstä",
+    "infoMsg": "Mittarikokoelma",
+    "infoToastIN": "Osallistunut mittareiden keräämiseen!",
+    "infoToastOUT": "Poistettu mittareiden keräämisestä!",
+    "infoToastPermission": "Lupia ei ole myönnetty."
   },
   "historyPage": {
     "historyTitle": "Historia",

@@ -98,11 +98,11 @@ function HomeScreen() {
       const cellularGranted = await checkCellularPermissions()
       const locationGranted = await checkLocationPermissions()
       if (!messagingGranted || !cellularGranted || !locationGranted) {
-        toast('Permissions have not been granted.')
+        toast(t('homePage.infoToastPermission'))
         return
       }
       await enableMessaging()
-      toast('Opted in to metrics collection!')
+      toast(t('homePage.infoToastIN'))
       await AsyncStorage.setItem('isUserOptedIn', 'true')
       setIsOptedIn(true)
     } catch (error) {
@@ -114,7 +114,7 @@ function HomeScreen() {
   const optout = useCallback(async () => {
     try {
       await disableMessaging()
-      toast('Opted out from metrics collection!')
+      toast(t('homePage.infoToastOUT'))
       await AsyncStorage.setItem('isUserOptedIn', 'false')
       setIsOptedIn(false)
     } catch (error) {
@@ -126,10 +126,10 @@ function HomeScreen() {
   return (
     <View style={styles.container}>
       <Tutorial />
-      <Text>Metrics collection {isOptedIn ? 'enabled' : 'disabled'}</Text>
+      <Text>{t('homePage.infoMsg')} {isOptedIn ? t('homePage.enabled') : t('homePage.disabled')}</Text>
       <TouchableOpacity onPress={isOptedIn ? optout : optin}>
         <Text style={styles.optinoutbutton}>
-          {isOptedIn ? 'Opt out' : 'Opt in'}
+          {isOptedIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
         </Text>
       </TouchableOpacity>
       <StatusBar style='auto' />

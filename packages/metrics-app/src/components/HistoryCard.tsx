@@ -50,10 +50,10 @@ const getMeasurementData = (measurement: MeasurementType) => {
 
   switch (measurement) {
     case MeasurementType.Bandwidth: {
-      return { label: t('historyPage.bandwidth'), icon: 'collapse-all-outline', unit: 'Mbit/s' }
+      return { label: t('historyPage.bandwidth'), icon: 'collapse-all-outline', unit: t('historyPage.mbit') }
     }
     case MeasurementType.Latency: {
-      return { label: t('historyPage.latency'), icon: 'clock-fast', unit: 'ms' }
+      return { label: t('historyPage.latency'), icon: 'clock-fast', unit: t('historyPage.ms') }
     }
     case MeasurementType.SignalStrength: {
       return { label: t('historyPage.signalStr'), icon: 'signal' }
