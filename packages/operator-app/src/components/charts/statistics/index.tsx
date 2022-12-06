@@ -1,10 +1,4 @@
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography
-} from '@mui/material'
+import { InputLabel, MenuItem, Select, Typography } from '@mui/material'
 import { format, isSameDay } from 'date-fns'
 import {
   ResponsiveContainer,
@@ -24,7 +18,7 @@ import {
 import { theme } from '../../../theme/default'
 import { MeasurementUnits } from '../../../types/measurement'
 import { getYAxisLabel } from '../../../utils/chart'
-import { FilterContainer } from './styles'
+import { FilterContainer, FilterForm } from './styles'
 import { CustomToolTipLabel } from './tooltipLabel'
 import { StatisticsChartProps } from './types'
 
@@ -82,7 +76,7 @@ export const StatisticsChart = ({
   return (
     <>
       <FilterContainer>
-        <FormControl style={{ width: '350px', paddingRight: theme.spacing(2) }}>
+        <FilterForm>
           <InputLabel>Location</InputLabel>
           <Select
             value={selectedArea ?? 'all'}
@@ -97,8 +91,8 @@ export const StatisticsChart = ({
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
-        <FormControl style={{ width: '350px', paddingRight: theme.spacing(2) }}>
+        </FilterForm>
+        <FilterForm>
           <InputLabel>Carrier</InputLabel>
           <Select
             value={selectedCarrier ?? 'all'}
@@ -113,8 +107,8 @@ export const StatisticsChart = ({
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
-        <FormControl style={{ width: '300px' }}>
+        </FilterForm>
+        <FilterForm>
           <InputLabel>Time period</InputLabel>
           <Select
             value={selectedTimePeriod}
@@ -129,7 +123,7 @@ export const StatisticsChart = ({
             <MenuItem value={60}>Past 60 days</MenuItem>
             <MenuItem value={180}>Past 180 days</MenuItem>
           </Select>
-        </FormControl>
+        </FilterForm>
       </FilterContainer>
       <ResponsiveContainer width="100%" height={580}>
         <LineChart
