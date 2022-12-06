@@ -5,15 +5,8 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { RootSiblingParent } from 'react-native-root-siblings'
-import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
-import {
-  checkMessagingPermissions,
-  enableMessaging,
-  setBackgroundMessageListener,
-  setForegroundMessageListener
-} from './services/messaging'
+import { setBackgroundMessageListener, setForegroundMessageListener } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
-import { checkLocationPermissions } from './services/location'
 import HistoryScreen from './screens/HistoryScreen'
 import HomeScreen from './screens/HomeScreen'
 import { colors } from './theme/colors'
@@ -31,15 +24,6 @@ const styles = StyleSheet.create({
 const Tab = createMaterialBottomTabNavigator()
 
 function App() {
-
-  // Check if permissions exist, request them if not
-  useEffect(() => {
-    checkCellularPermissions()
-    checkLocationPermissions()
-    checkMessagingPermissions().then(granted => {
-      if (granted) enableMessaging()
-    })
-  }, [])
 
   // Set the foreground message listener
   useEffect(() => {

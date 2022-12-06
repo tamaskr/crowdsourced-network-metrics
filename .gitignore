@@ -28,6 +28,7 @@ node_modules/
 # dotenv
 .env
 .env.test
+.env.local
 
 # macOS
 .DS_Store

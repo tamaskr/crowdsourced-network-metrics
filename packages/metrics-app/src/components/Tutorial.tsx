@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   buttonClose: {
+    marginTop: 20,
     backgroundColor: '#2196F3'
   },
   textStyle: {

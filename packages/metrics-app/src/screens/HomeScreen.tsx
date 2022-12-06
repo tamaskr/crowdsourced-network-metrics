@@ -1,20 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useTranslation } from 'react-i18next'
 import SwitchSelector from 'react-native-switch-selector'
 import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
   // eslint-disable-next-line react-native/split-platform-components
-  ToastAndroid
+  ToastAndroid,
+  StyleSheet, Text, View, TouchableOpacity
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
+import { checkLocationPermissions } from '../services/location'
+import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
 import Tutorial from '../components/Tutorial'
-import { enableMessaging, disableMessaging } from '../services/messaging'
 import { colors } from '../theme/colors'
+import { toast } from '../utils/toast'
+import { logger } from '../utils/logger'
 
+
+// Logger tag
+const TAG = 'HomeScreen'
 
 const styles = StyleSheet.create({
   container: {
@@ -23,7 +27,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10
   },
-  // eslint-disable-next-line react-native/no-color-literals
   optinoutbutton: {
     marginVertical: 10,
     height: 40,
@@ -36,7 +39,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
     borderWidth: 2,
-    borderColor: '#5d57ff',
+    borderColor: colors.primary,
     textAlign: 'center',
     textAlignVertical: 'center'
   },
@@ -48,7 +51,7 @@ const styles = StyleSheet.create({
 })
 
 function HomeScreen() {
-  const [ isOptIn, setIsOptIn ] = useState(false)
+  const [ isOptedIn, setIsOptedIn ] = useState(false)
   const [ isLoading, setIsLoading ] = useState(true)
   const { t, i18n } = useTranslation()
 
@@ -58,18 +61,14 @@ function HomeScreen() {
   ]
 
 
+  // Check for a previously saved opted-in state
   useEffect(() => {
-    async function fetchOpt() {
-      await AsyncStorage.getItem('user').then(value => {
-        console.log('value of opted:', value)
-        if (value === null || value === JSON.stringify(true)) {
-          setIsOptIn(true)
-        }
-        setIsOptIn(value === JSON.stringify(true))
+    AsyncStorage.getItem('isUserOptedIn')
+      .then(value => {
+        if (value !== null) setIsOptedIn(value === 'true')
         setIsLoading(false)
       })
-    }
-    fetchOpt()
+      .catch(error => logger.error(TAG, 'Failed to check for previous opted-in state', error))
   }, [])
 
   // user subscribe to get FCM messages and send reports
@@ -92,20 +91,45 @@ function HomeScreen() {
     // save the user opt-out to AsyncStorage
     AsyncStorage.setItem('user', JSON.stringify(false))
   }
+  // Opt in by subscribing to the FCM topic and asking for permissions
+  const optin = useCallback(async () => {
+    try {
+      const messagingGranted = await checkMessagingPermissions()
+      const cellularGranted = await checkCellularPermissions()
+      const locationGranted = await checkLocationPermissions()
+      if (!messagingGranted || !cellularGranted || !locationGranted) {
+        toast('Permissions have not been granted.')
+        return
+      }
+      await enableMessaging()
+      toast('Opted in to metrics collection!')
+      await AsyncStorage.setItem('isUserOptedIn', 'true')
+      setIsOptedIn(true)
+    } catch (error) {
+      logger.error(TAG, 'Failed to opt in', error)
+    }
+  }, [])
+
+  // Opt out by unsubscribing from the FCM topic
+  const optout = useCallback(async () => {
+    try {
+      await disableMessaging()
+      toast('Opted out from metrics collection!')
+      await AsyncStorage.setItem('isUserOptedIn', 'false')
+      setIsOptedIn(false)
+    } catch (error) {
+      logger.error(TAG, 'Failed to opt out', error)
+    }
+  }, [])
 
   if (isLoading) return null
   return (
     <View style={styles.container}>
       <Tutorial />
-      <Text>{t('homePage.infoMsg')}</Text>
-      <TouchableOpacity
-        onPress={() => {
-          isOptIn ? unsubscribe() : subscribe()
-          setIsOptIn(!isOptIn)
-        }}
-      >
+      <Text>Metrics collection {isOptedIn ? 'enabled' : 'disabled'}</Text>
+      <TouchableOpacity onPress={isOptedIn ? optout : optin}>
         <Text style={styles.optinoutbutton}>
-          {isOptIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
+          {isOptedIn ? 'Opt out' : 'Opt in'}
         </Text>
       </TouchableOpacity>
       <StatusBar style='auto' />

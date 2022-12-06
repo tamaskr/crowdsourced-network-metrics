@@ -9,6 +9,8 @@ import { logger } from '../utils/logger'
 import { Measurement } from '../types/types'
 import { HistoryCard } from '../components/HistoryCard'
 import { colors } from '../theme/colors'
+import { toast } from '../utils/toast'
+
 
 // Logger tag
 const TAG = 'HistoryScreen'
@@ -89,6 +91,7 @@ function HistoryScreen() {
               animation: true,
               backgroundColor: colors.primary
             })
+            toast('History refreshed successfully!')
           })
         }}
         refreshing={isLoading}

@@ -1,4 +1,4 @@
-import { MeasurementType } from './../../types/measurement'
+import { MeasurementType } from '../../types/measurement'
 
 
 export interface QueryDTO {

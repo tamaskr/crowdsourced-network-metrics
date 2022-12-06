@@ -2,7 +2,7 @@
   "expo": {
     "name": "Metrics App",
     "slug": "metrics-app",
-    "version": "1.0.3",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,6 +22,7 @@
     "android": {
       "package": "com.cmnm.metricsapp",
       "googleServicesFile": "./google-services.json",
+      "permissions": [ "ACCESS_BACKGROUND_LOCATION" ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"

@@ -1,10 +1,11 @@
 import performance, { setResourceLoggingEnabled } from 'react-native-performance'
-import { getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
+import { getCarrierNameAsync, getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
 import { PermissionStatus } from 'expo-modules-core'
 import { logger } from '../utils/logger'
 import { FCMDataMessage, MeasurementType } from '../types/types'
 import { report } from './backend'
-import { getCurrentCoordinates } from './location'
+import { getDistanceOfCoordinates, getCurrentCoordinates, getReverseGeocodedArea } from './location'
+import { getCachedMeasurements, setCacheMeasurements } from './cache'
 
 
 // Logger tag
@@ -23,7 +24,7 @@ async function measureDownloadBandwidth(): Promise<number | null> {
     delete results[1]
     setResourceLoggingEnabled(false)
     const duration = performance.getEntriesByName(url, 'resource').pop()?.duration ?? 0
-    const kbps = Math.round(25 * 1024 * 1000 / duration)
+    const kbps = Math.round((25 * 1024 * 1000) / duration)
     logger.log(TAG, 'Measured download bandwidth is', kbps, 'kbps')
     return kbps
   } catch (error) {
@@ -77,6 +78,33 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       logger.warn(TAG, 'Aborted performing measurements as coordinates cannot be obtained')
       return
     }
+
+    // Parse coordinates and range from query
+    const center = { latitude: Number.parseFloat(query.latitude), longitude: Number.parseFloat(query.longitude) }
+    const range = Number.parseFloat(query.range)
+
+    // Check that the coordinates are within the queried area
+    const distance = getDistanceOfCoordinates(center, coordinates)
+    if (distance > range) {
+      logger.log(TAG, 'Aborted performing measurements as coordinates are out of the queried range')
+      return
+    }
+
+    // Check if cached measurements are available
+    const cachedMeasurements = await getCachedMeasurements()
+    if (cachedMeasurements) {
+      await report({
+        queryId: query.id,
+        coordinates,
+        area: cachedMeasurements.area,
+        carrier: cachedMeasurements.carrier,
+        bandwidth: cachedMeasurements.bandwidth,
+        latency: cachedMeasurements.latency,
+        signalStrength: cachedMeasurements.signalStrength
+      })
+      return
+    }
+
     // Take measurements
     const bandwidth = query.measurements.includes(MeasurementType.Bandwidth)
       ? await measureDownloadBandwidth()
@@ -87,14 +115,25 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
     const signalStrength = query.measurements.includes(MeasurementType.SignalStrength)
       ? await measureSignalStrength()
       : null
+
+    // Check the area of the coordinates
+    const area = await getReverseGeocodedArea(coordinates)
+
+    // Get the carrier name
+    const carrier = await getCarrierNameAsync()
+
+    // Cache measurements
+    await setCacheMeasurements({ area, carrier, bandwidth, latency, signalStrength })
+
     // Report measurements
     await report({
       queryId: query.id,
+      coordinates,
+      area,
+      carrier,
       bandwidth,
       latency,
-      signalStrength,
-      coordinates,
-      area: null // TODO implement reverse geocoded locality here
+      signalStrength
     })
     logger.log(TAG, 'Performed measurements successfully')
   } catch (error) {

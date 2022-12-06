@@ -27,8 +27,8 @@ export const QueryCard = ({
 }: {
   query: Query
 }) => {
-  // Converted range from decimal range to kilometers
-  const rangeInKilometers = range * 111
+  // Converted range from meters to kilometers
+  const rangeInKilometers = range / 1000
   /*
     Calculates map zoom based on the given range parameter
      - if range is 15 kilometers (max), then the map zoom should be 8
