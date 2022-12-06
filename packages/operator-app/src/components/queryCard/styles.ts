@@ -11,6 +11,9 @@ const CardContainer = styled('div')(({ theme }) => ({
   '&:hover': {
     boxShadow: '1px 2px 9px #9e9e9e',
     transform: 'scale3d(1.005, 1.005, 1)'
+  },
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column'
   }
 }))
 
@@ -20,10 +23,7 @@ const MapContainer = styled('div')(({ theme }) => ({
   minHeight: '220px',
   backgroundColor: theme.palette.primary.main,
   borderTopRightRadius: theme.spacing(2),
-  borderBottomRightRadius: theme.spacing(2),
-  [theme.breakpoints.down('md')]: {
-    minHeight: '290px'
-  }
+  borderBottomRightRadius: theme.spacing(2)
 }))
 
 const ContentContainer = styled('div')(({ theme }) => ({
@@ -33,12 +33,16 @@ const ContentContainer = styled('div')(({ theme }) => ({
   position: 'relative',
   flexDirection: 'column',
   justifyContent: 'center',
-  padding: theme.spacing(2)
+  padding: theme.spacing(2),
+  [theme.breakpoints.down('md')]: {
+    paddingTop: theme.spacing(5.5)
+  }
 }))
 
 const MeasurementCardsContainer = styled('div')(({ theme }) => ({
   display: 'flex',
-  gap: theme.spacing(1)
+  gap: theme.spacing(1),
+  flexWrap: 'wrap'
 }))
 
 const MeasurementCard = styled('div')(({ theme }) => ({
@@ -56,7 +60,10 @@ const FloatingCountContainer = styled('div')(({ theme }) => ({
   right: 0,
   padding: `${theme.spacing(0.5)} ${theme.spacing(2)}`,
   borderBottomLeftRadius: theme.spacing(1.5),
-  backgroundColor: theme.palette.primary.dark
+  backgroundColor: theme.palette.primary.dark,
+  [theme.breakpoints.down('md')]: {
+    padding: `0 ${theme.spacing(1.5)}`
+  }
 }))
 
 export {
