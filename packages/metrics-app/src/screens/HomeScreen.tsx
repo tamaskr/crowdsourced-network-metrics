@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
+import RNLanguageDetector from '@os-team/i18next-react-native-language-detector'
 import { checkLocationPermissions } from '../services/location'
 import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
 import Tutorial from '../components/Tutorial'
