@@ -1,15 +1,19 @@
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import { CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
+import { Map, Marker, Popup } from 'react-map-gl'
+import { format } from 'date-fns'
 import {  getMeasurementsByQueryId } from '../../services/queries'
 import { Layout } from '../../components/layout'
 import { Loading } from '../../components/loading'
-import { Measurement } from '../../types/measurement'
+import { Measurement, MeasurementUnits } from '../../types/measurement'
 import { theme } from '../../theme/default'
+import Pin from '../../components/queryForm/map/pin'
+import { CustomToolTipLabel } from '../../components/charts/statistics/tooltipLabel'
 
 
 const Details: NextPage = () => {
@@ -53,6 +57,8 @@ const Details: NextPage = () => {
       { name: signalStrengthNames[4], color: '#FF6BD7', value: measurements.filter(m => m.signalStrength === 4).length }
     ].filter(x => x.value)
   }, [ measurements, signalStrengthNames ])
+
+  const [ popupInfo, setPopupInfo ] = useState<Measurement | null>(null)
 
   return (
     <Layout>
@@ -109,9 +115,72 @@ const Details: NextPage = () => {
             </ResponsiveContainer>
           </Grid>
           <Grid item xs={12}>
-            <h3>Raw data</h3>
+            <h3>Map view</h3>
+            <Map
+              initialViewState={{
+                latitude: 60.221342,
+                longitude: 24.940873,
+                zoom: 10
+              }}
+              style={{ width: '100%', height: 700 }}
+              mapStyle="mapbox://styles/mapbox/streets-v9"
+              mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
+            >
+              {measurements.map(measurement => {
+                const {
+                  coordinates: { longitude, latitude },
+                  id
+                } = measurement
+                return (
+                  <Marker
+                    key={`marker-${id}`}
+                    longitude={longitude}
+                    latitude={latitude}
+                    anchor="top"
+                    onClick={e => {
+                      e.originalEvent.stopPropagation()
+                      setPopupInfo(measurement)
+                    }}
+                  >
+                    <Pin size={36} color="#FF2800" />
+                  </Marker>
+                )
+              })}
+              {popupInfo && (
+                <Popup
+                  anchor="bottom"
+                  longitude={popupInfo.coordinates.longitude}
+                  latitude={popupInfo.coordinates.latitude}
+                  onClose={() => setPopupInfo(null)}
+                  style={{ minWidth: '300px' }}
+                >
+                  <Typography fontWeight="bold">{`${format(
+                    new Date(popupInfo.timestamp),
+                    'yyyy MMMM do pp'
+                  )}`}</Typography>
+                  <CustomToolTipLabel
+                    label="Bandwidth"
+                    color={theme.palette.warning.dark}
+                    value={popupInfo.bandwidth}
+                    unit={MeasurementUnits.BANDWIDTH}
+                  />
+                  <CustomToolTipLabel
+                    label="Latency"
+                    color={theme.palette.primary.main}
+                    value={popupInfo.latency}
+                    unit={MeasurementUnits.LATENCY}
+                  />
+                  <CustomToolTipLabel
+                    label="Signal strength"
+                    color={theme.palette.grey[700]}
+                    value={popupInfo.signalStrength}
+                  />
+                </Popup>
+              )}
+            </Map>
           </Grid>
           <Grid item xs={12}>
+            <h3>Raw data</h3>
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>

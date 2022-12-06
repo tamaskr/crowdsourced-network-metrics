@@ -26,10 +26,10 @@ export const NavBar: FunctionComponent<{
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen)
 
   const navItems = [
-    { label: 'Home', route: '/' },
-    { label: 'Statistics', route: '/statistics' },
+    { label: 'HOME', route: '/' },
+    { label: 'STATISTICS', route: '/statistics' },
     {
-      label: 'New query',
+      label: 'NEW QUERY',
       route: '/query'
     }
   ]
@@ -44,9 +44,23 @@ export const NavBar: FunctionComponent<{
             passHref
             style={{ textDecoration: 'none' }}
           >
-            <ListItem key={route} disablePadding>
-              <ListItemButton>
-                <ListItemText primary={label} />
+            <ListItem key={route}>
+              <ListItemButton
+                style={{
+                  border:
+                    pathname === route
+                      ? `3px solid ${theme.palette.primary.main}`
+                      : 'none',
+                  borderRadius: theme.spacing(1)
+                }}
+              >
+                <ListItemText
+                  primary={label}
+                  primaryTypographyProps={{
+                    color: theme.palette.primary.main,
+                    fontWeight: pathname === route ? 'bold' : 500
+                  }}
+                />
               </ListItemButton>
             </ListItem>
           </Link>
