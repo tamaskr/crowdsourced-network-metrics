@@ -142,7 +142,7 @@ const Details: NextPage = () => {
                       setPopupInfo(measurement)
                     }}
                   >
-                    <Pin size={24} />
+                    <Pin size={36} color="#FF2800" />
                   </Marker>
                 )
               })}
