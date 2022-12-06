@@ -53,8 +53,8 @@ const Details: NextPage = () => {
       { name: signalStrengthNames[0], color: '#ADADAD', value: measurements.filter(m => !m.signalStrength).length },
       { name: signalStrengthNames[1], color: '#D44627', value: measurements.filter(m => m.signalStrength === 1).length },
       { name: signalStrengthNames[2], color: '#FFC30B', value: measurements.filter(m => m.signalStrength === 2).length },
-      { name: signalStrengthNames[3], color: '#0D95D0', value: measurements.filter(m => m.signalStrength === 3).length },
-      { name: signalStrengthNames[4], color: '#68B14B', value: measurements.filter(m => m.signalStrength === 4).length }
+      { name: signalStrengthNames[3], color: '#68B14B', value: measurements.filter(m => m.signalStrength === 3).length },
+      { name: signalStrengthNames[4], color: '#0D95D0', value: measurements.filter(m => m.signalStrength === 4).length }
     ].filter(x => x.value)
   }, [ measurements, signalStrengthNames ])
 
