@@ -50,11 +50,11 @@ const Details: NextPage = () => {
   const signalStrengthNames = useMemo(() => [ 'None or Unknown', 'Poor', 'Moderate', 'Good', 'Excellent' ], [])
   const pieChartData = useMemo(() => {
     return [
-      { name: signalStrengthNames[0], color: '#0088FE', value: measurements.filter(m => !m.signalStrength).length },
-      { name: signalStrengthNames[1], color: '#00C49F', value: measurements.filter(m => m.signalStrength === 1).length },
-      { name: signalStrengthNames[2], color: '#FFBB28', value: measurements.filter(m => m.signalStrength === 2).length },
-      { name: signalStrengthNames[3], color: '#FF8042', value: measurements.filter(m => m.signalStrength === 3).length },
-      { name: signalStrengthNames[4], color: '#FF6BD7', value: measurements.filter(m => m.signalStrength === 4).length }
+      { name: signalStrengthNames[0], color: '#ADADAD', value: measurements.filter(m => !m.signalStrength).length },
+      { name: signalStrengthNames[1], color: '#D44627', value: measurements.filter(m => m.signalStrength === 1).length },
+      { name: signalStrengthNames[2], color: '#FFC30B', value: measurements.filter(m => m.signalStrength === 2).length },
+      { name: signalStrengthNames[3], color: '#0D95D0', value: measurements.filter(m => m.signalStrength === 3).length },
+      { name: signalStrengthNames[4], color: '#68B14B', value: measurements.filter(m => m.signalStrength === 4).length }
     ].filter(x => x.value)
   }, [ measurements, signalStrengthNames ])
 
@@ -104,7 +104,7 @@ const Details: NextPage = () => {
           <Grid item xs={4}>
             <ResponsiveContainer width="100%" height={500}>
               <PieChart margin={{ bottom: 24, left: 24, top: 12, right: 24 }}>
-                <Legend verticalAlign="top" height={50} />
+                <Legend verticalAlign="top" height={50} wrapperStyle={{ fontWeight: 'bold' }} />
                 <Pie data={pieChartData} dataKey="value" nameKey="name" labelLine={false} label>
                   {pieChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
