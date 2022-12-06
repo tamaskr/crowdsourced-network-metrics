@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { useTranslation } from 'react-i18next'
+import SwitchSelector from 'react-native-switch-selector'
+import {
+  // eslint-disable-next-line react-native/split-platform-components
+  ToastAndroid,
+  StyleSheet, Text, View, TouchableOpacity
+} from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
 import { checkLocationPermissions } from '../services/location'
@@ -36,12 +42,24 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     textAlign: 'center',
     textAlignVertical: 'center'
+  },
+  langSelector: {
+    marginVertical: 20,
+    paddingHorizontal: 80,
+    alignItems: 'center'
   }
 })
 
 function HomeScreen() {
   const [ isOptedIn, setIsOptedIn ] = useState(false)
   const [ isLoading, setIsLoading ] = useState(true)
+  const { t, i18n } = useTranslation()
+
+  const options = [
+    { label: 'English', value: 'en' },
+    { label: 'Suomi', value: 'fi' }
+  ]
+
 
   // Check for a previously saved opted-in state
   useEffect(() => {
@@ -53,6 +71,26 @@ function HomeScreen() {
       .catch(error => logger.error(TAG, 'Failed to check for previous opted-in state', error))
   }, [])
 
+  // user subscribe to get FCM messages and send reports
+  function subscribe() {
+    enableMessaging()
+    ToastAndroid.show(
+      t('homePage.infoToastIN'),
+      ToastAndroid.SHORT
+    )
+    // save the user opt-in to AsyncStorage
+    AsyncStorage.setItem('user', JSON.stringify(true))
+  }
+  // user unsubscribe and no longer to get FCM messages and send reports
+  function unsubscribe() {
+    disableMessaging()
+    ToastAndroid.show(
+      t('homePage.infoToastOUT'),
+      ToastAndroid.SHORT
+    )
+    // save the user opt-out to AsyncStorage
+    AsyncStorage.setItem('user', JSON.stringify(false))
+  }
   // Opt in by subscribing to the FCM topic and asking for permissions
   const optin = useCallback(async () => {
     try {
@@ -60,11 +98,11 @@ function HomeScreen() {
       const cellularGranted = await checkCellularPermissions()
       const locationGranted = await checkLocationPermissions()
       if (!messagingGranted || !cellularGranted || !locationGranted) {
-        toast('Permissions have not been granted.')
+        toast(t('homePage.infoToastPermission'))
         return
       }
       await enableMessaging()
-      toast('Opted in to metrics collection!')
+      toast(t('homePage.infoToastIN'))
       await AsyncStorage.setItem('isUserOptedIn', 'true')
       setIsOptedIn(true)
     } catch (error) {
@@ -76,7 +114,7 @@ function HomeScreen() {
   const optout = useCallback(async () => {
     try {
       await disableMessaging()
-      toast('Opted out from metrics collection!')
+      toast(t('homePage.infoToastOUT'))
       await AsyncStorage.setItem('isUserOptedIn', 'false')
       setIsOptedIn(false)
     } catch (error) {
@@ -88,14 +126,28 @@ function HomeScreen() {
   return (
     <View style={styles.container}>
       <Tutorial />
-      <Text>Metrics collection {isOptedIn ? 'enabled' : 'disabled'}</Text>
+      <Text>{t('homePage.infoMsg')} {isOptedIn ? t('homePage.enabled') : t('homePage.disabled')}</Text>
       <TouchableOpacity onPress={isOptedIn ? optout : optin}>
         <Text style={styles.optinoutbutton}>
-          {isOptedIn ? 'Opt out' : 'Opt in'}
+          {isOptedIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
         </Text>
       </TouchableOpacity>
       <StatusBar style='auto' />
+      <View style={styles.langSelector}>
+        <SwitchSelector
+          options={options}
+          initial={0}
+          selectedColor={colors.background.white}
+          buttonColor={colors.primary}
+          borderColor={colors.primary}
+          hasPadding
+          onPress={language => {
+            i18n.changeLanguage(language)
+          }}/>
+      </View>
     </View>
+
+
   )
 }
 
