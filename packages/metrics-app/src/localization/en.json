@@ -1,0 +1,31 @@
+{
+  "bottomNav": {
+    "home": "Home",
+    "history": "History"
+  },
+  "homePage": {
+    "optInBtn": "OPT IN",
+    "optOutBtn": "OPT OUT",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "infoMsg": "Metrics collection",
+    "infoToastIN": "Opted in to metrics collection!",
+    "infoToastOUT": "Opted out from metrics collection!",
+    "infoToastPermission": "Permissions have not been granted."
+  },
+  "historyPage": {
+    "historyTitle": "History",
+    "bandwidth": "Bandwidth",
+    "latency": "Latency",
+    "signalStr": "Signal strength",
+    "historyRfshToast": "History refreshed successfully",
+    "mbit": "Mbit/s",
+    "ms": "ms",
+    "noDataYet": "No measurements have been recorded yet"
+  },
+  "tutorial": {
+    "tutorialText" : "We are going to collect your most private and personal data for manipulative use in the dark web, also the application will most likely consume a huge amount of your phones battery and slow down the processor a bit",
+    "title": "ATTENTION",
+    "okBtn": "Continue"
+  }
+  }

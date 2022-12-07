@@ -1,0 +1,31 @@
+{
+  "bottomNav": {
+    "home": "Koti",
+    "history": "Historia"
+  },
+  "homePage": {
+    "optInBtn": "OPT IN",
+    "optOutBtn": "OPT OUT",
+    "enabled": "käytössä",
+    "disabled": "pois käytöstä",
+    "infoMsg": "Mittarikokoelma",
+    "infoToastIN": "Osallistunut mittareiden keräämiseen!",
+    "infoToastOUT": "Poistettu mittareiden keräämisestä!",
+    "infoToastPermission": "Lupia ei ole myönnetty."
+  },
+  "historyPage": {
+    "historyTitle": "Historia",
+    "bandwidth": "Kaistanleveys",
+    "latency": "Viive",
+    "signalStr": "Signaalin voimakkuus",
+    "historyRfshToast": "Historia on päivitetty",
+    "mbit": "Mbit/s",
+    "ms": "ms",
+    "noDataYet": "Mittauksia ei ole vielä tehty"
+  },
+  "tutorial": {
+    "tutorialText" : "Keräämme yksityisimmät ja henkilökohtaisimmat tietosi manipuloivaa käyttöä varten pimeässä verkossa, myös sovellus kuluttaa todennäköisesti valtavan määrän puhelimesi akkua ja hidastaa hieman prosessoria",
+    "title": "HUOMIO",
+    "okBtn": "Jatkaa"
+  }
+}

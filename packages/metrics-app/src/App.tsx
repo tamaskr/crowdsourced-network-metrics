@@ -5,11 +5,13 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { RootSiblingParent } from 'react-native-root-siblings'
+import { useTranslation } from 'react-i18next'
 import { setBackgroundMessageListener, setForegroundMessageListener } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
 import HistoryScreen from './screens/HistoryScreen'
 import HomeScreen from './screens/HomeScreen'
 import { colors } from './theme/colors'
+import './localization/i18n'
 
 
 const styles = StyleSheet.create({
@@ -23,12 +25,13 @@ const styles = StyleSheet.create({
 const Tab = createMaterialBottomTabNavigator()
 
 function App() {
+  const { t } = useTranslation()
+
 
   // Set the foreground message listener
   useEffect(() => {
     return setForegroundMessageListener(performMeasurementsFromQuery)
   }, [])
-
   return (
     <RootSiblingParent>
       <NavigationContainer>
@@ -38,7 +41,7 @@ function App() {
           barStyle={styles.navigator}
         >
           <Tab.Screen
-            name="Home"
+            name={t('bottomNav.home')}
             component={HomeScreen}
             options={{
               tabBarIcon: ({ color }) => (
@@ -47,7 +50,7 @@ function App() {
             }}
           />
           <Tab.Screen
-            name="History"
+            name={t('bottomNav.history')}
             component={HistoryScreen}
             options={{
               tabBarIcon: ({ color }) => (

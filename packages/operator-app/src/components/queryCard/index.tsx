@@ -27,6 +27,7 @@ export const QueryCard = ({
 }: {
   query: Query
 }) => {
+  const { innerWidth } = window
   // Converted range from meters to kilometers
   const rangeInKilometers = range / 1000
   /*
@@ -97,6 +98,11 @@ export const QueryCard = ({
           mapStyle="mapbox://styles/mapbox/streets-v9"
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
           cursor="pointer"
+          style={{
+            width:
+              innerWidth < theme.breakpoints.values.md ? innerWidth : '100%',
+            minHeight: '220px'
+          }}
         >
           <Source
             id="range"

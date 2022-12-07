@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar'
 import { Text, StyleSheet, View, FlatList } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useTranslation } from 'react-i18next'
 import { logger } from '../utils/logger'
 import { Measurement } from '../types/types'
 import { HistoryCard } from '../components/HistoryCard'
@@ -50,6 +51,8 @@ function HistoryScreen() {
   // Local state for storing measurement history data and loading
   const [ history, setHistory ] = useState<Measurement[]>()
   const [ isLoading, setIsLoading ] = useState<boolean>(true)
+  const { t } = useTranslation()
+
 
   // Access AsyncStorage to retrieve user measurement history
   const getMeasurementHistory = useCallback(async () => {
@@ -74,14 +77,14 @@ function HistoryScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>History</Text>
+      <Text style={styles.title}>{t('historyPage.historyTitle')}</Text>
       <FlatList
         data={history}
         contentContainerStyle={styles.list}
         onRefresh={() => {
           setIsLoading(true)
           getMeasurementHistory().then(() => {
-            toast('History refreshed successfully!')
+            toast(t('historyPage.historyRfshToast'))
           })
         }}
         refreshing={isLoading}
@@ -92,7 +95,7 @@ function HistoryScreen() {
           !isLoading ? (
             <View style={styles.emptyTextContainer}>
               <Text style={styles.emptyText}>
-                No measurements have been recorded yet.
+                {t('historyPage.noDataYet')}
               </Text>
             </View>
           ) : null
