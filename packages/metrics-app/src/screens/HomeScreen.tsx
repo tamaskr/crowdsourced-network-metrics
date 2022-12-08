@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
   },
   langSelector: {
     marginVertical: 20,
+    margin: 20,
     paddingHorizontal: 80,
     alignItems: 'center'
   }
@@ -52,8 +53,7 @@ const styles = StyleSheet.create({
 
 function HomeScreen() {
   const [ isOptedIn, setIsOptedIn ] = useState(false)
-  // temporary false
-  const [ isLoading, setIsLoading ] = useState(false)
+  const [ isLoading, setIsLoading ] = useState(true)
   const { t } = useTranslation()
   const { setLang, getLang } = useApp()
   const options = [
@@ -72,26 +72,7 @@ function HomeScreen() {
       .catch(error => logger.error(TAG, 'Failed to check for previous opted-in state', error))
   }, [])
 
-  // user subscribe to get FCM messages and send reports
-  function subscribe() {
-    enableMessaging()
-    ToastAndroid.show(
-      t('homePage.infoToastIN'),
-      ToastAndroid.SHORT
-    )
-    // save the user opt-in to AsyncStorage
-    AsyncStorage.setItem('user', JSON.stringify(true))
-  }
-  // user unsubscribe and no longer to get FCM messages and send reports
-  function unsubscribe() {
-    disableMessaging()
-    ToastAndroid.show(
-      t('homePage.infoToastOUT'),
-      ToastAndroid.SHORT
-    )
-    // save the user opt-out to AsyncStorage
-    AsyncStorage.setItem('user', JSON.stringify(false))
-  }
+
   // Opt in by subscribing to the FCM topic and asking for permissions
   const optin = useCallback(async () => {
     try {

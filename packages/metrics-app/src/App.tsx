@@ -11,8 +11,8 @@ import { performMeasurementsFromQuery } from './services/measurements'
 import HistoryScreen from './screens/HistoryScreen'
 import HomeScreen from './screens/HomeScreen'
 import { colors } from './theme/colors'
-import './localization/i18n'
-import { AppProvider } from './providers/AppProvider'
+import './utils/i18n'
+import { LanguageProvider } from './providers/LanguageProvider'
 
 
 const styles = StyleSheet.create({
@@ -35,7 +35,7 @@ function App() {
   }, [])
   return (
     <RootSiblingParent>
-      <AppProvider>
+      <LanguageProvider>
         <NavigationContainer>
           <Tab.Navigator
             initialRouteName="Feed"
@@ -62,7 +62,7 @@ function App() {
             />
           </Tab.Navigator>
         </NavigationContainer>
-      </AppProvider>
+      </LanguageProvider>
     </RootSiblingParent>
   )
 }
