@@ -5,12 +5,19 @@ import SwitchSelector from 'react-native-switch-selector'
 import {
   // eslint-disable-next-line react-native/split-platform-components
   ToastAndroid,
-  StyleSheet, Text, View, TouchableOpacity
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
 import { checkLocationPermissions } from '../services/location'
-import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
+import {
+  enableMessaging,
+  disableMessaging,
+  checkMessagingPermissions
+} from '../services/messaging'
 import Tutorial from '../components/Tutorial'
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
@@ -61,7 +68,6 @@ function HomeScreen() {
     { label: 'Suomi', value: 'fi' }
   ]
 
-
   // Check for a previously saved opted-in state
   useEffect(() => {
     AsyncStorage.getItem('isUserOptedIn')
@@ -69,9 +75,9 @@ function HomeScreen() {
         if (value !== null) setIsOptedIn(value === 'true')
         setIsLoading(false)
       })
-      .catch(error => logger.error(TAG, 'Failed to check for previous opted-in state', error))
+      .catch(error =>
+        logger.error(TAG, 'Failed to check for previous opted-in state', error))
   }, [])
-
 
   // Opt in by subscribing to the FCM topic and asking for permissions
   const optin = useCallback(async () => {
@@ -90,6 +96,7 @@ function HomeScreen() {
     } catch (error) {
       logger.error(TAG, 'Failed to opt in', error)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Opt out by unsubscribing from the FCM topic
@@ -102,13 +109,17 @@ function HomeScreen() {
     } catch (error) {
       logger.error(TAG, 'Failed to opt out', error)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (isLoading) return null
   return (
     <View style={styles.container}>
       <Tutorial />
-      <Text>{t('homePage.infoMsg')} {isOptedIn ? t('homePage.enabled') : t('homePage.disabled')}</Text>
+      <Text>
+        {t('homePage.infoMsg')}{' '}
+        {isOptedIn ? t('homePage.enabled') : t('homePage.disabled')}
+      </Text>
       <TouchableOpacity onPress={isOptedIn ? optout : optin}>
         <Text style={styles.optinoutbutton}>
           {isOptedIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
@@ -125,11 +136,10 @@ function HomeScreen() {
           hasPadding
           onPress={options => {
             setLang(options)
-          }}/>
+          }}
+        />
       </View>
     </View>
-
-
   )
 }
 

@@ -46,14 +46,23 @@ interface HistoryCardProps {
 
 // Returns all the properties that are needed to display the measurements
 const getMeasurementData = (measurement: MeasurementType) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { t } = useTranslation()
 
   switch (measurement) {
     case MeasurementType.Bandwidth: {
-      return { label: t('historyPage.bandwidth'), icon: 'collapse-all-outline', unit: t('historyPage.mbit') }
+      return {
+        label: t('historyPage.bandwidth'),
+        icon: 'collapse-all-outline',
+        unit: t('historyPage.mbit')
+      }
     }
     case MeasurementType.Latency: {
-      return { label: t('historyPage.latency'), icon: 'clock-fast', unit: t('historyPage.ms') }
+      return {
+        label: t('historyPage.latency'),
+        icon: 'clock-fast',
+        unit: t('historyPage.ms')
+      }
     }
     case MeasurementType.SignalStrength: {
       return { label: t('historyPage.signalStr'), icon: 'signal' }
