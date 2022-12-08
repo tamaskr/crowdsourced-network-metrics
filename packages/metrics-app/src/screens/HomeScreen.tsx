@@ -9,14 +9,13 @@ import {
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
-import RNLanguageDetector from '@os-team/i18next-react-native-language-detector'
 import { checkLocationPermissions } from '../services/location'
 import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
 import Tutorial from '../components/Tutorial'
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
 import { logger } from '../utils/logger'
-
+import { useApp } from '../hooks/useApp'
 
 // Logger tag
 const TAG = 'HomeScreen'
@@ -53,9 +52,10 @@ const styles = StyleSheet.create({
 
 function HomeScreen() {
   const [ isOptedIn, setIsOptedIn ] = useState(false)
-  const [ isLoading, setIsLoading ] = useState(true)
-  const { t, i18n } = useTranslation()
-
+  // temporary false
+  const [ isLoading, setIsLoading ] = useState(false)
+  const { t } = useTranslation()
+  const { setLang, getLang } = useApp()
   const options = [
     { label: 'English', value: 'en' },
     { label: 'Suomi', value: 'fi' }
@@ -137,13 +137,13 @@ function HomeScreen() {
       <View style={styles.langSelector}>
         <SwitchSelector
           options={options}
-          initial={0}
+          initial={getLang() === 'fi' ? 1 : 0}
           selectedColor={colors.background.white}
           buttonColor={colors.primary}
           borderColor={colors.primary}
           hasPadding
-          onPress={language => {
-            i18n.changeLanguage(language)
+          onPress={options => {
+            setLang(options)
           }}/>
       </View>
     </View>
