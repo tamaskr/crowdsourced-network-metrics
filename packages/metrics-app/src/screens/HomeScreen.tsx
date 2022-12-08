@@ -8,7 +8,6 @@ import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellul
 import { TFunction } from 'i18next'
 import { checkLocationPermissions } from '../services/location'
 import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
-import Tutorial from '../components/Tutorial'
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
 import { logger } from '../utils/logger'
@@ -104,11 +103,8 @@ function HomeScreen() {
   if (isLoading) return null
   return (
     <View style={styles.container}>
-      <Tutorial />
       <Text>{t('homePage.infoMsg')} {isOptedIn ? t('homePage.enabled') : t('homePage.disabled')}</Text>
-      <TouchableOpacity onPress={() => {
-        return isOptedIn ? optout(t) : optin(t)
-      }}>
+      <TouchableOpacity onPress={() => isOptedIn ? optout(t) : optin(t)}>
         <Text style={styles.optinoutbutton}>
           {isOptedIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
         </Text>
