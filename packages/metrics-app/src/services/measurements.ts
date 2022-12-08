@@ -1,12 +1,19 @@
 import performance, { setResourceLoggingEnabled } from 'react-native-performance'
-import { getCarrierNameAsync, getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
+import {
+  getCarrierNameAsync,
+  getPermissionsAsync,
+  getSignalStrengthAsync
+} from 'expo-cellular'
 import { PermissionStatus } from 'expo-modules-core'
 import { logger } from '../utils/logger'
 import { FCMDataMessage, MeasurementType } from '../types/types'
 import { report } from './backend'
-import { getDistanceOfCoordinates, getCurrentCoordinates, getReverseGeocodedArea } from './location'
+import {
+  getDistanceOfCoordinates,
+  getCurrentCoordinates,
+  getReverseGeocodedArea
+} from './location'
 import { getCachedMeasurements, setCacheMeasurements } from './cache'
-
 
 // Logger tag
 const TAG = 'Measurements'
@@ -15,15 +22,25 @@ const TAG = 'Measurements'
 async function measureDownloadBandwidth(): Promise<number | null> {
   logger.log(TAG, 'Measuring download bandwidth...')
   try {
-    const url = 'https://storage.googleapis.com/cmnm-measurement-files/binary25mb'
-    const results = []
+    const url
+      = 'https://storage.googleapis.com/cmnm-measurement-files/binary25mb'
+    const results: unknown[] = []
     setResourceLoggingEnabled(true)
-    results[0] = await fetch(url, { method: 'GET', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
+    results[0] = await fetch(url, {
+      method: 'GET',
+      headers: { 'cache-content': 'no-cache' },
+      mode: 'no-cors'
+    })
     delete results[0]
-    results[1] = await fetch(url, { method: 'GET', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
+    results[1] = await fetch(url, {
+      method: 'GET',
+      headers: { 'cache-content': 'no-cache' },
+      mode: 'no-cors'
+    })
     delete results[1]
     setResourceLoggingEnabled(false)
-    const duration = performance.getEntriesByName(url, 'resource').pop()?.duration ?? 0
+    const duration
+      = performance.getEntriesByName(url, 'resource').pop()?.duration ?? 0
     const kbps = Math.round((25 * 1024 * 1000) / duration)
     logger.log(TAG, 'Measured download bandwidth is', kbps, 'kbps')
     return kbps
@@ -40,10 +57,17 @@ async function measureLatency(): Promise<number | null> {
     const url = 'https://1.1.1.1/cdn-cgi/trace'
     setResourceLoggingEnabled(true)
     for (let i = 0; i < 10; i++) {
-      await fetch(url, { method: 'HEAD', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
+      await fetch(url, {
+        method: 'HEAD',
+        headers: { 'cache-content': 'no-cache' },
+        mode: 'no-cors'
+      })
     }
     setResourceLoggingEnabled(false)
-    const durations = performance.getEntriesByName(url, 'resource').slice(-10).map(x => x.duration)
+    const durations = performance
+      .getEntriesByName(url, 'resource')
+      .slice(-10)
+      .map(x => x.duration)
     const roundTrip = Math.round(durations.reduce((acc, cur) => Math.min(acc, cur), durations[0]))
     const ms = Math.round(roundTrip / 2)
     logger.log(TAG, 'Measured latency is', ms, 'ms')
@@ -75,18 +99,27 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
     // Check location
     const coordinates = await getCurrentCoordinates()
     if (!coordinates) {
-      logger.warn(TAG, 'Aborted performing measurements as coordinates cannot be obtained')
+      logger.warn(
+        TAG,
+        'Aborted performing measurements as coordinates cannot be obtained'
+      )
       return
     }
 
     // Parse coordinates and range from query
-    const center = { latitude: Number.parseFloat(query.latitude), longitude: Number.parseFloat(query.longitude) }
+    const center = {
+      latitude: Number.parseFloat(query.latitude),
+      longitude: Number.parseFloat(query.longitude)
+    }
     const range = Number.parseFloat(query.range)
 
     // Check that the coordinates are within the queried area
     const distance = getDistanceOfCoordinates(center, coordinates)
     if (distance > range) {
-      logger.log(TAG, 'Aborted performing measurements as coordinates are out of the queried range')
+      logger.log(
+        TAG,
+        'Aborted performing measurements as coordinates are out of the queried range'
+      )
       return
     }
 
@@ -123,7 +156,13 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
     const carrier = await getCarrierNameAsync()
 
     // Cache measurements
-    await setCacheMeasurements({ area, carrier, bandwidth, latency, signalStrength })
+    await setCacheMeasurements({
+      area,
+      carrier,
+      bandwidth,
+      latency,
+      signalStrength
+    })
 
     // Report measurements
     await report({

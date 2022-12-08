@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   paginationDot: {
+    position: 'relative',
     borderRadius: PAGINATION_DOT_SIZE,
     width: PAGINATION_DOT_SIZE,
     height: PAGINATION_DOT_SIZE,
@@ -53,6 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: PAGINATION_DOT_UNSELECTED_COLOR
   },
   paginationDotSelected: {
+    position: 'relative',
     backgroundColor: 'black'
   },
   startButton: {
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
   startText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 18
+    fontSize: 16
   }
 })
 
@@ -124,9 +126,11 @@ export default function OnBoardingScreen() {
         ))}
       </View>
       <View>
-        <TouchableOpacity style={styles.startButton}>
-          <Text style={styles.startText}>Get Started</Text>
-        </TouchableOpacity>
+        {currentIndex === carouselItems.length - 1 && (
+          <TouchableOpacity style={styles.startButton}>
+            <Text style={styles.startText}>Get Started</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   )

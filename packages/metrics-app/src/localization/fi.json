@@ -24,7 +24,7 @@
     "noDataYet": "Mittauksia ei ole vielä tehty"
   },
   "tutorial": {
-    "tutorialText" : "Keräämme yksityisimmät ja henkilökohtaisimmat tietosi manipuloivaa käyttöä varten pimeässä verkossa, myös sovellus kuluttaa todennäköisesti valtavan määrän puhelimesi akkua ja hidastaa hieman prosessoria",
+    "tutorialText": "Keräämme yksityisimmät ja henkilökohtaisimmat tietosi manipuloivaa käyttöä varten pimeässä verkossa, myös sovellus kuluttaa todennäköisesti valtavan määrän puhelimesi akkua ja hidastaa hieman prosessoria",
     "title": "HUOMIO",
     "okBtn": "Jatkaa"
   }
