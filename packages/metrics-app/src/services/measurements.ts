@@ -16,7 +16,7 @@ async function measureDownloadBandwidth(): Promise<number | null> {
   logger.log(TAG, 'Measuring download bandwidth...')
   try {
     const url = 'https://storage.googleapis.com/cmnm-measurement-files/binary25mb'
-    const results = []
+    const results: unknown[] = []
     setResourceLoggingEnabled(true)
     results[0] = await fetch(url, { method: 'GET', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
     delete results[0]
