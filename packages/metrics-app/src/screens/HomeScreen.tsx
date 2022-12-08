@@ -9,14 +9,13 @@ import {
 } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
-import RNLanguageDetector from '@os-team/i18next-react-native-language-detector'
 import { checkLocationPermissions } from '../services/location'
 import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
 import Tutorial from '../components/Tutorial'
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
 import { logger } from '../utils/logger'
-
+import { useApp } from '../hooks/useApp'
 
 // Logger tag
 const TAG = 'HomeScreen'
@@ -46,6 +45,7 @@ const styles = StyleSheet.create({
   },
   langSelector: {
     marginVertical: 20,
+    margin: 20,
     paddingHorizontal: 80,
     alignItems: 'center'
   }
@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
 function HomeScreen() {
   const [ isOptedIn, setIsOptedIn ] = useState(false)
   const [ isLoading, setIsLoading ] = useState(true)
-  const { t, i18n } = useTranslation()
-
+  const { t } = useTranslation()
+  const { setLang, getLang } = useApp()
   const options = [
     { label: 'English', value: 'en' },
     { label: 'Suomi', value: 'fi' }
@@ -72,26 +72,7 @@ function HomeScreen() {
       .catch(error => logger.error(TAG, 'Failed to check for previous opted-in state', error))
   }, [])
 
-  // user subscribe to get FCM messages and send reports
-  function subscribe() {
-    enableMessaging()
-    ToastAndroid.show(
-      t('homePage.infoToastIN'),
-      ToastAndroid.SHORT
-    )
-    // save the user opt-in to AsyncStorage
-    AsyncStorage.setItem('user', JSON.stringify(true))
-  }
-  // user unsubscribe and no longer to get FCM messages and send reports
-  function unsubscribe() {
-    disableMessaging()
-    ToastAndroid.show(
-      t('homePage.infoToastOUT'),
-      ToastAndroid.SHORT
-    )
-    // save the user opt-out to AsyncStorage
-    AsyncStorage.setItem('user', JSON.stringify(false))
-  }
+
   // Opt in by subscribing to the FCM topic and asking for permissions
   const optin = useCallback(async () => {
     try {
@@ -137,13 +118,13 @@ function HomeScreen() {
       <View style={styles.langSelector}>
         <SwitchSelector
           options={options}
-          initial={0}
+          initial={getLang() === 'fi' ? 1 : 0}
           selectedColor={colors.background.white}
           buttonColor={colors.primary}
           borderColor={colors.primary}
           hasPadding
-          onPress={language => {
-            i18n.changeLanguage(language)
+          onPress={options => {
+            setLang(options)
           }}/>
       </View>
     </View>
