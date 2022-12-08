@@ -11,7 +11,8 @@ import { performMeasurementsFromQuery } from './services/measurements'
 import HistoryScreen from './screens/HistoryScreen'
 import HomeScreen from './screens/HomeScreen'
 import { colors } from './theme/colors'
-import './localization/i18n'
+import './utils/i18n'
+import { LanguageProvider } from './providers/LanguageProvider'
 
 
 const styles = StyleSheet.create({
@@ -34,32 +35,34 @@ function App() {
   }, [])
   return (
     <RootSiblingParent>
-      <NavigationContainer>
-        <Tab.Navigator
-          initialRouteName="Feed"
-          activeColor={colors.background.white}
-          barStyle={styles.navigator}
-        >
-          <Tab.Screen
-            name={t('bottomNav.home')}
-            component={HomeScreen}
-            options={{
-              tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="home-variant-outline" color={color} size={26} />
-              )
-            }}
-          />
-          <Tab.Screen
-            name={t('bottomNav.history')}
-            component={HistoryScreen}
-            options={{
-              tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="history" color={color} size={26} />
-              )
-            }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
+      <LanguageProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            initialRouteName="Feed"
+            activeColor={colors.background.white}
+            barStyle={styles.navigator}
+          >
+            <Tab.Screen
+              name={t('bottomNav.home')}
+              component={HomeScreen}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <MaterialCommunityIcons name="home-variant-outline" color={color} size={26} />
+                )
+              }}
+            />
+            <Tab.Screen
+              name={t('bottomNav.history')}
+              component={HistoryScreen}
+              options={{
+                tabBarIcon: ({ color }) => (
+                  <MaterialCommunityIcons name="history" color={color} size={26} />
+                )
+              }}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </LanguageProvider>
     </RootSiblingParent>
   )
 }

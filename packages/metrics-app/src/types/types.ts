@@ -1,3 +1,6 @@
+import { ReactNode } from 'react'
+
+
 export interface Measurement {
   id: string
   queryId: string
@@ -38,4 +41,13 @@ export interface FCMDataMessage {
   latitude: string
   longitude: string
   range: string
+}
+
+export interface AppProps {
+  children: ReactNode
+}
+
+export interface IContext {
+  getLang: () => string
+  setLang: (lang) => boolean
 }
