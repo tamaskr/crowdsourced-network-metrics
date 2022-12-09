@@ -2,16 +2,12 @@ import { useState, useEffect, useCallback } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useTranslation } from 'react-i18next'
 import SwitchSelector from 'react-native-switch-selector'
-import {
-  // eslint-disable-next-line react-native/split-platform-components
-  ToastAndroid,
-  StyleSheet, Text, View, TouchableOpacity
-} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
+import { TFunction } from 'i18next'
 import { checkLocationPermissions } from '../services/location'
 import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
-import Tutorial from '../components/Tutorial'
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
 import { logger } from '../utils/logger'
@@ -74,7 +70,7 @@ function HomeScreen() {
 
 
   // Opt in by subscribing to the FCM topic and asking for permissions
-  const optin = useCallback(async () => {
+  const optin = useCallback(async (t: TFunction<'translation', undefined>) => {
     try {
       const messagingGranted = await checkMessagingPermissions()
       const cellularGranted = await checkCellularPermissions()
@@ -93,7 +89,7 @@ function HomeScreen() {
   }, [])
 
   // Opt out by unsubscribing from the FCM topic
-  const optout = useCallback(async () => {
+  const optout = useCallback(async (t: TFunction<'translation', undefined>) => {
     try {
       await disableMessaging()
       toast(t('homePage.infoToastOUT'))
@@ -107,9 +103,8 @@ function HomeScreen() {
   if (isLoading) return null
   return (
     <View style={styles.container}>
-      <Tutorial />
       <Text>{t('homePage.infoMsg')} {isOptedIn ? t('homePage.enabled') : t('homePage.disabled')}</Text>
-      <TouchableOpacity onPress={isOptedIn ? optout : optin}>
+      <TouchableOpacity onPress={() => isOptedIn ? optout(t) : optin(t)}>
         <Text style={styles.optinoutbutton}>
           {isOptedIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
         </Text>

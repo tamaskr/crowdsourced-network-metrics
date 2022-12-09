@@ -24,8 +24,13 @@
     "noDataYet": "Mittauksia ei ole vielä tehty"
   },
   "tutorial": {
-    "tutorialText" : "Keräämme yksityisimmät ja henkilökohtaisimmat tietosi manipuloivaa käyttöä varten pimeässä verkossa, myös sovellus kuluttaa todennäköisesti valtavan määrän puhelimesi akkua ja hidastaa hieman prosessoria",
-    "title": "HUOMIO",
-    "okBtn": "Jatkaa"
+    "welcomeTitle": "Welcome to Metrics app",
+    "welcomeDescription": "In this short tutorial, we will explain how the app works and what kind of permission we'll require from your part - press Next to continue.",
+    "explanationTitle": "About the app",
+    "explanationDescription": "This application will help your mobile network provider understand your end-user experience by periodically collecting network quality metrics, such as signal strength, bandwidth and latency. \n \n You can opt out at any time, and no metric will be collected until you opt in again.",
+    "permissionTitle": "Permissions",
+    "permissionDescription": "The app will require you to grant permissions for making phone calls to measure the signal strength, and precise location to map your network information to a geographic area. \n \n For the app to work in the background you also need to set location access as \"all the time\" in the settings.",
+    "next": "Next",
+    "done": "Done"
   }
 }
