@@ -1,6 +1,7 @@
 import performance, { setResourceLoggingEnabled } from 'react-native-performance'
 import { getCarrierNameAsync, getPermissionsAsync, getSignalStrengthAsync } from 'expo-cellular'
 import { PermissionStatus } from 'expo-modules-core'
+import { getNetworkStateAsync, NetworkStateType } from 'expo-network'
 import { logger } from '../utils/logger'
 import { FCMDataMessage, MeasurementType } from '../types/types'
 import { report } from './backend'
@@ -87,6 +88,13 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
     const distance = getDistanceOfCoordinates(center, coordinates)
     if (distance > range) {
       logger.log(TAG, 'Aborted performing measurements as coordinates are out of the queried range')
+      return
+    }
+
+    // Check that the user is connected to a cellular network
+    const state = await getNetworkStateAsync()
+    if (state.type !== NetworkStateType.CELLULAR) {
+      logger.log(TAG, 'Aborted performing measurements as the device is not connected to a cellular network')
       return
     }
 
