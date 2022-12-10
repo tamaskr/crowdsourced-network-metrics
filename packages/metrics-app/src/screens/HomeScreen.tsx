@@ -11,7 +11,6 @@ import { enableMessaging, disableMessaging, checkMessagingPermissions } from '..
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
 import { logger } from '../utils/logger'
-import { useApp } from '../hooks/useApp'
 
 // Logger tag
 const TAG = 'HomeScreen'
@@ -50,8 +49,7 @@ const styles = StyleSheet.create({
 function HomeScreen() {
   const [ isOptedIn, setIsOptedIn ] = useState(false)
   const [ isLoading, setIsLoading ] = useState(true)
-  const { t } = useTranslation()
-  const { setLang, getLang } = useApp()
+  const { i18n, t } = useTranslation()
   const options = [
     { label: 'English', value: 'en' },
     { label: 'Suomi', value: 'fi' }
@@ -113,14 +111,12 @@ function HomeScreen() {
       <View style={styles.langSelector}>
         <SwitchSelector
           options={options}
-          initial={getLang() === 'fi' ? 1 : 0}
+          initial={i18n.language === 'fi' ? 1 : 0}
           selectedColor={colors.background.white}
           buttonColor={colors.primary}
           borderColor={colors.primary}
           hasPadding
-          onPress={options => {
-            setLang(options)
-          }}/>
+          onPress={option => i18n.changeLanguage(option as string)}/>
       </View>
     </View>
 

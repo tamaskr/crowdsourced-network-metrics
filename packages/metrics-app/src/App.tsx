@@ -1,33 +1,32 @@
 import 'react-native-gesture-handler'
 import { registerRootComponent } from 'expo'
-import { useEffect } from 'react'
+import { StrictMode, Suspense, useEffect } from 'react'
 import { RootSiblingParent } from 'react-native-root-siblings'
-import {
-  setBackgroundMessageListener,
-  setForegroundMessageListener
-} from './services/messaging'
+import { setBackgroundMessageListener, setForegroundMessageListener } from './services/messaging'
 import { performMeasurementsFromQuery } from './services/measurements'
-import './utils/i18n'
-import { LanguageProvider } from './providers/LanguageProvider'
 import Navigator from './navigation/Navigator'
+import './utils/i18n'
 
 
 function App() {
-  // Set the foreground message listener
+
+  // Set the FCM foreground listener
   useEffect(() => {
     return setForegroundMessageListener(performMeasurementsFromQuery)
   }, [])
 
   return (
-    <RootSiblingParent>
-      <LanguageProvider>
-        <Navigator />
-      </LanguageProvider>
-    </RootSiblingParent>
+    <StrictMode>
+      <Suspense>
+        <RootSiblingParent>
+          <Navigator />
+        </RootSiblingParent>
+      </Suspense>
+    </StrictMode>
   )
 }
 
-// Set the background message listener
+// Set the FCM background listener
 setBackgroundMessageListener(performMeasurementsFromQuery)
 
 // Register the root component
