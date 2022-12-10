@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 const Tab = createMaterialBottomTabNavigator()
 
 // Set up stack navigation to determine if tutorial screen should be shown
-const Stack = createStackNavigator()
+const Stack = createStackNavigator<RootStackParamList>()
 
 // Prevent app loading until the stack navigator is ready
 SplashScreen.preventAutoHideAsync()
@@ -65,7 +65,9 @@ const MainStack = () => {
 }
 
 const Navigator = () => {
-  const [ initialRoute, setInitialRoute ] = useState<string | undefined>()
+  const [ initialRoute, setInitialRoute ] = useState<
+    keyof RootStackParamList | undefined
+  >()
 
   useEffect(() => {
     const checkTutorialToken = async () => {
@@ -102,3 +104,8 @@ const Navigator = () => {
 }
 
 export default Navigator
+
+export type RootStackParamList = {
+  Tutorial: undefined
+  Main: undefined
+}

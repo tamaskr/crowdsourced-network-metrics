@@ -2,6 +2,7 @@
 import { useRef, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { Text, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StackNavigationProp } from '@react-navigation/stack'
 import { CommonActions, useNavigation } from '@react-navigation/core'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -10,6 +11,7 @@ import { Carousel } from 'react-native-ui-lib'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { colors } from '../theme/colors'
 import { logger } from '../utils/logger'
+import { RootStackParamList } from '../navigation/Navigator'
 
 // Logger tag
 const TAG = 'TutorialScreen'
@@ -22,18 +24,19 @@ const styles = StyleSheet.create({
   },
   pageContainer: {
     flex: 1,
-    marginBottom: 80
+    marginBottom: 48
   },
   iconContainer: {
-    flex: 2,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    lineHeight: 72,
+    lineHeight: 48,
     color: colors.black,
+    paddingBottom: 10,
     paddingHorizontal: 10,
     textAlign: 'center'
   },
@@ -71,25 +74,27 @@ const pages = [
   }
 ]
 
+type TutorialScreenStackNavigation = StackNavigationProp<
+  RootStackParamList,
+  'Tutorial'
+>
+
 const TutorialScreen = () => {
   const [ currentPage, setCurrentPage ] = useState<number>(0)
   const carouselRef = useRef<any | undefined>()
   const { t } = useTranslation()
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<TutorialScreenStackNavigation>()
 
   return (
     <SafeAreaView style={styles.container}>
       <Carousel
         ref={carouselRef}
-        containerStyle={{ height: '80%' }}
-        pageControlProps={{
-          size: 10
-        }}
+        containerStyle={{ flex: 5 }}
+        pageControlProps={{ size: 10 }}
         onChangePage={(currentPage: number, _: unknown) => {
           setCurrentPage(currentPage)
           carouselRef.current.setState({ currentPage })
         }}
-        autoPlay={true}
         pageControlPosition={Carousel.pageControlPositions.OVER}
       >
         {pages.map(({ title, description, icon }) => (
@@ -101,37 +106,39 @@ const TutorialScreen = () => {
                 size={156}
               />
             </View>
-            <View style={{ flex: 1 }}>
+            <View>
               <Text style={styles.title}>{t(title)}</Text>
               <Text style={styles.description}>{t(description)}</Text>
             </View>
           </View>
         ))}
       </Carousel>
-      <TouchableOpacity
-        onPress={async () => {
-          if (currentPage < 2) {
-            setCurrentPage(prevPage => prevPage + 1)
-            carouselRef.current.goToPage(currentPage + 1, false)
-            return
-          }
-          try {
-            await AsyncStorage.setItem('hasShownTutorial', 'true')
-            logger.log(TAG, 'Tutorial token has been saved')
-            navigation.dispatch(CommonActions.reset({
-              index: 0,
-              routes: [{ name: 'Main' }]
-            }))
-          } catch {
-            logger.log(TAG, 'Error while saving tutorial token')
-          }
-        }}
-        style={styles.nextButton}
-      >
-        <Text style={styles.nextButtonText}>
-          {t(currentPage === 2 ? 'tutorial.done' : 'tutorial.next')}
-        </Text>
-      </TouchableOpacity>
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          onPress={async () => {
+            if (currentPage < 2) {
+              setCurrentPage(prevPage => prevPage + 1)
+              carouselRef.current.goToPage(currentPage + 1, false)
+              return
+            }
+            try {
+              await AsyncStorage.setItem('hasShownTutorial', 'true')
+              logger.log(TAG, 'Tutorial token has been saved')
+              navigation.dispatch(CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'Main' }]
+              }))
+            } catch {
+              logger.log(TAG, 'Error while saving tutorial token')
+            }
+          }}
+          style={styles.nextButton}
+        >
+          <Text style={styles.nextButtonText}>
+            {t(currentPage === 2 ? 'tutorial.done' : 'tutorial.next')}
+          </Text>
+        </TouchableOpacity>
+      </View>
       <StatusBar style="auto" />
     </SafeAreaView>
   )
