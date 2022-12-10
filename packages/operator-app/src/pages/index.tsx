@@ -8,7 +8,7 @@ import { Layout } from '../components/layout'
 import { getQueries } from '../services/queries'
 import { Query } from '../types/measurement'
 import { Loading } from '../components/loading'
-import { QueryCard } from '../components/queryCard'
+import { HomeCard } from '../components/homeCard'
 import { theme } from '../theme/default'
 
 // Modify the query array to only show queries for a specififc page
@@ -24,11 +24,14 @@ const Home: NextPage = () => {
   // Max number of queries shown on the page at once
   const pageSize = 10
 
+  // Fetch all the queries upon the first render
   const { isLoading, data } = useQuery([ 'queries' ], () => getQueries(), {
     cacheTime: 0,
     refetchOnWindowFocus: false,
     onSuccess: data =>
+      // After fetching data, calculate how many pages the data can be split into
       setPageCount(Math.ceil(data.queries.length / pageSize)),
+    // Show error toast when the data cannot be fetched
     onError: () => toast.error('Error while fetching query data')
   })
 
@@ -43,6 +46,7 @@ const Home: NextPage = () => {
   const children = useMemo(() => {
     if (isLoading) return <Loading />
 
+    // If no queries are available or there is an error while fetching data, show placeholder text
     if (!data?.queries || data?.queries?.length === 0)
       return (
         <Typography
@@ -70,7 +74,7 @@ const Home: NextPage = () => {
               passHref
               style={{ textDecoration: 'none' }}
             >
-              <QueryCard query={query} />
+              <HomeCard query={query} />
             </Link>
           </div>
         ))}

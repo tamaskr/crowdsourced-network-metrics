@@ -16,10 +16,10 @@ import { QuerySlider } from './slider'
 const validationSchema = object().shape({
   measurements: array()
     .min(1, 'Select at least 1 measurement')
-    .required('required'),
-  longitude: number().required('required'),
-  latitude: number().required('required'),
-  range: number().required('required')
+    .required(),
+  longitude: number().required(),
+  latitude: number().required(),
+  range: number().required()
 })
 
 export const QueryForm = ({ onSubmit }: QueryFormProps) => {

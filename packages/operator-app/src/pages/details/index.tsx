@@ -13,10 +13,11 @@ import { Loading } from '../../components/loading'
 import { Measurement, MeasurementUnits } from '../../types/measurement'
 import { theme } from '../../theme/default'
 import Pin from '../../components/queryForm/map/pin'
-import { CustomToolTipLabel } from '../../components/charts/statistics/tooltipLabel'
+import { CustomToolTipLabel } from '../../components/charts/statistics/tooltip/label'
 
 
 const Details: NextPage = () => {
+  // Get query id from URL
   const { query: { id: queryId } } = useRouter()
 
   // Fetch all measurements by query id
@@ -28,6 +29,7 @@ const Details: NextPage = () => {
     {
       cacheTime: 0,
       refetchOnWindowFocus: false,
+      // Only fetch queries if query id is a valid value
       enabled: !!queryId
     }
   )
@@ -50,14 +52,35 @@ const Details: NextPage = () => {
   const signalStrengthNames = useMemo(() => [ 'None or Unknown', 'Poor', 'Moderate', 'Good', 'Excellent' ], [])
   const pieChartData = useMemo(() => {
     return [
-      { name: signalStrengthNames[0], color: '#ADADAD', value: measurements.filter(m => !m.signalStrength).length },
-      { name: signalStrengthNames[1], color: '#D44627', value: measurements.filter(m => m.signalStrength === 1).length },
-      { name: signalStrengthNames[2], color: '#FFC30B', value: measurements.filter(m => m.signalStrength === 2).length },
-      { name: signalStrengthNames[3], color: '#68B14B', value: measurements.filter(m => m.signalStrength === 3).length },
-      { name: signalStrengthNames[4], color: '#0D95D0', value: measurements.filter(m => m.signalStrength === 4).length }
+      {
+        name: signalStrengthNames[0],
+        color: theme.chart.unknown,
+        value: measurements.filter(m => !m.signalStrength).length
+      },
+      {
+        name: signalStrengthNames[1],
+        color: theme.chart.poor,
+        value: measurements.filter(m => m.signalStrength === 1).length
+      },
+      {
+        name: signalStrengthNames[2],
+        color: theme.chart.moderate,
+        value: measurements.filter(m => m.signalStrength === 2).length
+      },
+      {
+        name: signalStrengthNames[3],
+        color: theme.chart.good,
+        value: measurements.filter(m => m.signalStrength === 3).length
+      },
+      {
+        name: signalStrengthNames[4],
+        color: theme.chart.excellent,
+        value: measurements.filter(m => m.signalStrength === 4).length
+      }
     ].filter(x => x.value)
   }, [ measurements, signalStrengthNames ])
 
+  // When a marker is clicked on the map, store its measurement data
   const [ popupInfo, setPopupInfo ] = useState<Measurement | null>(null)
 
   return (
@@ -97,7 +120,7 @@ const Details: NextPage = () => {
                 <XAxis dataKey="bandwidth" label={{ value: 'Bandwidth (kbps)', position: 'bottom', offset: 10 }} padding="gap" />
                 <YAxis dataKey="latency" label={{ value: 'Latency (ms)', angle: -90, position: 'left', offset: 10 }} />
                 <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                <Scatter data={scatterChartData} fill="#8884d8" name="Bandwidth (x) to Latency (y)" />
+                <Scatter data={scatterChartData} fill={theme.customPalette.purple} name="Bandwidth (x) to Latency (y)" />
               </ScatterChart>
             </ResponsiveContainer>
           </Grid>
@@ -142,7 +165,7 @@ const Details: NextPage = () => {
                       setPopupInfo(measurement)
                     }}
                   >
-                    <Pin size={36} color="#FF2800" />
+                    <Pin size={36} color={theme.customPalette.red} />
                   </Marker>
                 )
               })}

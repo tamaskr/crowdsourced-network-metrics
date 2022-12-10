@@ -12,6 +12,7 @@ import { QueryDTO } from '../../components/queryForm/types'
 
 
 const Query: NextPage = () => {
+  // Make a new query when the form is submitted
   const {
     error,
     data,
@@ -24,7 +25,7 @@ const Query: NextPage = () => {
     }
   )
 
-  // Show toasts for query request
+  // Show different error/success toasts for query request
   useEffect(() => {
     if (error) {
       toast.error('Error while trying to make a query')
