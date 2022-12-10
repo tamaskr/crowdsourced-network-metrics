@@ -35,7 +35,7 @@ export const LanguageProvider = (props: AppProps) => {
     AsyncStorage.getItem('language')
       .then(value => {
         if (value === null) {
-          setCurrentLanguage('en')
+          setCurrentLanguage('fi')
           return
         }
         setCurrentLanguage(value)
