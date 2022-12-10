@@ -21,7 +21,7 @@ export interface FormattedQueryData {
 export enum MeasurementType {
   BANDWIDTH = 'bandwidth',
   LATENCY = 'latency',
-  SIGNAL_STRENGTH = 'signalStrength'
+  SIGNAL_STRENGTH = 'signalStrength',
 }
 
 export interface Query {

@@ -19,5 +19,4 @@ const ContentContainer = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(3)
 }))
 
-
 export { Wrapper, Container, ContentContainer }

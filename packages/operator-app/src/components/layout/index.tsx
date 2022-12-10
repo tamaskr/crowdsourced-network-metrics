@@ -1,6 +1,6 @@
 import { FunctionComponent, ReactNode } from 'react'
 import { ToastContainer } from 'react-toastify'
-import { NavBar } from '../navBar'
+import { NavBar } from './navBar'
 import { Container, ContentContainer, Wrapper } from './styles'
 
 

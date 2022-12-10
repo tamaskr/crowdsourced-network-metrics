@@ -15,7 +15,7 @@ import {
 } from './styles'
 
 
-export const QueryCard = ({
+export const HomeCard = ({
   query: {
     id,
     measurements,
@@ -32,11 +32,12 @@ export const QueryCard = ({
   const rangeInKilometers = range / 1000
   /*
     Calculates map zoom based on the given range parameter
-     - if range is 15 kilometers (max), then the map zoom should be 8
-     - if the range is 0, map zoom should be 11
-     - anything in between those values should have the proportionate value between 8 and 11
+     - if range is 15 kilometers, then the map zoom should be 8
+     - if the range is close to 0, map zoom should be 11
+     - anything between those values should have the proportionate value between 8 and 11
   */
   const mapZoom = 11 - rangeInKilometers / 5
+
   return (
     <CardContainer>
       <ContentContainer>

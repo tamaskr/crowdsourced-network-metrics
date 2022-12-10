@@ -15,24 +15,28 @@ import {
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FunctionComponent, ReactNode, useState } from 'react'
-import { theme } from '../../theme/default'
+import { theme } from '../../../theme/default'
 
+
+// All navigation items with routes
+const navItems = [
+  { label: 'HOME', route: '/' },
+  { label: 'STATISTICS', route: '/statistics' },
+  {
+    label: 'NEW QUERY',
+    route: '/query'
+  }
+]
 
 export const NavBar: FunctionComponent<{
   children?: ReactNode
 }> = () => {
+  // Handle mobile drawer state
   const [ mobileOpen, setMobileOpen ] = useState(false)
-  const { pathname } = useRouter()
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen)
 
-  const navItems = [
-    { label: 'HOME', route: '/' },
-    { label: 'STATISTICS', route: '/statistics' },
-    {
-      label: 'NEW QUERY',
-      route: '/query'
-    }
-  ]
+  // Get current path from router
+  const { pathname } = useRouter()
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ marginTop: theme.spacing(5) }}>

@@ -1,5 +1,5 @@
-import { InputLabel, MenuItem, Select, Typography } from '@mui/material'
-import { format, isSameDay } from 'date-fns'
+import { InputLabel, MenuItem, Select } from '@mui/material'
+import { format } from 'date-fns'
 import {
   ResponsiveContainer,
   LineChart,
@@ -8,20 +8,33 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  Line,
-  TooltipProps
+  Line
 } from 'recharts'
-import {
-  ValueType,
-  NameType
-} from 'recharts/src/component/DefaultTooltipContent'
 import { theme } from '../../../theme/default'
-import { MeasurementUnits } from '../../../types/measurement'
 import { getYAxisLabel } from '../../../utils/chart'
 import { FilterContainer, FilterForm } from './styles'
-import { CustomToolTipLabel } from './tooltipLabel'
+import { CustomTooltip } from './tooltip'
 import { StatisticsChartProps } from './types'
 
+
+// Store all parameters, which are required to render customized chart lines
+const chartLines = [
+  {
+    name: 'Signal strength',
+    color: theme.palette.success.main,
+    key: 'signalStrengthChart'
+  },
+  {
+    name: 'Latency',
+    color: theme.palette.primary.main,
+    key: 'latencyChart'
+  },
+  {
+    name: 'Bandwidth',
+    color: theme.palette.warning.dark,
+    key: 'bandwidthChart'
+  }
+]
 
 export const StatisticsChart = ({
   chartData,
@@ -34,45 +47,6 @@ export const StatisticsChart = ({
   selectedTimePeriod,
   handleDaysChange
 }: StatisticsChartProps) => {
-  const CustomTooltip = ({
-    active,
-    payload,
-    label
-  }: TooltipProps<ValueType, NameType>) => {
-    const dailyMeasurement = chartData.find(data =>
-      isSameDay(new Date(label), data.timestamp))
-    if (active && payload && payload.length > 0 && !!dailyMeasurement) {
-      const { bandwidth, latency, signalStrength } = dailyMeasurement
-      return (
-        <div style={{ padding: theme.spacing(2), border: 'none' }}>
-          <Typography fontWeight="bold">{`${format(
-            new Date(label),
-            'yyyy MMMM do'
-          )}`}</Typography>
-          <CustomToolTipLabel
-            label="Avg bandwidth"
-            color={theme.palette.warning.dark}
-            value={bandwidth}
-            unit={MeasurementUnits.BANDWIDTH}
-          />
-          <CustomToolTipLabel
-            label="Avg latency"
-            color={theme.palette.primary.main}
-            value={latency}
-            unit={MeasurementUnits.LATENCY}
-          />
-          <CustomToolTipLabel
-            label="Avg signal strength"
-            color={theme.palette.grey[700]}
-            value={signalStrength}
-            rounded={false}
-          />
-        </div>
-      )
-    }
-    return null
-  }
-
   return (
     <>
       <FilterContainer>
@@ -146,7 +120,7 @@ export const StatisticsChart = ({
           />
 
           <Tooltip
-            content={<CustomTooltip />}
+            content={<CustomTooltip chartData={chartData} />}
             filterNull={false}
             wrapperStyle={{
               outline: 'none',
@@ -154,27 +128,16 @@ export const StatisticsChart = ({
               boxShadow: '0px 0px 4px 0px rgba(0,0,0,0.2)'
             }}
           />
-          <Line
-            name="Signal strength"
-            type="monotone"
-            dataKey="signalStrengthChart"
-            stroke={theme.palette.grey[700]}
-            strokeWidth={2}
-          />
-          <Line
-            name="Latency"
-            type="monotone"
-            dataKey="latencyChart"
-            stroke={theme.palette.primary.main}
-            strokeWidth={2}
-          />
-          <Line
-            name="Bandwidth"
-            type="monotone"
-            dataKey="bandwidthChart"
-            stroke={theme.palette.warning.dark}
-            strokeWidth={2}
-          />
+          {chartLines.map(({ name, color, key }) => (
+            <Line
+              key={key}
+              name={name}
+              type="monotone"
+              dataKey={key}
+              stroke={color}
+              strokeWidth={2}
+            />
+          ))}
         </LineChart>
       </ResponsiveContainer>
     </>

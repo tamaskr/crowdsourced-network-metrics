@@ -10,5 +10,4 @@ const LoadingWrapper = styled(Box)(({ theme }) => ({
   paddingTop: theme.spacing(6)
 }))
 
-
 export { LoadingWrapper }

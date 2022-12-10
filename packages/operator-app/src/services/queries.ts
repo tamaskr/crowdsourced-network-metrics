@@ -1,12 +1,10 @@
 import { QueryDTO } from '../components/queryForm/types'
 
-// Base URL for queries to backend
+// Base URL for all endpoints
 const baseUrl = 'https://europe-west1-crowdsourced-network-metrics.cloudfunctions.net/'
-// Local emulator base URL for development purposes
-// const baseUrl = 'http://127.0.0.1:5001/crowdsourced-network-metrics/europe-west1/'
 
+// Header data for endpoints
 const headers = { 'Content-Type': 'application/json' }
-
 
 // Get all measurements
 export const getMeasurements = async () => {
@@ -22,21 +20,25 @@ export const getQueries = async () => {
 
 // Get measurements by query id
 export const getMeasurementsByQueryId = async (queryId: string) => {
-  const response = await fetch(
-    `${baseUrl}measurements?queryId=${queryId}`,
-    { method: 'GET' }
-  )
+  const response = await fetch(`${baseUrl}measurements?queryId=${queryId}`, {
+    method: 'GET'
+  })
   return await response.json()
 }
 
-// Report a measurement to the backend to be stored
+// Send a query request to the backend endpoint
 export const postQuery = async ({
   measurements,
   latitude,
   longitude,
   range
 }: QueryDTO) => {
-  const body = JSON.stringify({ measurements, coordinates: { latitude, longitude }, range })
+  // Format request body before calling the endpoint
+  const body = JSON.stringify({
+    measurements,
+    coordinates: { latitude, longitude },
+    range
+  })
   const response = await fetch(`${baseUrl}query`, {
     method: 'POST',
     headers,
