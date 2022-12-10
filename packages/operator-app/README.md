@@ -4,6 +4,8 @@ The Operator App is a [Next.js](https://nextjs.org/) web application, which is o
 
 This web app provides a user interface that allows communication with the cloud functions in the project's [backend service](https://github.com/tamaskr/crowdsourced-network-metrics/tree/main/packages/backend) in order to make queries and visualise data from all the past queries. The raw data is visualised on charts, tables and maps as well.
 
+![operator-app](https://user-images.githubusercontent.com/91802386/206851835-0afa137f-7c18-49f8-9047-4f32d6385524.png)
+
 ## Setup
 
 1. Clone the [main repository](https://github.com/tamaskr/crowdsourced-network-metrics) and navigate to `/packages/operator-app` folder
