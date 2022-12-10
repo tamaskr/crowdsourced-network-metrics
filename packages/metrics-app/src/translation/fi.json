@@ -24,13 +24,13 @@
     "noDataYet": "Mittauksia ei ole vielä tehty"
   },
   "tutorial": {
-    "welcomeTitle": "Welcome to Metrics app",
-    "welcomeDescription": "In this short tutorial, we will explain how the app works and what kind of permission we'll require from your part - press Next to continue.",
-    "explanationTitle": "About the app",
-    "explanationDescription": "This application will help your mobile network provider understand your end-user experience by periodically collecting network quality metrics, such as signal strength, bandwidth and latency. \n \n You can opt out at any time, and no metric will be collected until you opt in again.",
-    "permissionTitle": "Permissions",
-    "permissionDescription": "The app will require you to grant permissions for making phone calls to measure the signal strength, and precise location to map your network information to a geographic area. \n \n For the app to work in the background you also need to set location access as \"all the time\" in the settings.",
-    "next": "Next",
-    "done": "Done"
+    "welcomeTitle": "Tervetuloa Metrics-sovellukseen",
+    "welcomeDescription": "Tässä lyhyessä opetusohjelmassa selitämme, miten sovellus toimii ja millaisen luvan tarvitsemme sinulta - jatka painamalla Seuraava.",
+    "explanationTitle": "Tietoja sovelluksesta",
+    "explanationDescription": "Tämä sovellus auttaa matkapuhelinoperaattoriasi ymmärtämään loppukäyttäjäkokemustasi keräämällä säännöllisesti verkon laatumittareita, kuten signaalin voimakkuutta, kaistanleveyttä ja viivettä. \n \n Voit kieltäytyä käytöstä milloin tahansa, eikä mittareita kerätä ennen kuin otat sen uudelleen käyttöön.",
+    "permissionTitle": "Käyttöoikeudet",
+    "permissionDescription": "Sovellus edellyttää, että annat luvan soittaa puheluita signaalin voimakkuuden mittaamiseksi ja tarkan sijainnin kartoittaaksesi verkkotietosi maantieteelliseen alueeseen. \n \n Jotta sovellus toimisi taustalla, sinun on myös asetettava asetuksista sijainnin käyttöoikeus \"Aina\".",
+    "next": "Seuraava",
+    "done": "Valmis"
   }
 }

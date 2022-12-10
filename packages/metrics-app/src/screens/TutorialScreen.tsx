@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     textAlign: 'center'
   },
-  description: { textAlign: 'center', padding: 10 },
+  description: { textAlign: 'center', paddingBottom: 10 },
   nextButton: {
     marginTop: 20,
     height: 50,
