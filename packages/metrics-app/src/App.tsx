@@ -6,7 +6,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import './services/i18n'
 import { setBackgroundMessageListener, setForegroundMessageListener } from './services/messaging'
-import { performMeasurement } from './services/measurements'
+import { performMeasurement } from './services/measurement'
 import Navigator from './navigation/Navigator'
 
 

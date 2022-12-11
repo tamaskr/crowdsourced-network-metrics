@@ -10,7 +10,7 @@ import { getCachedMeasurement, setCacheMeasurement } from './cache'
 
 
 // Logger tag
-const TAG = 'Measurements'
+const TAG = 'Measurement'
 
 // Measure the download bandwidth in kilobytes per second
 async function measureDownloadBandwidth(): Promise<number | null> {

@@ -16,12 +16,12 @@ export async function reportMeasurementToBackend(measurement: Omit<Measurement, 
     const response = await fetch(url, { method: 'POST', headers, body })
     const responseData = await response.json()
     if (response.status !== 200) {
-      logger.error(TAG, 'Failed to report measurements', responseData.errors)
+      logger.error(TAG, 'Failed to report measurement', responseData.errors)
       return
     }
     await saveMeasurementToHistory(responseData.measurement)
-    logger.log(TAG, 'Reported measurements to the backend')
+    logger.log(TAG, 'Reported measurement to the backend')
   } catch (error) {
-    logger.error(TAG, 'Failed to report measurements', error)
+    logger.error(TAG, 'Failed to report measurement', error)
   }
 }
