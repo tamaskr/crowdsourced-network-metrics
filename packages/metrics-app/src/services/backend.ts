@@ -8,8 +8,8 @@ const TAG = 'Backend'
 
 // Report a measurement to the backend to be stored
 export async function report(measurement: Omit<Measurement, 'id' | 'timestamp'>) {
-  logger.log(TAG, 'Reporting measurements...')
   try {
+    logger.log(TAG, 'Reporting measurements...')
     const url = 'https://europe-west1-crowdsourced-network-metrics.cloudfunctions.net/report'
     const headers = { 'content-type': 'application/json' }
     const body = JSON.stringify(measurement)

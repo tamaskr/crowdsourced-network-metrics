@@ -2,9 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Measurement } from '../types/types'
 import { logger } from './logger'
 
-// Logger tag
-const TAG = 'AsyncStorage'
 
+// Logger tag
+const TAG = 'History'
+
+// Store measurement in AsyncStorage
 export const storeMeasurement = async (measurement: Measurement) => {
   logger.log(TAG, 'Saving measurement data...')
   try {

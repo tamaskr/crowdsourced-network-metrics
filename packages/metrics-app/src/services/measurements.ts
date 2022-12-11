@@ -13,9 +13,10 @@ import { getCachedMeasurements, setCacheMeasurements } from './cache'
 const TAG = 'Measurements'
 
 // Measure the download bandwidth in kilobytes per second
-async function measureDownloadBandwidth(): Promise<number | null> {
-  logger.log(TAG, 'Measuring download bandwidth...')
+async function measureBandwidth(): Promise<number | null> {
   try {
+    logger.log(TAG, 'Measuring download bandwidth...')
+    const fileSize = 25 * 1024 * 1000
     const url = 'https://storage.googleapis.com/cmnm-measurement-files/binary25mb'
     const results: unknown[] = []
     setResourceLoggingEnabled(true)
@@ -24,10 +25,12 @@ async function measureDownloadBandwidth(): Promise<number | null> {
     results[1] = await fetch(url, { method: 'GET', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
     delete results[1]
     setResourceLoggingEnabled(false)
-    const duration = performance.getEntriesByName(url, 'resource').pop()?.duration ?? 0
-    const kbps = Math.round((25 * 1024 * 1000) / duration)
-    logger.log(TAG, 'Measured download bandwidth is', kbps, 'kbps')
-    return kbps
+    // The first request is slower due to establishing the connection, so the duration of the second one must be used
+    const duration = performance.getEntriesByName(url, 'resource')?.pop()?.duration ?? Number.NaN
+    const kbps = Math.round(fileSize / duration)
+    const safe = Number.isSafeInteger(kbps) ? kbps : null
+    logger.log(TAG, 'Measured download bandwidth is', safe, 'kbps')
+    return safe
   } catch (error) {
     logger.error(TAG, 'Failed to measure download bandwidth', error)
     return null
@@ -36,19 +39,21 @@ async function measureDownloadBandwidth(): Promise<number | null> {
 
 // Measure the latency in milliseconds
 async function measureLatency(): Promise<number | null> {
-  logger.log(TAG, 'Measuring latency...')
   try {
+    logger.log(TAG, 'Measuring latency...')
     const url = 'https://1.1.1.1/cdn-cgi/trace'
     setResourceLoggingEnabled(true)
     for (let i = 0; i < 10; i++) {
       await fetch(url, { method: 'HEAD', headers: { 'cache-content': 'no-cache' }, mode: 'no-cors' })
     }
     setResourceLoggingEnabled(false)
+    // Take the lowest of the ten measurements taken
     const durations = performance.getEntriesByName(url, 'resource').slice(-10).map(x => x.duration)
     const roundTrip = Math.round(durations.reduce((acc, cur) => Math.min(acc, cur), durations[0]))
     const ms = Math.round(roundTrip / 2)
-    logger.log(TAG, 'Measured latency is', ms, 'ms')
-    return ms
+    const safe = Number.isSafeInteger(ms) ? ms : null
+    logger.log(TAG, 'Measured latency is', safe, 'ms')
+    return safe
   } catch (error) {
     logger.error(TAG, 'Failed to measure latency', error)
     return null
@@ -57,11 +62,11 @@ async function measureLatency(): Promise<number | null> {
 
 // Measure the signal strength in values from 0 to 4
 async function measureSignalStrength(): Promise<number | null> {
-  logger.log(TAG, 'Measuring signal strength...')
   try {
+    logger.log(TAG, 'Measuring signal strength...')
     const permission = await getPermissionsAsync()
-    const granted = permission.status === PermissionStatus.GRANTED
-    const value = granted ? await getSignalStrengthAsync() : null
+    const hasPermission = permission.status === PermissionStatus.GRANTED
+    const value = hasPermission ? await getSignalStrengthAsync() : null
     logger.log(TAG, 'Measured signal strength is', value)
     return value
   } catch (error) {
@@ -70,9 +75,11 @@ async function measureSignalStrength(): Promise<number | null> {
   }
 }
 
+// Perform measurements when receiving a query and report back
 export async function performMeasurementsFromQuery(query: FCMDataMessage): Promise<void> {
-  logger.log(TAG, 'Performing measurement for query', query.id)
   try {
+    logger.log(TAG, 'Performing measurement for query', query.id)
+
     // Check location
     const coordinates = await getCurrentCoordinates()
     if (!coordinates) {
@@ -80,20 +87,20 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       return
     }
 
-    // Parse coordinates and range from query
-    const center = { latitude: Number.parseFloat(query.latitude), longitude: Number.parseFloat(query.longitude) }
-    const range = Number.parseFloat(query.range)
-
     // Check that the coordinates are within the queried area
-    const distance = getDistanceOfCoordinates(center, coordinates)
-    if (distance > range) {
+    const queryLatitude = Number.parseFloat(query.latitude)
+    const queryLongitude = Number.parseFloat(query.longitude)
+    const queryCoordinates = { latitude: queryLatitude, longitude: queryLongitude }
+    const distance = getDistanceOfCoordinates(queryCoordinates, coordinates)
+    const queryRange = Number.parseFloat(query.range)
+    if (distance > queryRange) {
       logger.log(TAG, 'Aborted performing measurements as coordinates are out of the queried range')
       return
     }
 
-    // Check that the user is connected to a cellular network
+    // Check that the user is connected to a cellular network or is in dev mode
     const state = await getNetworkStateAsync()
-    if (state.type !== NetworkStateType.CELLULAR) {
+    if (state.type !== NetworkStateType.CELLULAR && !__DEV__) {
       logger.log(TAG, 'Aborted performing measurements as the device is not connected to a cellular network')
       return
     }
@@ -113,22 +120,15 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       return
     }
 
-    // Take measurements
-    const bandwidth = query.measurements.includes(MeasurementType.Bandwidth)
-      ? await measureDownloadBandwidth()
-      : null
-    const latency = query.measurements.includes(MeasurementType.Latency)
-      ? await measureLatency()
-      : null
-    const signalStrength = query.measurements.includes(MeasurementType.SignalStrength)
-      ? await measureSignalStrength()
-      : null
-
-    // Check the area of the coordinates
+    // Take measurements, check area and carrier
     const area = await getReverseGeocodedArea(coordinates)
-
-    // Get the carrier name
     const carrier = await getCarrierNameAsync()
+    const shouldMeasureBandwidth = query.measurements.includes(MeasurementType.Bandwidth)
+    const shouldMeasureLatency = query.measurements.includes(MeasurementType.Latency)
+    const shouldMeasureSignalStrength = query.measurements.includes(MeasurementType.SignalStrength)
+    const bandwidth = shouldMeasureBandwidth ? await measureBandwidth() : null
+    const latency = shouldMeasureLatency ? await measureLatency() : null
+    const signalStrength = shouldMeasureSignalStrength ? await measureSignalStrength() : null
 
     // Cache measurements
     await setCacheMeasurements({ area, carrier, bandwidth, latency, signalStrength })

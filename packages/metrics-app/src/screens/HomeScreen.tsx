@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next'
 import SwitchSelector from 'react-native-switch-selector'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
+import { requestPermissionsAsync as requestCellularPermissions } from 'expo-cellular'
 import { TFunction } from 'i18next'
-import { checkLocationPermissions } from '../services/location'
-import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
+import { requestLocationPermissions } from '../services/location'
+import { enableMessaging, disableMessaging, requestMessagingPermissions } from '../services/messaging'
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
 import { logger } from '../utils/logger'
@@ -70,9 +70,9 @@ function HomeScreen() {
   // Opt in by subscribing to the FCM topic and asking for permissions
   const optin = useCallback(async (t: TFunction<'translation', undefined>) => {
     try {
-      const messagingGranted = await checkMessagingPermissions()
-      const cellularGranted = await checkCellularPermissions()
-      const locationGranted = await checkLocationPermissions()
+      const messagingGranted = await requestMessagingPermissions()
+      const cellularGranted = await requestCellularPermissions()
+      const locationGranted = await requestLocationPermissions()
       if (!messagingGranted || !cellularGranted || !locationGranted) {
         toast(t('homePage.infoToastPermission'))
         return
