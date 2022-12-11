@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next'
 import { locale } from 'expo-localization'
 import en from '../translation/en.json'
 import fi from '../translation/fi.json'
-import { logger } from './logger'
+import { logger } from '../utils/logger'
 
 
 // Logger tag

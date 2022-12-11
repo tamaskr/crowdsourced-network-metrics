@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { Carousel } from 'react-native-ui-lib'
 import { colors } from '../theme/colors'
 import { RootStackParamList } from '../navigation/Navigator'
-import { setUserHasSeenTutorial } from '../utils/tutorial'
+import { setUserHasSeenTutorial } from '../services/tutorial'
 
 
 const styles = StyleSheet.create({

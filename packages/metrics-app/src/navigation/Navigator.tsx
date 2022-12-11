@@ -10,7 +10,7 @@ import HistoryScreen from '../screens/HistoryScreen'
 import HomeScreen from '../screens/HomeScreen'
 import { colors } from '../theme/colors'
 import TutorialScreen from '../screens/TutorialScreen'
-import { getUserHasSeenTutorial } from '../utils/tutorial'
+import { getUserHasSeenTutorial } from '../services/tutorial'
 
 
 const styles = StyleSheet.create({

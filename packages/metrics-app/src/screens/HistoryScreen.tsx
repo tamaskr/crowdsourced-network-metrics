@@ -7,7 +7,7 @@ import { Measurement } from '../types/types'
 import { HistoryCard } from '../components/HistoryCard'
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
-import { getMeasurementHistory } from '../utils/history'
+import { getMeasurementHistory } from '../services/history'
 
 
 const styles = StyleSheet.create({

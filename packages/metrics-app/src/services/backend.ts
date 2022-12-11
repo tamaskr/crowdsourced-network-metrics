@@ -1,6 +1,6 @@
 import { Measurement } from '../types/types'
-import { saveMeasurementToHistory } from '../utils/history'
 import { logger } from '../utils/logger'
+import { saveMeasurementToHistory } from './history'
 
 
 // Logger tag
