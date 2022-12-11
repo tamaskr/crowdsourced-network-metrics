@@ -1,6 +1,5 @@
 import { Fragment } from 'react'
 import { format } from 'date-fns'
-import { TFunction } from 'i18next'
 import { View, StyleSheet, Text, ViewStyle } from 'react-native'
 import { Divider } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -46,34 +45,31 @@ interface HistoryCardProps {
 }
 
 // Returns all the properties that are needed to display the measurements
-const getMeasurementData = (
-  measurement: MeasurementType,
-  t: TFunction<'translation', undefined>
-) => {
+const getMeasurementData = (measurement: MeasurementType) => {
   switch (measurement) {
     case MeasurementType.Bandwidth: {
       return {
-        label: t('historyPage.bandwidth'),
+        label: 'historyPage.bandwidth',
         icon: 'collapse-all-outline',
-        unit: t('historyPage.mbit')
+        unit: 'historyPage.mbit'
       }
     }
     case MeasurementType.Latency: {
       return {
-        label: t('historyPage.latency'),
+        label: 'historyPage.latency',
         icon: 'clock-fast',
-        unit: t('historyPage.ms')
+        unit: 'historyPage.ms'
       }
     }
     case MeasurementType.SignalStrength: {
-      return { label: t('historyPage.signalStr'), icon: 'signal' }
+      return { label: 'historyPage.signalStr', icon: 'signal' }
     }
   }
 }
 
 export const HistoryCard = ({ measurement, style }: HistoryCardProps) => {
-  const date = format(new Date(measurement.timestamp), 'yyyy MMMM dd pp')
   const { t } = useTranslation()
+  const date = format(new Date(measurement.timestamp), 'yyyy MMMM dd pp')
 
   return (
     <View style={[ styles.container, style ]}>
@@ -81,9 +77,9 @@ export const HistoryCard = ({ measurement, style }: HistoryCardProps) => {
         <Text>{date}</Text>
       </View>
       {Object.values(MeasurementType).map(m => {
-        const { label, icon, unit } = getMeasurementData(m, t)
+        const { label, icon, unit } = getMeasurementData(m)
         // Measurement value with unit
-        const value = measurement[m] ? `${measurement[m]} ${unit ?? ''}` : '-'
+        const value = measurement[m] ? `${measurement[m]} ${unit ? t(unit) : ''}` : '-'
         return (
           <Fragment key={m}>
             <Divider style={styles.divider} />
@@ -95,7 +91,7 @@ export const HistoryCard = ({ measurement, style }: HistoryCardProps) => {
                 style={styles.measurementIcon}
               />
               <View>
-                <Text style={styles.measurementLabel}>{label}</Text>
+                <Text style={styles.measurementLabel}>{t(label)}</Text>
                 <Text style={styles.measurementValue}>{value}</Text>
               </View>
             </View>

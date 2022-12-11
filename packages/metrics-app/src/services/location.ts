@@ -5,32 +5,30 @@ import { logger } from '../utils/logger'
 // Logger tag
 const TAG = 'Location'
 
-// Radius of the Earth in meters
-const EARTH_RADIUS = 6378137
+// Geocoding key
+const GEOCODE_API_KEY = 'bdc_ec1c6c097de9484c8db9633444fb8cca'
 
 export interface Coordinate {
   latitude: number
   longitude: number
 }
 
-// Check if permissions for location have been granted and request them if not
-export async function checkLocationPermissions(): Promise<boolean> {
-  logger.log(TAG, 'Checking location permissions...')
+// Request permissions for location if they haven't yet been provided
+export async function requestLocationPermissions(): Promise<boolean> {
   try {
     const foregroundPermissionResponse = await Location.requestForegroundPermissionsAsync()
-    logger.log(TAG, 'Checked foreground location permissions, granted =', foregroundPermissionResponse.granted)
+    logger.log(TAG, 'Requested foreground location permissions, granted =', foregroundPermissionResponse.granted)
     const backgroundPermissionResponse = await Location.requestBackgroundPermissionsAsync()
-    logger.log(TAG, 'Checked background location permissions, granted =', backgroundPermissionResponse.granted)
+    logger.log(TAG, 'Requested background location permissions, granted =', backgroundPermissionResponse.granted)
     return foregroundPermissionResponse.granted && backgroundPermissionResponse.granted
   } catch (error) {
-    logger.error(TAG, 'Failed to check location permissions', error)
+    logger.error(TAG, 'Failed to request location permissions', error)
     return false
   }
 }
 
 // Get the current location of the device as coordinates
 export async function getCurrentCoordinates(): Promise<Coordinate | null> {
-  logger.log(TAG, 'Getting current coordinates...')
   try {
     const foregroundPermissionResponse = await Location.getForegroundPermissionsAsync()
     const backgroundPermissionResponse = await Location.getBackgroundPermissionsAsync()
@@ -40,10 +38,10 @@ export async function getCurrentCoordinates(): Promise<Coordinate | null> {
     }
     const { coords: { latitude, longitude } } = await Location.getCurrentPositionAsync()
     const coordinates = { latitude, longitude }
-    logger.log(TAG, 'Gotten current coordinates', coordinates)
+    logger.log(TAG, 'Fetched current coordinates', coordinates)
     return coordinates
   } catch (error) {
-    logger.error(TAG, 'Failed to get current coordinates', error)
+    logger.error(TAG, 'Failed to fetch current coordinates', error)
     return null
   }
 }
@@ -68,22 +66,19 @@ export function getDistanceOfCoordinates(coordinate1: Coordinate, coordinate2: C
     * Math.sin(longitudeDifference / 2) * Math.sin(longitudeDifference / 2)
   const distance = 2 * Math.atan2(Math.sqrt(n), Math.sqrt(1 - n))
 
-  // Return the distance multiplied by the Earth's radius
-  return Math.round(EARTH_RADIUS * distance)
+  // Return the distance multiplied by the Earth's radius in meters
+  return Math.round(distance * 6378137)
 }
 
 // Get the area (aka locality) of the coordinates
 export async function getReverseGeocodedArea(coordinate: Coordinate): Promise<string | null> {
   try {
-    const BIGDATACLOUD_API_KEY = 'bdc_ec1c6c097de9484c8db9633444fb8cca'
-    const url = `https://api.bigdatacloud.net/data/reverse-geocode?latitude=${coordinate?.latitude}&longitude=${coordinate?.longitude}&localityLanguage=en&key=${BIGDATACLOUD_API_KEY}`
+    const url = `https://api.bigdatacloud.net/data/reverse-geocode?latitude=${coordinate?.latitude}&longitude=${coordinate?.longitude}&localityLanguage=en&key=${GEOCODE_API_KEY}`
     const response = await fetch(url)
-
-    if (!response.ok) {
+    if (response.status !== 200) {
       logger.error(TAG, 'Failed to reverse geocode the area')
       return null
     }
-
     const data = await response.json()
     const area = data.locality ?? null
     logger.log(TAG, 'Reverse geocoded area is', area)

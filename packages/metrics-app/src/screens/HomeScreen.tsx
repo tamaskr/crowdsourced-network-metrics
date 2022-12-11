@@ -1,20 +1,14 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Fragment } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useTranslation } from 'react-i18next'
-import SwitchSelector from 'react-native-switch-selector'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { requestPermissionsAsync as checkCellularPermissions } from 'expo-cellular'
-import { TFunction } from 'i18next'
-import { checkLocationPermissions } from '../services/location'
-import { enableMessaging, disableMessaging, checkMessagingPermissions } from '../services/messaging'
+import { StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { requestPermissionsAsync as requestCellularPermissions } from 'expo-cellular'
+import { requestLocationPermissions } from '../services/location'
+import { enableMessaging, disableMessaging, requestMessagingPermissions, isMessagingEnabled } from '../services/messaging'
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
-import { logger } from '../utils/logger'
-import { useApp } from '../hooks/useApp'
 
-// Logger tag
-const TAG = 'HomeScreen'
 
 const styles = StyleSheet.create({
   container: {
@@ -27,7 +21,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     height: 40,
     marginHorizontal: 10,
-    padding: 10,
+    paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
@@ -38,94 +32,58 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     textAlign: 'center',
     textAlignVertical: 'center'
-  },
-  langSelector: {
-    marginVertical: 20,
-    margin: 20,
-    paddingHorizontal: 80,
-    alignItems: 'center'
   }
 })
 
-function HomeScreen() {
-  const [ isOptedIn, setIsOptedIn ] = useState(false)
-  const [ isLoading, setIsLoading ] = useState(true)
+export default function HomeScreen() {
   const { t } = useTranslation()
-  const { setLang, getLang } = useApp()
-  const options = [
-    { label: 'English', value: 'en' },
-    { label: 'Suomi', value: 'fi' }
-  ]
-
+  const [ isLoading, setIsLoading ] = useState(true)
+  const [ isOptedIn, setIsOptedIn ] = useState(false)
 
   // Check for a previously saved opted-in state
   useEffect(() => {
-    AsyncStorage.getItem('isUserOptedIn')
-      .then(value => {
-        if (value !== null) setIsOptedIn(value === 'true')
-        setIsLoading(false)
-      })
-      .catch(error => logger.error(TAG, 'Failed to check for previous opted-in state', error))
+    isMessagingEnabled().then(enabled => {
+      setIsOptedIn(enabled)
+      setIsLoading(false)
+    })
   }, [])
-
 
   // Opt in by subscribing to the FCM topic and asking for permissions
-  const optin = useCallback(async (t: TFunction<'translation', undefined>) => {
-    try {
-      const messagingGranted = await checkMessagingPermissions()
-      const cellularGranted = await checkCellularPermissions()
-      const locationGranted = await checkLocationPermissions()
-      if (!messagingGranted || !cellularGranted || !locationGranted) {
-        toast(t('homePage.infoToastPermission'))
-        return
-      }
-      await enableMessaging()
-      toast(t('homePage.infoToastIN'))
-      await AsyncStorage.setItem('isUserOptedIn', 'true')
-      setIsOptedIn(true)
-    } catch (error) {
-      logger.error(TAG, 'Failed to opt in', error)
+  const optin = useCallback(async () => {
+    const messagingGranted = await requestMessagingPermissions()
+    const cellularGranted = await requestCellularPermissions()
+    const locationGranted = await requestLocationPermissions()
+    if (!messagingGranted || !cellularGranted || !locationGranted) {
+      toast(t('homePage.infoToastPermission'))
+      return
     }
-  }, [])
+    await enableMessaging()
+    toast(t('homePage.infoToastIN'))
+    setIsOptedIn(true)
+  }, [ t ])
 
   // Opt out by unsubscribing from the FCM topic
-  const optout = useCallback(async (t: TFunction<'translation', undefined>) => {
-    try {
-      await disableMessaging()
-      toast(t('homePage.infoToastOUT'))
-      await AsyncStorage.setItem('isUserOptedIn', 'false')
-      setIsOptedIn(false)
-    } catch (error) {
-      logger.error(TAG, 'Failed to opt out', error)
-    }
-  }, [])
+  const optout = useCallback(async () => {
+    await disableMessaging()
+    toast(t('homePage.infoToastOUT'))
+    setIsOptedIn(false)
+  }, [ t ])
 
-  if (isLoading) return null
   return (
-    <View style={styles.container}>
-      <Text>{t('homePage.infoMsg')} {isOptedIn ? t('homePage.enabled') : t('homePage.disabled')}</Text>
-      <TouchableOpacity onPress={() => isOptedIn ? optout(t) : optin(t)}>
-        <Text style={styles.optinoutbutton}>
-          {isOptedIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
-        </Text>
-      </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      {isLoading ? (
+        <ActivityIndicator size="large" />
+      ) : (
+        <Fragment>
+          <Text>{t('homePage.infoMsg')} {isOptedIn ? t('homePage.enabled') : t('homePage.disabled')}</Text>
+          <TouchableOpacity onPress={() => isOptedIn ? optout() : optin()}>
+            <Text style={styles.optinoutbutton}>
+              {isOptedIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
+            </Text>
+          </TouchableOpacity>
+        </Fragment>
+      )}
       <StatusBar style='auto' />
-      <View style={styles.langSelector}>
-        <SwitchSelector
-          options={options}
-          initial={getLang() === 'fi' ? 1 : 0}
-          selectedColor={colors.background.white}
-          buttonColor={colors.primary}
-          borderColor={colors.primary}
-          hasPadding
-          onPress={options => {
-            setLang(options)
-          }}/>
-      </View>
-    </View>
-
-
+    </SafeAreaView>
   )
 }
-
-export default HomeScreen
