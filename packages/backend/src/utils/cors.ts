@@ -10,7 +10,7 @@ export function cors(request: Request, response: Response): boolean {
     response.setHeader('Access-Control-Allow-Methods', '*')
     response.setHeader('Access-Control-Max-Age', '86400')
     response.setHeader('Content-Length', '0')
-    response.status(204).send('')
+    response.status(204).send()
     return true
   }
   return false

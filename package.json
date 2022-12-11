@@ -1,6 +1,5 @@
 {
   "name": "crowdsourced-network-metrics",
-  "private": true,
   "license": "MIT",
   "engines": {
     "node": ">=16.0.0",

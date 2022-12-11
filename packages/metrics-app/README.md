@@ -1,9 +1,14 @@
-# CMNM - Metrics app
+# CMNM - Metrics App
+
+> 📱 The metrics app can be installed by volunteers who wish to share their network metrics.
+
+## Technologies
+The metrics app is built with React Native, however currently it only supports Android due to limitations on the iOS platform. The application uses Expo to simplify development and abstract away much of the native code.
 
 ## Running the development app locally
-1. Get the development app APK either from the repository's releases section or build your own with EAS
+1. Get the development app APK from the repository's releases section, or build your own locally or with EAS
 2. Install the APK on a real device or emulator
-3. Place the the `google-services.json` in the project folder
+3. Place the the `google-services.json` in the project folder that you download from the Firebase dashboard
 4. Run `npm start` in the project folder to launch the expo development server
 5. Open the app on the phone and scan the QR code from the terminal, or manually enter the IP address
 
