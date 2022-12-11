@@ -1,5 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { Text, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -8,13 +7,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTranslation } from 'react-i18next'
 import { Carousel } from 'react-native-ui-lib'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { colors } from '../theme/colors'
-import { logger } from '../utils/logger'
 import { RootStackParamList } from '../navigation/Navigator'
+import { setUserHasSeenTutorial } from '../utils/tutorial'
 
-// Logger tag
-const TAG = 'TutorialScreen'
 
 const styles = StyleSheet.create({
   container: {
@@ -74,16 +70,25 @@ const pages = [
   }
 ]
 
-type TutorialScreenStackNavigation = StackNavigationProp<
-  RootStackParamList,
-  'Tutorial'
->
-
-const TutorialScreen = () => {
-  const [ currentPage, setCurrentPage ] = useState<number>(0)
-  const carouselRef = useRef<any | undefined>()
+export default function TutorialScreen() {
   const { t } = useTranslation()
-  const navigation = useNavigation<TutorialScreenStackNavigation>()
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Tutorial'>>()
+  const [ currentPage, setCurrentPage ] = useState(0)
+  const carouselRef = useRef<any>()
+
+  // Handle pressint the action button
+  const onButtonPress = useCallback(async () => {
+    if (currentPage < 2) {
+      setCurrentPage(prevPage => prevPage + 1)
+      carouselRef.current.goToPage(currentPage + 1, false)
+      return
+    }
+    await setUserHasSeenTutorial()
+    navigation.dispatch(CommonActions.reset({
+      index: 0,
+      routes: [{ name: 'Main' }]
+    }))
+  }, [ currentPage, navigation ])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -91,10 +96,7 @@ const TutorialScreen = () => {
         ref={carouselRef}
         containerStyle={{ flex: 5 }}
         pageControlProps={{ size: 10 }}
-        onChangePage={(currentPage: number, _: unknown) => {
-          setCurrentPage(currentPage)
-          carouselRef.current.setState({ currentPage })
-        }}
+        onChangePage={setCurrentPage}
         pageControlPosition={Carousel.pageControlPositions.OVER}
       >
         {pages.map(({ title, description, icon }) => (
@@ -114,26 +116,7 @@ const TutorialScreen = () => {
         ))}
       </Carousel>
       <View style={{ flex: 1 }}>
-        <TouchableOpacity
-          onPress={async () => {
-            if (currentPage < 2) {
-              setCurrentPage(prevPage => prevPage + 1)
-              carouselRef.current.goToPage(currentPage + 1, false)
-              return
-            }
-            try {
-              await AsyncStorage.setItem('hasShownTutorial', 'true')
-              logger.log(TAG, 'Tutorial token has been saved')
-              navigation.dispatch(CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'Main' }]
-              }))
-            } catch {
-              logger.log(TAG, 'Error while saving tutorial token')
-            }
-          }}
-          style={styles.nextButton}
-        >
+        <TouchableOpacity onPress={onButtonPress} style={styles.nextButton}>
           <Text style={styles.nextButtonText}>
             {t(currentPage === 2 ? 'tutorial.done' : 'tutorial.next')}
           </Text>
@@ -143,5 +126,3 @@ const TutorialScreen = () => {
     </SafeAreaView>
   )
 }
-
-export default TutorialScreen

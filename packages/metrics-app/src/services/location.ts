@@ -13,7 +13,6 @@ export interface Coordinate {
 // Request permissions for location if they haven't yet been provided
 export async function requestLocationPermissions(): Promise<boolean> {
   try {
-    logger.log(TAG, 'Requesting location permissions...')
     const foregroundPermissionResponse = await Location.requestForegroundPermissionsAsync()
     logger.log(TAG, 'Requested foreground location permissions, granted =', foregroundPermissionResponse.granted)
     const backgroundPermissionResponse = await Location.requestBackgroundPermissionsAsync()
@@ -28,7 +27,6 @@ export async function requestLocationPermissions(): Promise<boolean> {
 // Get the current location of the device as coordinates
 export async function getCurrentCoordinates(): Promise<Coordinate | null> {
   try {
-    logger.log(TAG, 'Getting current coordinates...')
     const foregroundPermissionResponse = await Location.getForegroundPermissionsAsync()
     const backgroundPermissionResponse = await Location.getBackgroundPermissionsAsync()
     if (!foregroundPermissionResponse.granted || !backgroundPermissionResponse.granted) {
@@ -37,10 +35,10 @@ export async function getCurrentCoordinates(): Promise<Coordinate | null> {
     }
     const { coords: { latitude, longitude } } = await Location.getCurrentPositionAsync()
     const coordinates = { latitude, longitude }
-    logger.log(TAG, 'Gotten current coordinates', coordinates)
+    logger.log(TAG, 'Fetched current coordinates', coordinates)
     return coordinates
   } catch (error) {
-    logger.error(TAG, 'Failed to get current coordinates', error)
+    logger.error(TAG, 'Failed to fetch current coordinates', error)
     return null
   }
 }

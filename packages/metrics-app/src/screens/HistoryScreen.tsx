@@ -1,18 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { Text, StyleSheet, View, FlatList } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTranslation } from 'react-i18next'
-import { logger } from '../utils/logger'
 import { Measurement } from '../types/types'
 import { HistoryCard } from '../components/HistoryCard'
 import { colors } from '../theme/colors'
 import { toast } from '../utils/toast'
+import { getMeasurementHistory } from '../utils/history'
 
-
-// Logger tag
-const TAG = 'HistoryScreen'
 
 const styles = StyleSheet.create({
   container: {
@@ -47,33 +43,23 @@ const styles = StyleSheet.create({
   }
 })
 
-function HistoryScreen() {
-  // Local state for storing measurement history data and loading
-  const [ history, setHistory ] = useState<Measurement[]>()
-  const [ isLoading, setIsLoading ] = useState<boolean>(true)
+export default function HistoryScreen() {
   const { t } = useTranslation()
+  const [ isLoading, setIsLoading ] = useState(true)
+  const [ history, setHistory ] = useState<Measurement[]>([])
 
-
-  // Access AsyncStorage to retrieve user measurement history
-  const getMeasurementHistory = useCallback(async () => {
-    try {
-      logger.log(TAG, 'Fetching measurement history...')
-      const history = await AsyncStorage.getItem('history')
-      const parsedHistory = history ? JSON.parse(history) : []
-      // Sort array by timestamp
-      setHistory(parsedHistory.sort((a: Measurement, b: Measurement) => b.timestamp - a.timestamp))
-      logger.log(TAG, 'Fetching measurement history successful')
-    } catch {
-      logger.log(TAG, 'Error while fetching measurement history')
-    } finally {
-      setIsLoading(false)
-    }
+  // Get the measurement history and sort it in descending order by timestamp
+  const getSortedMeasurementHistory = useCallback(async () => {
+    setIsLoading(true)
+    const measurements = await getMeasurementHistory()
+    setHistory(measurements.sort((a: Measurement, b: Measurement) => b.timestamp - a.timestamp))
+    setIsLoading(false)
   }, [])
 
   // Fetch measurement history data on first render
   useEffect(() => {
-    getMeasurementHistory()
-  }, [ getMeasurementHistory ])
+    getSortedMeasurementHistory()
+  }, [ getSortedMeasurementHistory ])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -82,8 +68,7 @@ function HistoryScreen() {
         data={history}
         contentContainerStyle={styles.list}
         onRefresh={() => {
-          setIsLoading(true)
-          getMeasurementHistory().then(() => {
+          getSortedMeasurementHistory().then(() => {
             toast(t('historyPage.historyRfshToast'))
           })
         }}
@@ -91,19 +76,15 @@ function HistoryScreen() {
         renderItem={({ item }) => (
           <HistoryCard measurement={item} style={styles.card} key={item.id} />
         )}
-        ListEmptyComponent={() =>
-          !isLoading ? (
-            <View style={styles.emptyTextContainer}>
-              <Text style={styles.emptyText}>
-                {t('historyPage.noDataYet')}
-              </Text>
-            </View>
-          ) : null
-        }
+        ListEmptyComponent={() => isLoading ? null : (
+          <View style={styles.emptyTextContainer}>
+            <Text style={styles.emptyText}>
+              {t('historyPage.noDataYet')}
+            </Text>
+          </View>
+        )}
       />
       <StatusBar style="auto" />
     </SafeAreaView>
   )
 }
-
-export default HistoryScreen

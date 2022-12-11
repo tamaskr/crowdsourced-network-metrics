@@ -6,11 +6,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useTranslation } from 'react-i18next'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import HistoryScreen from '../screens/HistoryScreen'
 import HomeScreen from '../screens/HomeScreen'
 import { colors } from '../theme/colors'
 import TutorialScreen from '../screens/TutorialScreen'
+import { getUserHasSeenTutorial } from '../utils/tutorial'
 
 
 const styles = StyleSheet.create({
@@ -26,9 +26,6 @@ const Tab = createMaterialBottomTabNavigator()
 
 // Set up stack navigation to determine if tutorial screen should be shown
 const Stack = createStackNavigator<RootStackParamList>()
-
-// Prevent app loading until the stack navigator is ready
-SplashScreen.preventAutoHideAsync()
 
 const MainStack = () => {
   const { t } = useTranslation()
@@ -71,13 +68,8 @@ const Navigator = () => {
 
   useEffect(() => {
     const checkTutorialToken = async () => {
-      try {
-        const token = await AsyncStorage.getItem('hasShownTutorial')
-        if (token === null) return setInitialRoute('Tutorial')
-        setInitialRoute('Main')
-      } catch {
-        setInitialRoute('Main')
-      }
+      const hasSeenTutorial = await getUserHasSeenTutorial()
+      setInitialRoute(hasSeenTutorial ? 'Main' : 'Tutorial')
     }
     checkTutorialToken()
     SplashScreen.hideAsync()

@@ -1,4 +1,5 @@
 import messaging from '@react-native-firebase/messaging'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { FCMDataMessage } from '../types/types'
 import { logger } from '../utils/logger'
 
@@ -9,10 +10,12 @@ const TAG = 'Messaging'
 // FCM topic for receiving queries
 const TOPIC = 'CMNM_QUERY'
 
+// AsyncStorage key
+const STORAGE_KEY = '@cmnm/subscribed'
+
 // Request permissions for messaging if they haven't yet been provided
 export async function requestMessagingPermissions(): Promise<boolean> {
   try {
-    logger.log(TAG, 'Requesting messaging permissions...')
     const authStatus = await messaging().requestPermission()
     const { AuthorizationStatus } = messaging
     const hasPermission = [ AuthorizationStatus.AUTHORIZED, AuthorizationStatus.PROVISIONAL ].includes(authStatus)
@@ -24,12 +27,25 @@ export async function requestMessagingPermissions(): Promise<boolean> {
   }
 }
 
+// Check if messaging is enabled
+export async function isMessagingEnabled(): Promise<boolean> {
+  try {
+    const value = await AsyncStorage.getItem(STORAGE_KEY)
+    const result = value === 'true'
+    logger.log(TAG, 'Checked if messaging is enabled, result =', result)
+    return result
+  } catch (error) {
+    logger.error(TAG, 'Failed to check if messaging is enabled', error)
+    return false
+  }
+}
+
 // Enable messaging by subscribing to the topic for queries
 export async function enableMessaging(): Promise<void> {
   try {
-    logger.log(TAG, 'Enabling messaging...')
     if (!messaging().isDeviceRegisteredForRemoteMessages) await messaging().registerDeviceForRemoteMessages()
     await messaging().subscribeToTopic(TOPIC)
+    await AsyncStorage.setItem(STORAGE_KEY, 'true')
     logger.log(TAG, 'Enabled messaging and subscribed to topic', TOPIC)
   } catch (error) {
     logger.error(TAG, 'Failed to enable messaging', error)
@@ -39,9 +55,9 @@ export async function enableMessaging(): Promise<void> {
 // Disable messaging by unsubscribing from the topic for queries
 export async function disableMessaging(): Promise<void> {
   try {
-    logger.log(TAG, 'Disabling messaging...')
     if (messaging().isDeviceRegisteredForRemoteMessages) await messaging().unregisterDeviceForRemoteMessages()
     await messaging().unsubscribeFromTopic(TOPIC)
+    await AsyncStorage.setItem(STORAGE_KEY, 'false')
     logger.log(TAG, 'Disabled messaging and unsubscribed from topic', TOPIC)
   } catch (error) {
     logger.error(TAG, 'Failed to disable messaging', error)
