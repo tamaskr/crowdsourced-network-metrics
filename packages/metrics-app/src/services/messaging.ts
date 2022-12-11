@@ -66,7 +66,7 @@ export function setForegroundMessageListener(handler: (query: FCMDataMessage) =>
 }
 
 // Add a background message listener, must be used outside the root component
-export function setBackgroundMessageListener(handler: (query: FCMDataMessage) => unknown) {
+export function setBackgroundMessageListener(handler: (query: FCMDataMessage) => unknown): void {
   logger.log(TAG, 'Setting background message listener')
   messaging().setBackgroundMessageHandler(async message => {
     try {

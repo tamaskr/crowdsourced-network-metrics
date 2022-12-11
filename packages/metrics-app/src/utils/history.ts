@@ -10,11 +10,11 @@ const TAG = 'History'
 const STORAGE_KEY = '@cmnm/history'
 
 // Store measurement in AsyncStorage
-export async function saveMeasurementToHistory(measurement: Measurement) {
+export async function saveMeasurementToHistory(measurement: Measurement): Promise<void> {
   try {
     logger.log(TAG, 'Saving measurement data...')
     const history = await AsyncStorage.getItem(STORAGE_KEY)
-    const parsedHistory = history ? JSON.parse(history) : []
+    const parsedHistory: Measurement[] = history ? JSON.parse(history) : []
     parsedHistory.push({
       ...measurement,
       // Convert kilobyte to megabit (125 kB = 1 Mbit)
@@ -26,6 +26,6 @@ export async function saveMeasurementToHistory(measurement: Measurement) {
     await AsyncStorage.setItem(STORAGE_KEY, stringifiedHistory)
     logger.log(TAG, 'Measurement data saved')
   } catch (error) {
-    logger.error(TAG, 'Error while saving measurement data', error)
+    logger.error(TAG, 'Failed to save measurement history', error)
   }
 }

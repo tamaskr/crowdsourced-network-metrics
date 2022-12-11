@@ -7,7 +7,7 @@ import { logger } from '../utils/logger'
 const TAG = 'Backend'
 
 // Report a measurement to the backend to be stored in the database
-export async function reportMeasurementToBackend(measurement: Omit<Measurement, 'id' | 'timestamp'>) {
+export async function reportMeasurementToBackend(measurement: Omit<Measurement, 'id' | 'timestamp'>): Promise<void> {
   try {
     logger.log(TAG, 'Reporting measurement...')
     const url = 'https://europe-west1-crowdsourced-network-metrics.cloudfunctions.net/report'
