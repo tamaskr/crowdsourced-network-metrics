@@ -7,7 +7,7 @@ import { logger } from './logger'
 
 
 // Logger tag
-const TAG = 'I18N'
+const TAG = 'Localization'
 
 // Use a language detector module that checks the device's current language
 use<LanguageDetectorAsyncModule>({

@@ -4,7 +4,7 @@ import { logger } from '../utils/logger'
 
 
 // Logger tag
-const TAG = 'FCM'
+const TAG = 'Messaging'
 
 // FCM topic for receiving queries
 const TOPIC = 'CMNM_QUERY'
