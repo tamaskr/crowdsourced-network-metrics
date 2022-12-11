@@ -8,6 +8,9 @@ const TAG = 'Cache'
 // AsyncStorage key
 const STORAGE_KEY = '@cmnm/cache'
 
+// Expiry of the cache is one minute (in milliseconds)
+const EXPIRY = 60 * 1000
+
 interface CachedMeasurements {
   area: string | null
   carrier: string | null
@@ -34,7 +37,7 @@ export async function getCachedMeasurements(): Promise<CachedMeasurements | null
 // Cache measurements to AsyncStorage for one minute to avoid draining the device's resources
 export async function setCacheMeasurements(measurements: CachedMeasurements): Promise<void> {
   try {
-    const data = { ...measurements, expiry: Date.now() + 60 * 1000 }
+    const data = { ...measurements, expiry: Date.now() + EXPIRY }
     const stringified = JSON.stringify(data)
     await AsyncStorage.setItem(STORAGE_KEY, stringified)
     logger.log(TAG, 'Cached measurements to storage')
