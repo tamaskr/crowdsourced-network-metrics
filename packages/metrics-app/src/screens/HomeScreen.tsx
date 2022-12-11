@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback, Fragment } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useTranslation } from 'react-i18next'
-import SwitchSelector from 'react-native-switch-selector'
-import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { requestPermissionsAsync as requestCellularPermissions } from 'expo-cellular'
 import { requestLocationPermissions } from '../services/location'
@@ -33,25 +32,13 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     textAlign: 'center',
     textAlignVertical: 'center'
-  },
-  langSelector: {
-    marginVertical: 20,
-    margin: 20,
-    paddingHorizontal: 80,
-    alignItems: 'center'
   }
 })
 
 export default function HomeScreen() {
-  const { i18n, t } = useTranslation()
+  const { t } = useTranslation()
   const [ isLoading, setIsLoading ] = useState(true)
   const [ isOptedIn, setIsOptedIn ] = useState(false)
-
-  // Language switch selector options
-  const switchSelectorOptions = [
-    { label: 'English', value: 'en' },
-    { label: 'Suomi', value: 'fi' }
-  ]
 
   // Check for a previously saved opted-in state
   useEffect(() => {
@@ -94,19 +81,9 @@ export default function HomeScreen() {
               {isOptedIn ? t('homePage.optOutBtn') : t('homePage.optInBtn')}
             </Text>
           </TouchableOpacity>
-          <StatusBar style='auto' />
-          <View style={styles.langSelector}>
-            <SwitchSelector
-              options={switchSelectorOptions}
-              initial={i18n.language === 'fi' ? 1 : 0}
-              selectedColor={colors.background.white}
-              buttonColor={colors.primary}
-              borderColor={colors.primary}
-              hasPadding
-              onPress={option => i18n.changeLanguage(option as string)}/>
-          </View>
         </Fragment>
       )}
+      <StatusBar style='auto' />
     </SafeAreaView>
   )
 }
