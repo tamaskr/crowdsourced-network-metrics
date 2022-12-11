@@ -12,7 +12,7 @@ This project is a proof of concept aiming to help mobile network providers under
    ```
 2. Install dependencies
    ```bash
-   npm instal
+   npm install
    ```
 3. See the [backend](/packages/backend), [metrics-app](/packages/metrics-app) and [operator-app](/packages/operator-app) packages for individual instructions
 
