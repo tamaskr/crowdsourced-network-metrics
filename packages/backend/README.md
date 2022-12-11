@@ -13,4 +13,3 @@ The backend is built entirely on Firebase. It uses the Firestore database for st
    ```bash
    npm run serve
    ```
-5. Start developing!
