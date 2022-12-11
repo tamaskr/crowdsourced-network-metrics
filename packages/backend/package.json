@@ -8,8 +8,8 @@
     "logs": "firebase functions:log",
     "clean": "rimraf dist",
     "build": "tsc",
-    "typecheck": "tsc --strict --alwaysStrict --noEmit",
-    "lint": "eslint . --ext .ts,.json  --report-unused-disable-directives"
+    "lint": "eslint . --ext .ts,.json  --report-unused-disable-directives",
+    "typecheck": "tsc --noEmit"
   },
   "engines": {
     "node": "16"
