@@ -1,7 +1,6 @@
 import { init, LanguageDetectorAsyncModule, use } from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import { locale as deviceLanguage } from 'expo-localization'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import { locale } from 'expo-localization'
 import en from '../translation/en.json'
 import fi from '../translation/fi.json'
 import { logger } from './logger'
@@ -10,27 +9,17 @@ import { logger } from './logger'
 // Logger tag
 const TAG = 'I18N'
 
-// Use a language detector and cacher module utilizing AsyncStorage
+// Use a language detector module that checks the device's current language
 use<LanguageDetectorAsyncModule>({
   async: true,
   type: 'languageDetector',
-  init: () => null,
-  detect: async (callback: (lng: string) => void) => {
+  detect: async () => {
     try {
-      const cachedLanguage = await AsyncStorage.getItem('language')
-      const lng = cachedLanguage ?? deviceLanguage
-      logger.log(TAG, 'Detected user language', lng)
-      callback(lng)
+      const language = locale.startsWith('fi') ? 'fi' : 'en'
+      logger.log(TAG, 'Detected user language', language)
+      return language
     } catch (error) {
       logger.error(TAG, 'Failed to detect user language', error)
-    }
-  },
-  cacheUserLanguage: async (lng: string) => {
-    try {
-      await AsyncStorage.setItem('language', lng)
-      logger.log(TAG, 'Cached user language', lng)
-    } catch (error) {
-      logger.error(TAG, 'Failed to cache user language', error)
     }
   }
 })
