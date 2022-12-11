@@ -5,6 +5,9 @@ import { logger } from '../utils/logger'
 // Logger tag
 const TAG = 'Location'
 
+// Geocoding key
+const GEOCODE_API_KEY = 'bdc_ec1c6c097de9484c8db9633444fb8cca'
+
 export interface Coordinate {
   latitude: number
   longitude: number
@@ -70,7 +73,7 @@ export function getDistanceOfCoordinates(coordinate1: Coordinate, coordinate2: C
 // Get the area (aka locality) of the coordinates
 export async function getReverseGeocodedArea(coordinate: Coordinate): Promise<string | null> {
   try {
-    const url = `https://api.bigdatacloud.net/data/reverse-geocode?latitude=${coordinate?.latitude}&longitude=${coordinate?.longitude}&localityLanguage=en`
+    const url = `https://api.bigdatacloud.net/data/reverse-geocode?latitude=${coordinate?.latitude}&longitude=${coordinate?.longitude}&localityLanguage=en&key=${GEOCODE_API_KEY}`
     const response = await fetch(url)
     if (response.status !== 200) {
       logger.error(TAG, 'Failed to reverse geocode the area')
