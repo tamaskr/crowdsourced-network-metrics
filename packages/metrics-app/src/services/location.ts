@@ -74,7 +74,7 @@ export async function getReverseGeocodedArea(coordinate: Coordinate): Promise<st
   try {
     const url = `https://api.bigdatacloud.net/data/reverse-geocode?latitude=${coordinate?.latitude}&longitude=${coordinate?.longitude}&localityLanguage=en`
     const response = await fetch(url)
-    if (!response.ok) {
+    if (response.status !== 200) {
       logger.error(TAG, 'Failed to reverse geocode the area')
       return null
     }

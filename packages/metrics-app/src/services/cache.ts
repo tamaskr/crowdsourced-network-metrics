@@ -11,7 +11,7 @@ const STORAGE_KEY = '@cmnm/cache'
 // Expiry of the cache is one minute (in milliseconds)
 const EXPIRY = 60 * 1000
 
-interface CachedMeasurements {
+interface CacheContent {
   area: string | null
   carrier: string | null
   bandwidth: number | null
@@ -19,8 +19,8 @@ interface CachedMeasurements {
   signalStrength: number | null
 }
 
-// Retrieve cached measurements from AsyncStorage if they haven't yet expired
-export async function getCachedMeasurements(): Promise<CachedMeasurements | null> {
+// Retrieve the cached measurement from AsyncStorage if it exists and hasn't expired
+export async function getCachedMeasurement(): Promise<CacheContent | null> {
   try {
     const cache = await AsyncStorage.getItem(STORAGE_KEY)
     if (!cache) return null
@@ -34,8 +34,8 @@ export async function getCachedMeasurements(): Promise<CachedMeasurements | null
   }
 }
 
-// Cache measurements to AsyncStorage for one minute to avoid draining the device's resources
-export async function setCacheMeasurements(measurements: CachedMeasurements): Promise<void> {
+// Cache the measurement to AsyncStorage for one minute to avoid draining the device's resources
+export async function setCacheMeasurement(measurements: CacheContent): Promise<void> {
   try {
     const data = { ...measurements, expiry: Date.now() + EXPIRY }
     const stringified = JSON.stringify(data)

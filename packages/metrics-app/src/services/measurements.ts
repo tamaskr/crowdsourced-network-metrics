@@ -4,16 +4,16 @@ import { PermissionStatus } from 'expo-modules-core'
 import { getNetworkStateAsync, NetworkStateType } from 'expo-network'
 import { logger } from '../utils/logger'
 import { FCMDataMessage, MeasurementType } from '../types/types'
-import { report } from './backend'
+import { reportMeasurementToBackend } from './backend'
 import { getDistanceOfCoordinates, getCurrentCoordinates, getReverseGeocodedArea } from './location'
-import { getCachedMeasurements, setCacheMeasurements } from './cache'
+import { getCachedMeasurement, setCacheMeasurement } from './cache'
 
 
 // Logger tag
 const TAG = 'Measurements'
 
 // Measure the download bandwidth in kilobytes per second
-async function measureBandwidth(): Promise<number | null> {
+async function measureDownloadBandwidth(): Promise<number | null> {
   try {
     logger.log(TAG, 'Measuring download bandwidth...')
     const fileSize = 25 * 1024 * 1000
@@ -75,15 +75,15 @@ async function measureSignalStrength(): Promise<number | null> {
   }
 }
 
-// Perform measurements when receiving a query and report back
-export async function performMeasurementsFromQuery(query: FCMDataMessage): Promise<void> {
+// Perform a measurement when receiving a query and report it to the backend
+export async function performMeasurement(query: FCMDataMessage): Promise<void> {
   try {
     logger.log(TAG, 'Performing measurement for query', query.id)
 
     // Check location
     const coordinates = await getCurrentCoordinates()
     if (!coordinates) {
-      logger.warn(TAG, 'Aborted performing measurements as coordinates cannot be obtained')
+      logger.warn(TAG, 'Aborted performing measurement as coordinates cannot be obtained')
       return
     }
 
@@ -94,47 +94,47 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
     const distance = getDistanceOfCoordinates(queryCoordinates, coordinates)
     const queryRange = Number.parseFloat(query.range)
     if (distance > queryRange) {
-      logger.log(TAG, 'Aborted performing measurements as coordinates are out of the queried range')
+      logger.log(TAG, 'Aborted performing measurement as coordinates are out of the queried range')
       return
     }
 
     // Check that the user is connected to a cellular network or is in dev mode
     const state = await getNetworkStateAsync()
     if (state.type !== NetworkStateType.CELLULAR && !__DEV__) {
-      logger.log(TAG, 'Aborted performing measurements as the device is not connected to a cellular network')
+      logger.log(TAG, 'Aborted performing measurement as the device is not connected to a cellular network')
       return
     }
 
-    // Check if cached measurements are available
-    const cachedMeasurements = await getCachedMeasurements()
-    if (cachedMeasurements) {
-      await report({
+    // Check if a cached measurement is available
+    const cachedMeasurement = await getCachedMeasurement()
+    if (cachedMeasurement) {
+      await reportMeasurementToBackend({
         queryId: query.id,
         coordinates,
-        area: cachedMeasurements.area,
-        carrier: cachedMeasurements.carrier,
-        bandwidth: cachedMeasurements.bandwidth,
-        latency: cachedMeasurements.latency,
-        signalStrength: cachedMeasurements.signalStrength
+        area: cachedMeasurement.area,
+        carrier: cachedMeasurement.carrier,
+        bandwidth: cachedMeasurement.bandwidth,
+        latency: cachedMeasurement.latency,
+        signalStrength: cachedMeasurement.signalStrength
       })
       return
     }
 
-    // Take measurements, check area and carrier
+    // Measure network metrics, check the area, and find the carrier
     const area = await getReverseGeocodedArea(coordinates)
     const carrier = await getCarrierNameAsync()
     const shouldMeasureBandwidth = query.measurements.includes(MeasurementType.Bandwidth)
     const shouldMeasureLatency = query.measurements.includes(MeasurementType.Latency)
     const shouldMeasureSignalStrength = query.measurements.includes(MeasurementType.SignalStrength)
-    const bandwidth = shouldMeasureBandwidth ? await measureBandwidth() : null
+    const bandwidth = shouldMeasureBandwidth ? await measureDownloadBandwidth() : null
     const latency = shouldMeasureLatency ? await measureLatency() : null
     const signalStrength = shouldMeasureSignalStrength ? await measureSignalStrength() : null
 
-    // Cache measurements
-    await setCacheMeasurements({ area, carrier, bandwidth, latency, signalStrength })
+    // Cache the measurement
+    await setCacheMeasurement({ area, carrier, bandwidth, latency, signalStrength })
 
-    // Report measurements
-    await report({
+    // Report the measurement
+    await reportMeasurementToBackend({
       queryId: query.id,
       coordinates,
       area,
@@ -143,8 +143,8 @@ export async function performMeasurementsFromQuery(query: FCMDataMessage): Promi
       latency,
       signalStrength
     })
-    logger.log(TAG, 'Performed measurements successfully')
+    logger.log(TAG, 'Performed measurement successfully')
   } catch (error) {
-    logger.error(TAG, 'Failed to perform measurements', error)
+    logger.error(TAG, 'Failed to perform measurement', error)
   }
 }

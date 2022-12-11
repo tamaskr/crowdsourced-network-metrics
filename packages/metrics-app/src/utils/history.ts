@@ -6,11 +6,14 @@ import { logger } from './logger'
 // Logger tag
 const TAG = 'History'
 
+// AsyncStorage key
+const STORAGE_KEY = '@cmnm/history'
+
 // Store measurement in AsyncStorage
-export const storeMeasurement = async (measurement: Measurement) => {
-  logger.log(TAG, 'Saving measurement data...')
+export async function saveMeasurementToHistory(measurement: Measurement) {
   try {
-    const history = await AsyncStorage.getItem('history')
+    logger.log(TAG, 'Saving measurement data...')
+    const history = await AsyncStorage.getItem(STORAGE_KEY)
     const parsedHistory = history ? JSON.parse(history) : []
     parsedHistory.push({
       ...measurement,
@@ -19,10 +22,10 @@ export const storeMeasurement = async (measurement: Measurement) => {
         ? Number.parseFloat((measurement.bandwidth / 125).toFixed(1))
         : null
     })
-    const measurements = JSON.stringify(parsedHistory)
-    await AsyncStorage.setItem('history', measurements)
-    logger.log(TAG, 'Saving measurement data success')
-  } catch {
-    logger.log(TAG, 'Error while saving measurement data')
+    const stringifiedHistory = JSON.stringify(parsedHistory)
+    await AsyncStorage.setItem(STORAGE_KEY, stringifiedHistory)
+    logger.log(TAG, 'Measurement data saved')
+  } catch (error) {
+    logger.error(TAG, 'Error while saving measurement data', error)
   }
 }
